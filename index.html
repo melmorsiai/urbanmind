@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التخطيط العمراني | UrbanMind V25.1</title>
+    <title>منصة التخطيط العمراني | UrbanMind V25.2</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Cairo, Tajawal, JetBrains Mono -->
@@ -470,7 +470,7 @@ html.light details.um-pin-det>summary{background:#182236}
                                 منصة التخطيط العمراني
                             </h1>
                             <span class="text-xs font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
-                                UrbanMind <b data-app-version style="font-weight:inherit">V25.1</b>
+                                UrbanMind <b data-app-version style="font-weight:inherit">V25.2</b>
                             </span>
                         </div>
                         <p class="text-xs sm:text-sm text-slate-400 font-mono">
@@ -569,10 +569,10 @@ html.light details.um-pin-det>summary{background:#182236}
                 <div>
                     <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-amber-400"></i>
-                        <span>الحاسبة التخطيطية ومعايير الخدمات حسب المستوى التخطيطي (V25.1)</span>
+                        <span>الحاسبة التخطيطية ومعايير الخدمات حسب المستوى التخطيطي (V25.2)</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400">
-                        ميزانية استعمالات الأراضي، الكثافات، الارتدادات، أحمال المرافق بالحد الأدنى + معامل التباين، ومحرك خدمات بلدية رأس الخيمة الرسمي (الكود (أ) ضواحي / ريفي / حضري + Code D + لائحة 2026).
+                        ميزانية استعمالات الأراضي، الكثافات، الارتدادات، أحمال المرافق بالحد الأدنى + معامل التباين، ومحرك خدمات بمعايير عامة (ضواحي / ريفي / حضري) إلى جانب المعايير المصرية.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -583,7 +583,7 @@ html.light details.um-pin-det>summary{background:#182236}
                         <i class="fa-solid fa-compass-drafting ml-1"></i> استوديو العصف الذهني
                     </button>
                     <button onclick="switchTab('code')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold hover:bg-amber-500/30 transition">
-                        <i class="fa-solid fa-scale-balanced ml-1"></i> كود رأس الخيمة 2026 والاشتراطات
+                        <i class="fa-solid fa-scale-balanced ml-1"></i> الأكواد التخطيطية
                     </button>
                     <button onclick="switchTab('formulas')" class="px-3.5 py-2 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold hover:bg-sky-500/30 transition">
                         <i class="fa-solid fa-square-root-variable ml-1"></i> القوانين والمعادلات
@@ -591,14 +591,14 @@ html.light details.um-pin-det>summary{background:#182236}
                 </div>
             </div>
 
-            <!-- Collapsible RAK Settlement Context Scorer (Code D Table 1 / الدليل المرجعي Table 1) -->
+            <!-- Collapsible Settlement Context Scorer -->
             <details id="rak-scorer-box" class="um-pin-det rounded-2xl bg-slate-900/95 border border-teal-500/30 p-4 sm:p-5 shadow-lg">
                 <summary class="cursor-pointer font-bold text-sm sm:text-base text-teal-300 flex items-center justify-between gap-3 list-none">
-                    <span><i class="fa-solid fa-map-location-dot ml-2 text-amber-400"></i> مُصنّف سياق التجمع العمراني — بلدية رأس الخيمة (Code D / الدليل المرجعي Settlement Context Scorer)</span>
+                    <span><i class="fa-solid fa-map-location-dot ml-2 text-amber-400"></i> مُصنّف سياق التجمع العمراني (Settlement Context Scorer)</span>
                     <span id="scorer-badge" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 shrink-0">ضواحي (3.00)</span>
                 </summary>
                 <div class="mt-4 pt-4 border-t border-slate-800 space-y-4 text-xs">
-                    <p class="text-slate-400">وفق جدول (1) في دليل Code D صـ 42 ودليل الدليل المرجعي صـ 28: الكثافة 25% (12.5% قائم + 12.5% مقترح) + توفر الخدمات 35% + الجغرافيا 40%. التصنيف: <b>1.0–2.4 ريفي (Rural)</b> · <b>2.5–3.6 ضواحي (Suburban)</b> · <b>3.6–5.0 حضري (Urban)</b>.</p>
+                    <p class="text-slate-400">وفق معايير التصنيف التالية: الكثافة 25% (12.5% قائم + 12.5% مقترح) + توفر الخدمات 35% + الجغرافيا 40%. التصنيف: <b>1.0–2.4 ريفي (Rural)</b> · <b>2.5–3.6 ضواحي (Suburban)</b> · <b>3.6–5.0 حضري (Urban)</b>.</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         <div>
                             <label class="block text-slate-300 font-bold mb-1">1. الكثافة القائمة (12.5%)</label>
@@ -646,7 +646,7 @@ html.light details.um-pin-det>summary{background:#182236}
             <div id="calculator-section" class="rounded-2xl bg-slate-900/95 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-6">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                     <div>
-                        <span class="text-xs font-mono uppercase text-amber-400 font-semibold">UrbanMind <span data-app-version>V25.1</span> Hierarchical Quantitative Engine · RAK Code A / Code D / 2026 & Egypt 119</span>
+                        <span class="text-xs font-mono uppercase text-amber-400 font-semibold">UrbanMind <span data-app-version>V25.2</span> Hierarchical Quantitative Engine · General Standards & Egypt 119</span>
                         <h3 class="text-lg sm:text-xl font-bold text-white mt-0.5">
                             حاسبة ميزانية استعمالات الأراضي والكثافات الفورية (Land Use Budget & Density Engine)
                         </h3>
@@ -1372,7 +1372,7 @@ html.light details.um-pin-det>summary{background:#182236}
                 <div>
                     <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-wand-magic-sparkles text-teal-400"></i>
-                        <span>الأدوات الذكية (V25.1)</span>
+                        <span>الأدوات الذكية (V25.2)</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400">
                         مقارنة السيناريوهات، تصدير التقارير، المراجعة المتباعدة، الاختبار التجريبي بوقت، فحص المدخلات، مكتبة الحالات الدراسية، كتالوج معايير الخدمات، ملاحظات الأقسام، وورقة المعادلات السريعة. كل بياناتك هنا تُحفظ تلقائياً وتدخل في ملف المشروع.
@@ -4397,8 +4397,8 @@ var TIER_META = {
 // Per-code threshold definitions (Pop & Area Ha) for Auto Scale Classification
 var SCALE_RULES = {
     rak_sub: {
-        t1: { maxPop: 3000,  maxHa: 50,  desc: 'مجموعة سكنية سكني (Code D: حتى 1,500–3,000 نسمة · < 50 هكتار · نطاق مشي 350م)' },
-        t2: { maxPop: 10000, maxHa: 150, desc: 'مجاورة سكنية (Code D: 50–120 هكتار · 3,000–6,000 نسمة · الدليل المرجعي حتى 10,000 · نطاق 700م)' },
+        t1: { maxPop: 3000,  maxHa: 50,  desc: 'مجموعة سكنية سكني (حتى 1,500–3,000 نسمة · < 50 هكتار · نطاق مشي 350م)' },
+        t2: { maxPop: 10000, maxHa: 150, desc: 'مجاورة سكنية (50–120 هكتار · 3,000–6,000 نسمة · حتى 10,000 · نطاق 700م)' },
         t3: { maxPop: 40000, maxHa: 500, desc: 'حي سكني (District: 10,000–40,000 نسمة · 150–500 هكتار · نطاق 2 كم)' },
         t4: { desc: 'قطاع / مشروع متعدد الأحياء (Project: > 40,000 نسمة أو > 500 هكتار · يشمل المستشفى والشرطة والدفاع المدني)' }
     },
@@ -4413,12 +4413,6 @@ var SCALE_RULES = {
         t2: { maxPop: 15000, maxHa: 100, desc: 'مجاورة / حي حضري (Urban Neighborhood: 5,000–15,000 نسمة · 30–100 هكتار · نطاق 700م)' },
         t3: { maxPop: 50000, maxHa: 350, desc: 'قطاع حضري (Urban District: 15,000–50,000 نسمة · 100–350 هكتار · نطاق 2 كم)' },
         t4: { desc: 'نطاق شبه إقليمي (Sub-Regional: > 50,000 نسمة أو > 350 هكتار · مرافق 80,000+)' }
-    },
-    rak_legacy: {
-        t1: { maxPop: 4000,  maxHa: 130, desc: 'وحدة جوار (ج 3-1: 2,000–3,000 نسمة · 75–130 هكتار مواطنون)' },
-        t2: { maxPop: 15000, maxHa: 440, desc: 'وحدة مجتمع (ج 3-1: 5,000–10,000 نسمة · 215–440 هكتار مواطنون)' },
-        t3: { maxPop: 50000, maxHa: 1000, desc: 'وحدة حي (ج 3-1: 20,000–50,000 نسمة · 690–1,000 هكتار مواطنون)' },
-        t4: { desc: 'قطاع حضري متعدد الأحياء (> 50,000 نسمة أو > 1,000 هكتار)' }
     },
     eg: {
         t1: { maxPop: 2500,  maxHa: 20,  desc: 'مجموعة سكنية (< 2,500 نسمة · < 20 هكتار · خدمات يومية أساسية)' },
@@ -4511,43 +4505,42 @@ AB.insertAdjacentHTML('afterend',
     '<div id="pop-box" style="display:none"><label class="block text-xs text-slate-300 mb-1">عدد السكان المتوقع (نسمة)</label><input type="number" id="calc-pop-input" value="5000" min="0" step="100" oninput="runMasterplanCalculator()" class="w-full '+IC+'text-amber-400"></div>'
 );
 
-// Code selector + RAK 2026 Parcel Typology + الدليل المرجعي Multi-Unit Mix Panel
+// Code selector + Parcel Typology + Multi-Unit Mix Panel
 var inputCol = $('calc-area-input').closest('.lg\\:col-span-5');
 inputCol.insertAdjacentHTML('afterbegin',
     '<div class="p-3.5 rounded-xl bg-slate-900/80 border border-amber-500/35 space-y-2.5">' +
         '<div>' +
             '<label class="block text-xs font-bold text-amber-300 mb-1">الكود ومعايير الخدمات المعتمدة في الحسابات</label>' +
             '<select id="calc-code" onchange="calcCodeChange()" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs sm:text-sm font-bold text-white">' +
-                '<option value="rak_sub">رأس الخيمة — الكود (أ) ضواحي (Code A (Suburban 2022))</option>' +
-                '<option value="rak_rur">رأس الخيمة — الكود (ب) ريفي (Code B (Rural 2022))</option>' +
-                '<option value="rak_urb">رأس الخيمة — الكود (ج) حضري (Urban Tool)</option>' +
-                '<option value="rak_legacy">رأس الخيمة — الجداول المرجعية السابقة (ج 3-1 إلى 3-6)</option>' +
+                '<option value="rak_sub">معايير عامة — ضواحي (Suburban)</option>' +
+                '<option value="rak_rur">معايير عامة — ريفي (Rural)</option>' +
+                '<option value="rak_urb">معايير عامة — حضري (Urban)</option>' +
                 '<option value="eg">مصر — قانون البناء 119 لسنة 2008</option>' +
             '</select>' +
         '</div>' +
         '<div id="rak-parcel-box">' +
-            '<label class="block text-[11px] font-bold text-teal-300 mb-1">نمط القسيمة (لائحة رأس الخيمة 2026 + دليل Code D)</label>' +
+            '<label class="block text-[11px] font-bold text-teal-300 mb-1">نمط القسيمة</label>' +
             '<select id="rak-parcel-type" onchange="applyRakParcelPreset()" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-white">' +
                 '<option value="custom">مخصص (إدخال يدوي)</option>' +
                 '<option value="parcel_conv" selected>فيلا خاصة تقليدية 30×30م (900 م² · BCP 65% · G+1 · 2 موقف)</option>' +
                 '<option value="parcel_23">فيلا خاصة ثلثين 20×30م (600 م² · BCP 70% · G+1 · 2 موقف)</option>' +
                 '<option value="parcel_half">فيلا خاصة نصفية 15×30م (450 م² · ارتداد 3م/0م · G+1 · 1 موقف)</option>' +
                 '<option value="parcel_qtr">فيلا خاصة ربعية 15×15م (225 م² · ارتداد 3م/0م · G+2 · 1 موقف)</option>' +
-                '<option value="rak_inv">فيلا استثمارية — م7 لائحة 2026 (900 م² · شارع 2م / جار 1.5م · G+1)</option>' +
-                '<option value="rak_apt">شقق سكني-تجاري/استثماري — م7 و10 (900 م² · BCP 60% · G+4)</option>' +
+                '<option value="rak_inv">فيلا استثمارية (900 م² · شارع 2م / جار 1.5م · G+1)</option>' +
+                '<option value="rak_apt">شقق سكني-تجاري/استثماري (900 م² · BCP 60% · G+4)</option>' +
             '</select>' +
         '</div>' +
         '<div id="ca-sub-demo-box" class="flex items-center justify-between gap-2 text-[11px] bg-slate-950/70 p-2 rounded-lg border border-slate-800">' +
             '<span class="text-slate-300 font-bold">متوسط حجم الأسرة (ضواحي):</span>' +
             '<select id="ca-sub-demo" onchange="syncSubDemo()" class="rounded bg-slate-900 border border-slate-700 px-2 py-1 text-[11px] text-amber-300 font-bold">' +
-                '<option value="pdf">الكود (أ) 2022 (7.9 / 4.5 / 4.0)</option>' +
+                '<option value="pdf">المعيار العام (7.9 / 4.5 / 4.0)</option>' +
                 '<option value="upd">القيم المحدثة (6.92 / 5.06 / 3.28)</option>' +
             '</select>' +
         '</div>' +
         '<div id="ca-mix-wrap" class="p-2.5 rounded-lg bg-slate-950/80 border border-teal-500/30 space-y-2">' +
             '<label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-teal-300">' +
                 '<input type="checkbox" id="ca-mix-on" onchange="toggleRefMix()" class="w-4 h-4 accent-teal-500">' +
-                '<span>إدخال وحدات الدليل المرجعي التفصيلي (فيلات خاصة + استثمارية + شقق مثل الالمحدث)</span>' +
+                '<span>إدخال الوحدات التفصيلي (فيلات خاصة + استثمارية + شقق مثل الالمحدث)</span>' +
             '</label>' +
             '<div id="ca-mix-fields" style="display:none" class="grid grid-cols-2 gap-2 pt-1 text-[11px]">' +
                 '<div id="ca-vpriv-wrap"><label class="block text-slate-300 mb-0.5">فيلات خاصة (Emirati)</label><input type="number" id="ca-v-priv" value="500" min="0" oninput="runMasterplanCalculator()" class="w-full rounded bg-slate-900 border border-slate-700 px-2 py-1 font-mono text-amber-300"></div>' +
@@ -4572,7 +4565,7 @@ var presetBar = $('calculator-section').querySelector('.flex.flex-wrap.items-cen
 if(presetBar){
     presetBar.innerHTML =
         '<button onclick="applyCalcPreset(\'rak_cluster\')" class="px-2.5 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 text-xs text-emerald-300 border border-emerald-500/30 font-bold transition">مجموعة سكنية (25 هـ)</button>' +
-        '<button onclick="applyCalcPreset(\'rak_nh\')" class="px-2.5 py-1.5 rounded-lg bg-sky-950/60 hover:bg-sky-900/60 text-xs text-sky-300 border border-sky-500/30 font-bold transition">مجاورة Code D (82 هـ)</button>' +
+        '<button onclick="applyCalcPreset(\'rak_nh\')" class="px-2.5 py-1.5 rounded-lg bg-sky-950/60 hover:bg-sky-900/60 text-xs text-sky-300 border border-sky-500/30 font-bold transition">مجاورة (82 هـ)</button>' +
         '<button onclick="applyCalcPreset(\'rak_dist\')" class="px-2.5 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/60 text-xs text-amber-300 border border-amber-500/30 font-bold transition">حي سكني (280 هـ)</button>' +
         '<button onclick="applyCalcPreset(\'rak_sector\')" class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/60 text-xs text-rose-300 border border-rose-500/30 font-bold transition">قطاع نموذجي (1,182 هـ)</button>' +
         '<button onclick="normalizeLandUsePercentages()" class="px-2.5 py-1.5 rounded-lg bg-teal-600/20 hover:bg-teal-600/30 text-xs text-teal-300 border border-teal-500/30 font-bold transition"><i class="fa-solid fa-scale-balanced ml-1"></i> موازنة 100%</button>';
@@ -4721,73 +4714,40 @@ var EG_SV = [
     [4,'noncenter','إداري واجتماعي','دفاع مدني / إطفاء',50000,3000,'مستوى القطاع / المدينة']
 ];
 
-var RAK_LEGACY_SV = [
-    [1,'center','جوار','مسجد محلي (يشمل المحال ≈375 م²)',2000,2230,'2,000–3,000 نسمة · ج 3-2'],
-    [1,'center','جوار','ساحة محلية (Local Plaza)',2000,2790,'2,000–3,000 نسمة · ج 3-2'],
-    [1,'center','جوار','ملعب أطفال (Tot Lot)',2000,2790,'2,000–3,000 نسمة · ج 3-2'],
-    [2,'center','مجتمع','مسجد جامع (Juma)',7000,4650,'7,000–10,000 نسمة · ج 3-3'],
-    [2,'center','مجتمع','مركز تسوق مجتمعي',7000,8830,'7,000–10,000 نسمة · ج 3-3'],
-    [2,'center','مجتمع','حضانة أطفال',5000,1860,'5,000–7,000 نسمة · ج 3-3'],
-    [2,'center','مجتمع','روضة أطفال',5000,7250,'5,000–7,000 نسمة · ج 3-3'],
-    [2,'noncenter','مجتمع','مدرسة ابتدائية',5000,11710,'5,000–7,000 نسمة · لجنس واحد'],
-    [2,'noncenter','مجتمع','عيادة عامة خاصة',5000,1115,'5,000–7,000 نسمة'],
-    [2,'noncenter','مجتمع','عيادة تخصصية خاصة',7000,1115,'7,000–10,000 نسمة'],
-    [2,'noncenter','مجتمع','مركز عيادات (Poly Clinic)',7000,1490,'7,000–10,000 نسمة'],
-    [2,'center','مجتمع','ملعب (Playground)',5000,7435,'5,000–7,000 نسمة'],
-    [2,'center','مجتمع','حديقة المجتمع',7000,17655,'7,000–10,000 نسمة'],
-    [3,'noncenter','حي','مدرسة إعدادية',10000,13010,'10,000–15,000 نسمة · ج 3-4'],
-    [3,'noncenter','حي','مدرسة ثانوية',15000,20440,'15,000–20,000 نسمة · ج 3-4'],
-    [3,'center','حي','حضانة خاصة (Daycare)',15000,2230,'15,000–20,000 نسمة · ج 3-4'],
-    [3,'center','حي','مكتب بريد',20000,2510,'20,000–30,000 نسمة · ج 3-4'],
-    [3,'noncenter','حي','مركز صحي',30000,6505,'30,000 نسمة · ج 3-4'],
-    [3,'center','حي','دار رعاية مسنين',30000,4650,'30,000–50,000 نسمة · ج 3-4'],
-    [3,'center','حي','حديقة الحي (District Park)',30000,37165,'30,000–50,000 نسمة · ج 3-4'],
-    [0,'util','مرافق','محطة محولات كهرباء (DSS)',0,45,'5×9 م (Code D صـ 82)'],
-    [0,'util','مرافق','خزان / محطة مياه',10000,1000,'تقديري'],
-    [0,'util','مرافق','محطة رفع صرف صحي',10000,500,'تقديري'],
-    [0,'util','مرافق','نقطة تجميع مخلفات',2000,100,'تقديري']
-];
 
 var PROFILES = {
     rak_sub: {
-        n: 'رأس الخيمة — الكود (أ) ضواحي (Code A (Suburban 2022))', isRefMan: true, isRak: true,
+        n: 'معايير عامة — ضواحي (Suburban)', isRefMan: true, isRak: true,
         sb: [2, 1.5, 1.5], park: 2, hh: 7.9, plot: 900, w: 30, cov: 65, fl: 2,
         wat: [350, 550], kw: [15, 96], div: 0.65, cw: [80, 150], dssArea: 45,
         ok: [
-            'مبني على دليل Code A (Suburban 2022) + الأداة الحسابية + دليل Code D + لائحة 2026 (قرار 7).',
-            'تدرج Code D/الدليل المرجعي: مجموعة سكنية (< 50 هـ) ← مجاورة (50–120 هـ · 3–6 آلاف نسمة) ← حي (10–40 ألف) ← قطاع/مشروع (> 40 ألف).',
-            'محطة محولات التوزيع DSS = 5×9م (45 م²) وفق Code D صـ 82.'
+            'مبني على معايير عامة لسياق الضواحي + الأداة الحسابية.',
+            'تدرج المستويات: مجموعة سكنية (< 50 هـ) ← مجاورة (50–120 هـ · 3–6 آلاف نسمة) ← حي (10–40 ألف) ← قطاع/مشروع (> 40 ألف).',
+            'محطة محولات التوزيع DSS = 5×9م (45 م²) (قيمة مرجعية عامة).'
         ],
-        est: ['أحمال الكهرباء والمياه ومعامل التباين (0.65) قيم أولية بالحد الأدنى وتُعتمد مع EtihadWE.']
+        est: ['أحمال الكهرباء والمياه ومعامل التباين (0.65) قيم أولية بالحد الأدنى وتُعتمد مع شركة المرافق المختصة.']
     },
     rak_rur: {
-        n: 'رأس الخيمة — الكود (ب) ريفي (Code B (Rural 2022))', isRefMan: true, isRak: true,
+        n: 'معايير عامة — ريفي (Rural)', isRefMan: true, isRak: true,
         sb: [2, 1.5, 1.5], park: 2, hh: 8.7, plot: 900, w: 30, cov: 65, fl: 2,
         wat: [350, 550], kw: [15, 96], div: 0.65, cw: [80, 150], dssArea: 45,
         ok: [
-            'مبني على دليل Code B (Rural 2022) + الأداة الحسابية الريفية (مستوى البلدة Town + مستوى المشروع Project).',
+            'مبني على معايير عامة للسياق الريفي + الأداة الحسابية الريفية (مستوى البلدة Town + مستوى المشروع Project).',
             'حجم الأسرة: فيلا خاصة 8.7 · استثمار 5.9 · شقة 4.0. الطلاب: مواطنون 29.4% (80/20%) · مختلط 24.9%.',
             'تُخصم الأراضي الزراعية المحفوظة من مساحة البلدة عند حساب المساجد.'
         ],
         est: ['أحمال الكهرباء والمياه بالحد الأدنى × تباين 0.65؛ ومواقف المساجد تشمل +2/+3 للإمام والمؤذن والخادم.']
     },
     rak_urb: {
-        n: 'رأس الخيمة — الكود (ج) حضري (Urban Calculation Tool)', isRefMan: true, isRak: true,
+        n: 'معايير عامة — حضري (Urban)', isRefMan: true, isRak: true,
         sb: [2, 1.5, 1.5], park: 2, hh: 6.57, plot: 900, w: 30, cov: 65, fl: 2,
         wat: [350, 550], kw: [12, 60], div: 0.65, cw: [80, 150], dssArea: 45,
         ok: [
-            'مبني على أداة RAK - Code C Urban Calculation Tool (بلدية رأس الخيمة).',
+            'مبني على معايير عامة للسياق الحضري + الأداة الحسابية الحضرية.',
             'تدرج حضري: مجموعة محلية (< 5 آلاف) ← حي حضري (5–15 ألف) ← قطاع (15–50 ألف) ← شبه إقليمي (50–80 ألف+).',
             'الفراغات المفتوحة POS = 10% إجمالي (55% مبرمجة + 20% لعب + 25% رياضة).'
         ],
         est: ['فئة الدفاع المدني الحضري (A–D) حسب مصفوفة الخطورة على نطاق 2.5 كم.']
-    },
-    rak_legacy: {
-        n: 'رأس الخيمة — الجداول المرجعية السابقة (ج 3-1 إلى 3-6)', isRefMan: false, isRak: true,
-        sb: [1.5, 1.5, 1.5], park: 2, hh: 6.92, plot: 900, w: 30, cov: 65, fl: 2,
-        wat: [350, 550], kw: [15, 96], div: 0.65, cw: [80, 150], dssArea: 45,
-        ok: ['الجداول المرجعية (ج 3-1 إلى 3-6) مقسّمة هرمياً (جوار ← مجتمع ← حي) مع ارتداد لائحة 2026 (1.50م).'],
-        est: ['يمكن تعديل نسمة/وحدة ومساحة الوحدة مباشرة داخل كل مستوى وتُحفظ تلقائياً.']
     },
     eg: {
         n: 'مصر — قانون البناء 119 لسنة 2008', isRefMan: false, isRak: false,
@@ -5135,7 +5095,7 @@ function computeRefFacilities(codeKey, ha, popEm, popMix, totalUnits, aptUnits, 
     }
 
     // Tier 0: Utilities (DSS 5x9 = 45m2)
-    add(0, 'util', 'كهرباء Code D', 'محطات محولات توزيع (DSS · 5×9م)', 'محسوبة بالحد الأدنى × معامل التباين', trf, 45, 45);
+    add(0, 'util', 'كهرباء', 'محطات محولات توزيع (DSS · 5×9م)', 'محسوبة بالحد الأدنى × معامل التباين', trf, 45, 45);
 
     return { rows: rows, worshipers: Math.round(worshipers), students: studentsTotal, openSpaceM2: openSpaceM2 };
 }
@@ -5275,7 +5235,7 @@ window.runMasterplanCalculator = function(){
     $('out-env').textContent = (envF * 100).toFixed(0) + '%';
     $('out-env-s').textContent = 'حدود بناء ' + (fw>0?fw.toFixed(1):0) + '×' + (fd>0?fd.toFixed(1):0) + ' م';
     $('out-park').textContent = N(totPark);
-    $('out-park-s').textContent = 'سكني ' + N(resPark) + ' + تجاري ' + N(comPark) + (P.isRak ? ' (م31: 1/70م²)' : '');
+    $('out-park-s').textContent = 'سكني ' + N(resPark) + ' + تجاري ' + N(comPark) + (P.isRak ? ' (1/70م²)' : '');
     $('out-unbuilt').textContent = A(unb).replace(/ (م²|هكتار)$/, '');
     $('out-unbuilt-s').textContent = u === 'ha' ? 'هكتار' : 'م²';
     $('out-landpc').textContent = pop > 0 ? (m2 / pop).toFixed(0) : '0';
@@ -5288,10 +5248,10 @@ window.runMasterplanCalculator = function(){
     }).join('');
 
     var R = [
-        ['الإسكان الصافي (Net Residential)','res','48% – 55% (Code D: 50% صافي قسائم)','text-amber-300'],
+        ['الإسكان الصافي (Net Residential)','res','48% – 55% (50% صافي قسائم)','text-amber-300'],
         ['شبكة الطرق والمواقف (Roads & ROW)','roads','18% – 25% (الأمثل اقتصادياً)','text-slate-300'],
-        ['المناطق المفتوحة والحدائق (Open Space)','open','10% – 15% (Code D: 3–5% حدائق / 10% حضري)','text-emerald-400'],
-        ['المرافق والخدمات العامة (Public Facilities)','fac','8% – 12% (الدليل المرجعي: ~7–12% حسب الحجم)','text-sky-400'],
+        ['المناطق المفتوحة والحدائق (Open Space)','open','10% – 15% (3–5% حدائق / 10% حضري)','text-emerald-400'],
+        ['المرافق والخدمات العامة (Public Facilities)','fac','8% – 12% (~7–12% حسب الحجم)','text-sky-400'],
         ['التجاري والاستعمال المختلط (Commercial)','com','4% – 7% (مراكز المجموعة السكنية وحيّية)','text-rose-400']
     ];
     $('calc-table-body').innerHTML = R.map(function(r){
@@ -5412,13 +5372,13 @@ window.runMasterplanCalculator = function(){
         if(pop > 0 && pop < 3000){
             infillBox.classList.remove('hidden');
             infillBox.innerHTML =
-                '<b><i class="fa-solid fa-circle-info ml-1"></i> تنبيه الإحلال والتجمعات الصغيرة (&lt; 3,000 نسمة — الدليل المرجعي باب 8 جدول 36):</b> ' +
+                '<b><i class="fa-solid fa-circle-info ml-1"></i> تنبيه الإحلال والتجمعات الصغيرة (&lt; 3,000 نسمة — نهج نصيب الفرد):</b> ' +
                 'ينطبق نهج <b>نصيب الفرد (Per Capita GFA)</b>: عيادات = <b>'+(pop*0.50).toFixed(0)+' م²</b> (أدنى 3,000 م²) · تجاري = <b>'+(pop*0.80).toFixed(0)+' م²</b> · مركز مجتمعي = <b>'+(pop*0.13).toFixed(0)+' م²</b> · حضانة = <b>'+(pop*0.12).toFixed(0)+' م²</b>.';
         }
     } else {
         $('sv-section-title').textContent = 'رابعاً: خدمات ومرافق «' + (showAll ? 'جميع المستويات' : TIER_META[activeScaleNum].ar) + '» — ' + P.n;
         $('sv-section-sub').textContent = 'الخدمات مقسّمة هرمياً حسب مستوى الموقع، وقابلة للتعديل المباشر في خانات (نسمة/وحدة) و(مساحة الوحدة).';
-        var baseList = codeKey === 'eg' ? EG_SV : RAK_LEGACY_SV;
+        var baseList = EG_SV;
         var edits = getLegacyEdits(codeKey);
         allRows = baseList.map(function(r, idx){
             var ed = edits[idx] || {};
@@ -5455,7 +5415,7 @@ window.runMasterplanCalculator = function(){
         var gLand = 0, gGfa = 0, gCnt = 0;
         filtered.forEach(function(r){ gLand += r.cnt * r.landU; gGfa += r.cnt * (r.gfaU || 0); gCnt += r.cnt; });
 
-        // For RAK Legacy, add 20% service parking & roads per non-utility visible total inside summary
+        
         grandLand += gLand; grandGfa += gGfa; grandCount += gCnt;
 
         var tblHead = isEditableLegacy
@@ -5506,12 +5466,6 @@ window.runMasterplanCalculator = function(){
             '</details>';
     });
 
-    // Add 20% service parking/roads line for RAK Legacy if non-utility services > 0
-    if(codeKey === 'rak_legacy' && grandLand > 0){
-        var srvPark = grandLand * 0.2;
-        grandLand += srvPark;
-        groupsHtml += '<div class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-between text-xs text-slate-300"><span><i class="fa-solid fa-square-parking text-amber-300 ml-1"></i> مواقف وشوارع خدمة إضافية (20% من مساحات الخدمات وفق ج 3-2 إلى 3-4)</span><span class="font-mono font-bold text-amber-300">'+A(srvPark)+'</span></div>';
-    }
 
     // Grand Total Summary Bar
     groupsHtml +=
@@ -5549,7 +5503,7 @@ window.runMasterplanCalculator = function(){
 
     // Code D Utility Plot Reference Footer
     $('util-note').innerHTML = P.isRak
-        ? '<b class="text-amber-300"><i class="fa-solid fa-bolt ml-1"></i> مرجع أبعاد قطع المرافق (دليل Code D رأس الخيمة صـ 82):</b> محطة توزيع DSS = <b>5×9م (45 م²)</b> · رئيسية PSS = <b>100×80م</b> · شبكة Grid = <b>300×300م</b> · رفع صرف صحي = <b>50×50م</b> · تصريف أمطار = <b>50×50م</b> · غاز/إطفاء = <b>30×30م</b> · خزان مياه = <b>100×100م</b>.'
+        ? '<b class="text-amber-300"><i class="fa-solid fa-bolt ml-1"></i> مرجع أبعاد قطع المرافق (قيم مرجعية عامة):</b> محطة توزيع DSS = <b>5×9م (45 م²)</b> · رئيسية PSS = <b>100×80م</b> · شبكة Grid = <b>300×300م</b> · رفع صرف صحي = <b>50×50م</b> · تصريف أمطار = <b>50×50م</b> · غاز/إطفاء = <b>30×30م</b> · خزان مياه = <b>100×100م</b>.'
         : '<b class="text-sky-300">مرجع المرافق:</b> تُنسق مواقع المحولات والخزانات ومحطات الرفع مع شركات المرافق المختصة بالمحافظة.';
 
     // Diagnostics Alerts
@@ -5560,7 +5514,7 @@ window.runMasterplanCalculator = function(){
     if(Pct.open < 8) al.push(['rose','fa-tree','نسبة المناطق المفتوحة ('+Pct.open+'%) أقل من الموصى به (10–12%).']);
     if(envF <= 0) al.push(['rose','fa-ruler-combined','الارتدادات المدخلة تلتهم القسيمة بالكامل!']);
     if(P.isRak){
-        al.push(['teal','fa-mosque','لائحة رأس الخيمة 2026 + الدليل المرجعي: مواقف التجاري ('+N(comPark)+' موقف بمعدل 1/70م² للمحال والمكاتب؛ وللمطاعم 1/50م²) ← تستوجب مصليات (Appendix C) بإجمالي <b>'+musallaWP+' م²</b> ('+Math.ceil(musallaWP/2)+'م² رجال + '+Math.ceil(musallaWP/2)+'م² نساء).']);
+        al.push(['teal','fa-mosque','مواقف التجاري ('+N(comPark)+' موقف بمعدل 1/70م² للمحال والمكاتب؛ وللمطاعم 1/50م²) ← تستوجب مصليات  بإجمالي <b>'+musallaWP+' م²</b> ('+Math.ceil(musallaWP/2)+'م² رجال + '+Math.ceil(musallaWP/2)+'م² نساء).']);
     }
     al.push(['teal','fa-bolt','ملخص الموقع ('+N(m2)+' م² = '+ha.toFixed(2)+' هكتار · مستوى '+detMeta.ar+'): '+N(pop)+' نسمة · '+N(totalUnits)+' وحدة · عدد المحولات ('+lvLbl+' × تباين '+divF+'): <b>'+trf+' محول</b> بمساحة DSS = '+N(trf*P.dssArea)+' م².']);
 
@@ -5688,56 +5642,6 @@ if(rakDet){
     if(rakIn) rakIn.insertAdjacentHTML('beforeend', r5Summary);
 }
 
-// 3. New Section: RAK Code A Official Standards (Suburban Code A + Rural Code B + Urban Tool)
-var refHtml =
-    '<h4 class="um-sec" style="font-size:1.05rem">1. مقارنة الافتراضات الديموغرافية بين السياقات الثلاثة (مُدمجة في الحاسبة)</h4>' +
-    T(['المؤشر','ضواحي (Code A · 2022)','ريفي (Code B · 2022)','حضري (Code C)'], [
-        ['حجم الأسرة — فيلا مواطنون','7.9 (الدليل) / 6.92 (المحدث v2)','8.7 فرد/فيلا','15×15 (2.5) · 15×30 (3.5) · 20×30 (5.1) · 30×30 (6.57)'],
-        ['حجم الأسرة — فيلا استثمار / شقة','4.5 / 4.0 (الدليل) · 5.06 / 3.28 (المحدث)','5.9 فيلا استثمار / 4.0 شقة','4.39 فيلا استثمار / 2.9 شقة'],
-        ['نسبة الطلاب — مواطنون (حكومي/خاص)','26.8% (71% حكومي · 29% خاص)','29.4% (80% حكومي · 20% خاص)','31.8% (64.6% حكومي · 35.4% خاص)'],
-        ['نسبة الطلاب — مختلط الجنسيات','22.0% (100% خاص)','24.9% (100% خاص)','22.6% (100% خاص)'],
-        ['نسبة المصلين (ذكور / إناث)','35% من السكان (85% / 15%)','35% من السكان (85% / 15%)','35% من السكان (85% / 15%)'],
-        ['نطاق المساجد ومساحة المصلي','يومي 350م (4.4م²) · جامع 700م (3.5م²)','يومي 350م (4.4م²) · جامع 700م (5.6م²، تغطية 50%)','جامع كل 38.5 هكتار (350م · 1.8م² · G+2+قبو)'],
-        ['الدفاع المدني والإسعاف','دفاع مدني 3 كم (4,800 / 6,400 م²)','دفاع مدني 10 كم (4,800 م²) + إسعاف 6 كم (1,000 م²)','دفاع مدني 2.5 كم (فئات A–D: 1,800–8,000 م²)']
-    ]) +
-    '<h4 class="um-sec" style="font-size:1.05rem">2. معايير المدارس والمستشفيات والوقود والمصليات (Ref. Manual)</h4>' +
-    UL([
-        '<b>المدارس الحكومية (ضواحي وريفي):</b> حلقة 1 (1,200 طالب: 36,400 م² أرض / 20,140 GFA) · حلقة 2 متوسطة (31,600 م²) وكبيرة 1,500 طالب (39,100 م²) · حلقة 3 متوسطة (33,800 م²) وكبيرة (39,400 م²). الحد الأدنى للطلب 600 طالب.',
-        '<b>المدارس الخاصة K12:</b> صغيرة جداً 600 طالب (9,600 م²) · صغيرة 1,200 (13,200 م²) · متوسطة 1,750 (17,500 م²) · كبيرة 2,300 (21,700 م²) · كبيرة جداً 3,450 (31,600 م²). الحد الأدنى 550 طالباً.',
-        '<b>محطات الوقود (Appendix B):</b> مدمجة/خطية لكل السياقات 3,400 م² (85×40م) لكل 5,000 نسمة · حضري 6,000 م² (15 ألف) · ضواحي 9,600 م² (15 ألف) · طريق سريع ضواحي 21,600 م² · ريفي 9,600 م² (10 آلاف) · طريق سريع ريفي 15,000–80,000 م².',
-        '<b>حساب المصليات في المباني غير السكنية (Appendix C):</b> عدد المصلين = 35% × عدد مواقف المركبات غير السكنية المطلوبة، يُقسم 50% رجال + 50% نساء × 1 م²/مصلي.',
-        '<b>نهج نصيب الفرد لمشاريع الإحلال (&lt; 3,000 نسمة — جدول 36):</b> مسجد 1.8 م²/مصلي · عيادة 0.50 م²/فرد (أدنى 3,000 م²) · تجاري حي 0.80 م²/فرد · مركز مجتمعي 0.13 م²/فرد · حضانة 0.12 م²/فرد.',
-        '<b>منهجية تقييم المرافق القائمة (Infill & Rural):</b> هامش تسامح -15% على مساحة القسيمة، أولوية الإبقاء على المبني أو المرخّص حتى لو كان أقل من المعيار، وفي جنوب رأس الخيمة يُدرَس نطاق 10 كم في الإمارات المجاورة (اعتماد الخدمات ضمن 5 كم فعلي باستثناء الأمن والشرطة).'
-    ]);
-w.insertAdjacentHTML('beforeend', '<details class="um-det" id="acc-code-refman"><summary><i class="fa-solid fa-hospital"></i> رأس الخيمة: دليل تخطيط المرافق المجتمعية (الدليل المرجعي — ضواحي / ريفي / حضري)</summary><div class="um-in">'+refHtml+'</div></details>');
-
-// 4. New Section: RAK Code D (Emirati Residential Neighborhood Design Guidelines 2022)
-var codeDHtml =
-    '<h4 class="um-sec" style="font-size:1.05rem">1. حجم المجاورة وأنماط القسائم السكنية (Code D — 2022)</h4>' +
-    T(['نمط القسيمة','الأبعاد والمساحة','الارتفاع وBCP/FAR','الارتداد والمواقف','متوسط الأسرة والنسبة الموصى بها بالمجاورة'], [
-        ['A — تقليدية (Conventional)','30×30م (900 م²)','G+1 (أقصى 14م) · 65% · حتى 6 ملاحق','2م شارع · 2 موقف على الأقل','7.9 فرد · حد أدنى 50% (على الأطراف والتجميعي)'],
-        ['B — ثلثان (Two-Third)','20×30م (600 م²)','G+1 (أقصى 14م) · 70% · ملحقان','ارتداد جانبي · 2 موقف (خلفي)','5.1 فرد · حد أقصى 35% (على المحاور الرئيسية)'],
-        ['C1 — نصفية (Halved)','15×30م (450 م²)','G+1 (أقصى 14م) · متلاصقة','3م شارع / 0 جار · 1 موقف','3.5 فرد · حد أقصى 15% (قرب المرافق)'],
-        ['C2 — ربعية (One-Fourth)','15×15م (225 م²)','G+2 + نصف دور (14م) · متلاصقة','3م شارع / 0 جار · 1 موقف','2.5 فرد (حالات خاصة بموافقة الجهة)']
-    ]) +
-    '<h4 class="um-sec" style="font-size:1.05rem">2. ضوابط البلوكات والسكك والخصوصية والقيود والمرافق (Code D)</h4>' +
-    UL([
-        '<b>حجم المجاورة الإماراتية (صـ 58):</b> 50 إلى 120 هكتار (2 إلى 6 عناقيد)، 3,000 إلى 6,000 نسمة (المجموعة السكنية 110–150 قسيمة / حتى 1,500 نسمة، القطاع 10–15 ألف، المشروع 30–60 ألف). خصم 50% للطرق والخدمات عند التقدير الأولي.',
-        '<b>البلوكات والسكك والتقاطعات (صـ 60–75):</b> أقصى طول للبلوك 500–550م (أدنى عرض 93م)، يلزم <b>سكة مشاة كل 220م كحد أقصى</b> بعرض أدنى 4م (يفضل 6–10م). يفضل تقاطعات T؛ أقل مسافة بين تقاطعين محليين 65م، وعلى التجميعي 100م، و150م من مدخل المجاورة.',
-        '<b>مسافات الخصوصية بين الفيلات والمباني المتعددة (صـ 76):</b> G+2 يفصل بشارع محلي 25م · G+4 يفصل بتجميعي 50م · G+5 فأعلى يفصل بـ ≥ 100م (ويُفضل تحويل زوايا التقاطعات والدوارات لاستعمال آخر كعازل للخصوصية).',
-        '<b>القيود الطبوغرافية والبيئية (صـ 54–57):</b> أقصى ميل تصميمي 2.5% (أكثر من 8–10% غير صالح للتطوير)، ميل الطرق المفضل 0.3–2.5% (أقصى 6% للتجميعي والشرياني و8% للمحلي)، ارتداد ≥ 100م عن حرم السكة الحديد، و≥ 5م عن حرم قنوات تصريف السيول.',
-        '<b>أبعاد قطع المرافق (صـ 82):</b> محطة توزيع DSS (5×9م) · رئيسية PSS (100×80م) · شبكة Grid (300×300م) · محطة رفع صرف صحي (50×50م) · تصريف أمطار (50×50م) · غاز أو إطفاء (30×30م) · خزان مياه (100×100م).',
-        '<b>قواعد دمج وتقسيم القسائم (صـ 94–113):</b> أقصى دمج <b>6 قسائم</b> (3 واجهة × 2 عمق) ويحظر دمج الطرق أو السكك. نسبة البناء للمدمج: 65% إذا كانت المساحة &lt; 3 أضعاف القياسية، و<b>50%</b> إذا تجاوزت 3 أضعاف. ارتداد الشارع = 1.5× العادي، وبين وحدتين داخل المدمج = 2× ارتداد الجار. وللتقسيم: أدنى مساحة أصلية ≥ 1.5× القياسية مع احتواء مربع قابل للبناء <b>15×15م</b> على الأقل.'
-    ]);
-w.insertAdjacentHTML('beforeend', '<details class="um-det" id="acc-code-d"><summary><i class="fa-solid fa-house-chimney-window"></i> رأس الخيمة: دليل تصميم المجاورات السكنية الإماراتية (Code D — 2022)</summary><div class="um-in">'+codeDHtml+'</div></details>');
-
-// 5. Keep Legacy RAK Tables (3-1 to 3-6) collapsed for historical reference
-var legH =
-    '<h4 class="um-sec" style="font-size:1.05rem">ج 3-1: تدرج وحدات الخدمة السكنية</h4>'+T(['الخاصية','جوار','مجتمع','حي'],[['السكان','2,000–3,000','5,000–10,000','20,000–30,000 (الخريطة: 30–50 ألف)'],['الوحدات (مواطنون / وافدون)','250–425 / 400–600','700–1,400 / 1,000–2,000','2,900–4,300 / 4,000–6,000'],['المساحة هكتار (مواطنون)','75–130','215–440','690–1,000']])+
-    '<h4 class="um-sec" style="font-size:1.05rem">ج 3-2: خدمات الجوار (2,000–3,000 نسمة)</h4>'+fac([['مسجد محلي (يشمل محال ≈375 م²)','2,000–3,000',2230],['ساحة محلية','2,000–3,000',2790],['ملعب أطفال','2,000–3,000',2790]],7435,1490,8925)+
-    '<h4 class="um-sec" style="font-size:1.05rem">ج 3-3: خدمات المجتمع (5,000–10,000 نسمة)</h4>'+fac([['مسجد جامع','7,000–10,000',4650],['مركز تسوق مجتمعي','7,000–10,000',8830],['حضانة','5,000–7,000',1860],['روضة','5,000–7,000',7250],['مدرسة ابتدائية','5,000–7,000',11710],['عيادة عامة / تخصصية','5,000–10,000',1115],['مركز عيادات','7,000–10,000',1490],['ملعب','5,000–7,000',7435],['حديقة المجتمع','7,000–10,000',17655]],63110,12625,75735)+
-    '<h4 class="um-sec" style="font-size:1.05rem">ج 3-4: خدمات الحي (10,000–50,000 نسمة)</h4>'+fac([['مدرسة إعدادية','10,000–15,000',13010],['مدرسة ثانوية','15,000–20,000',20440],['حضانة خاصة','15,000–20,000',2230],['مكتب بريد','20,000–30,000',2510],['مركز صحي','30,000',6505],['دار مسنين','30,000–50,000',4650],['حديقة الحي','30,000–50,000',37165]],86510,17305,103815);
-w.insertAdjacentHTML('beforeend', '<details class="um-det" id="acc-code-legacy"><summary><i class="fa-solid fa-table-list"></i> رأس الخيمة: الجداول المرجعية السابقة (ج 3-1 إلى 3-6 — أرشيف)</summary><div class="um-in">'+legH+'</div></details>');
 })();
 </script>
 
@@ -6012,7 +5916,7 @@ document.addEventListener('click', function(e){
 /* ===== UrbanMind V17 — Unified project persistence (auto-save, full export/import) ===== */
 (function(){
 'use strict';
-var APP_VERSION='V25.1',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
+var APP_VERSION='V25.2',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
 var $=function(i){return document.getElementById(i)};
 var saved=null,savedQuiz=null;
 try{saved=JSON.parse(localStorage.getItem(KF)||'null')}catch(e){}
@@ -6166,10 +6070,10 @@ function umTxt(id){ var e = $(id); return e ? e.textContent.trim() : ''; }
 function umSub(id){ var e = $(id); return (e && e.nextElementSibling) ? e.nextElementSibling.textContent.trim() : ''; }
 function umVal(id){ var e = $(id); return e ? e.value : ''; }
 var LU_ROWS = [
-    { key:'pctRes',  name:'الإسكان الصافي (Net Residential)',          std:'48% – 55% (Code D: 50% صافي قسائم)',        min:48, max:55 },
+    { key:'pctRes',  name:'الإسكان الصافي (Net Residential)',          std:'48% – 55% (50% صافي قسائم)',        min:48, max:55 },
     { key:'pctRoads',name:'شبكة الطرق والمواقف (Roads & ROW)',          std:'18% – 25% (الأمثل اقتصادياً)',              min:18, max:25 },
-    { key:'pctOpen', name:'المناطق المفتوحة والحدائق (Open Space)',     std:'10% – 15% (Code D: 3–5% حدائق / 10% حضري)', min:10, max:15 },
-    { key:'pctFac',  name:'المرافق والخدمات العامة (Public Facilities)', std:'8% – 12% (الدليل المرجعي: ~7–12% حسب الحجم)', min:8,  max:12 },
+    { key:'pctOpen', name:'المناطق المفتوحة والحدائق (Open Space)',     std:'10% – 15% (3–5% حدائق / 10% حضري)', min:10, max:15 },
+    { key:'pctFac',  name:'المرافق والخدمات العامة (Public Facilities)', std:'8% – 12% (~7–12% حسب الحجم)', min:8,  max:12 },
     { key:'pctCom',  name:'التجاري والاستعمال المختلط (Commercial)',    std:'4% – 7% (مراكز المجموعة السكنية وحيّية)',    min:4,  max:7  }
 ];
 function umCapture(){
@@ -6298,7 +6202,7 @@ function umReportHTML(){
     var inp = cap.inputs, o = cap.outputs;
     var d = new Date();
     var dateStr = d.toLocaleDateString('ar-EG') + ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
-    var ver = window.UM_VERSION || 'V25.1';
+    var ver = window.UM_VERSION || 'V25.2';
     var h = '<div class="umr-h1">تقرير المشروع التخطيطي · UrbanMind ' + ver + '</div>';
     h += '<div class="umr-sub">أُنشئ في ' + dateStr + ' · حاسبة ميزانية استعمالات الأراضي والكثافات</div>';
     h += '<h3>أولاً: المدخلات</h3><table>';
@@ -6359,7 +6263,7 @@ function umGenericPrintHTML(sec){
         h.textContent = sm.textContent.trim();
         sm.replaceWith(h);
     });
-    var ver = window.UM_VERSION || 'V25.1';
+    var ver = window.UM_VERSION || 'V25.2';
     var h2 = sec.querySelector('h2');
     var title = h2 ? h2.textContent.trim() : document.title;
     return '<div class="umr-generic"><div class="umr-h1">' + esc(title) + '</div>' +
@@ -6387,7 +6291,7 @@ document.addEventListener('keydown', function(e){
 window.umCsvReport = function(){
     var cap = umCapture();
     var inp = cap.inputs, o = cap.outputs;
-    var ver = window.UM_VERSION || 'V25.1';
+    var ver = window.UM_VERSION || 'V25.2';
     function q(x){ x = (x === undefined || x === null) ? '' : String(x); return '"' + x.replace(/"/g, "'") + '"'; }
     function row(){ var a = Array.prototype.slice.call(arguments); while(a.length < 6) a.push(''); return a.join(','); }
     var lines = [];
@@ -6784,7 +6688,7 @@ function umCheatRender(){
     }).join('');
 }
 function umCheatHTML(){
-    var ver = window.UM_VERSION || 'V25.1';
+    var ver = window.UM_VERSION || 'V25.2';
     var h = '<div class="umr-h1">ورقة المعادلات السريعة · UrbanMind ' + ver + '</div>';
     h += '<div class="umr-sub">' + UM_FORMULAS.length + ' قانوناً ومعادلة من قسم القوانين والمعادلات، مختصرة للمراجعة السريعة.</div>';
     var cats = [];
@@ -6850,14 +6754,11 @@ if(lv){
 }
 // 2) code tab restructure
 var h2=code.querySelector('h2.um-h'); if(h2) h2.textContent='الأكواد والاشتراطات التخطيطية';
-var sub=code.querySelector('.um-sub'); if(sub) sub.textContent='مرجع موحّد مقسّم إلى قسمين: الأكواد التخطيطية (النصوص القانونية والتنظيمية) والاشتراطات التخطيطية (المعايير والأرقام التفصيلية والأدلة). مستويات التخطيط والمصطلحات انتقلت إلى تبويب المصطلحات التخطيطية.';
+var sub=code.querySelector('.um-sub'); if(sub) sub.textContent='مرجع موحّد للأكواد التخطيطية (النصوص القانونية والتنظيمية). مستويات التخطيط والمصطلحات انتقلت إلى تبويب المصطلحات التخطيطية.';
 var heads={eg:'أولاً: مصر — قانون البناء الموحد 119 لسنة 2008 (التخطيط العمراني)',uae:'ثانياً: دولة الإمارات (الإطار العام: دبي 2040 · أبوظبي 2030)',rak26:'ثالثاً: رأس الخيمة — لائحة شروط ومواصفات البناء 2026 (قرار 7 · 62 مادة)'};
 setSum('acc-code-eg','<i class="fa-solid fa-landmark"></i> '+heads.eg);
 setSum('acc-code-uae','<i class="fa-solid fa-building-columns"></i> '+heads.uae);
 setSum('acc-code-rak26','<i class="fa-solid fa-mountain-sun"></i> '+heads.rak26);
-setSum('acc-code-refman','<i class="fa-solid fa-hospital"></i> أولاً: رأس الخيمة — دليل تخطيط المرافق المجتمعية (الدليل المرجعي — ضواحي / ريفي / حضري)');
-setSum('acc-code-d','<i class="fa-solid fa-house-chimney-window"></i> ثانياً: رأس الخيمة — دليل تصميم المجاورات السكنية الإماراتية (Code D — 2022)');
-setSum('acc-code-legacy','<i class="fa-solid fa-table-list"></i> ثالثاً: رأس الخيمة — الجداول المرجعية السابقة (ج 3-1 إلى 3-6 — أرشيف)');
 function sec(id,icon,title,defn,items,cls){
   var d=document.createElement('details');d.className='um-det';d.id=id;d.open=true;
   d.innerHTML='<summary><i class="fa-solid '+icon+'"></i> '+title+'</summary><div class="um-in"><div class="um-warn" style="background:rgba(20,184,166,.08);border-color:rgba(20,184,166,.35)"><b>التعريف:</b> '+defn+'</div></div>';
@@ -6867,16 +6768,12 @@ function sec(id,icon,title,defn,items,cls){
 }
 var banner=null;
 Array.prototype.forEach.call(code.children,function(c){ if(c.tagName==='DIV'&&c.textContent.indexOf('المرجع الرسمي المعتمد')>-1) banner=c; });
-var codes=sec('acc-sec-codes','fa-gavel','القسم الأول: الأكواد التخطيطية (Planning Codes)',
+var codes=sec('acc-sec-codes','fa-gavel','الأكواد التخطيطية (Planning Codes)',
  'هي النصوص القانونية والتنظيمية الملزمة (قوانين، لوائح تنفيذية، قرارات بلدية) التي تضع الإطار العام لاستعمالات الأراضي والتخطيط والبناء والترخيص وصلاحيات الجهات. تجيب عن سؤال: ما القانون أو اللائحة الحاكمة وما الإجراءات المطلوبة؟',
  [$('acc-code-eg'),$('acc-code-uae'),banner,$('acc-code-rak26')]);
-var reqs=sec('acc-sec-reqs','fa-ruler-combined','القسم الثاني: الاشتراطات التخطيطية (Planning Requirements)',
- 'هي المعايير والقيم التفصيلية الواجب تطبيقها على المشروع أو القطعة (نصيب الفرد من المرافق والخدمات، المساحات، الكثافات، الارتدادات، المواقف، تصميم المجاورة)، وتصدر غالباً في صورة أدلة وجداول مرجعية. تجيب عن سؤال: ما الأرقام والمعايير التي أصمم بها؟',
- [$('acc-code-refman'),$('acc-code-d'),$('acc-code-legacy')]);
 var hero=document.createElement('div');hero.className='um-hero rounded-2xl p-5 space-y-1.5';hero.style.marginBottom='1rem';var hh=code.querySelector('h2.um-h'),hs=code.querySelector('.um-sub');hero.innerHTML='<div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 text-xs font-bold"><i class="fa-solid fa-scale-balanced"></i><span>المرجع التنظيمي</span></div>';hh.className='text-lg sm:text-xl font-extrabold';hh.style.margin='0';hs.className='text-xs sm:text-sm';hs.style.margin='0';hero.appendChild(hh);hero.appendChild(hs);code.insertBefore(hero,code.firstChild);
 var warn=code.querySelector('.um-warn');
 (warn||sub).insertAdjacentElement('afterend',codes);
-codes.insertAdjacentElement('afterend',reqs);
 })();
 </script>
 <script>

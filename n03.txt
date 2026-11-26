@@ -1,0 +1,1740 @@
+($('calc-area-ha').value) || 0;
+    var u = $('calc-unit').value;
+    $('calc-area-input').value = u === 'ha' ? +ha.toFixed(4) : Math.round(ha * 10000);
+    runMasterplanCalculator();
+};
+window.syncSubDemo = function(){
+    if($('calc-code').value === 'rak_sub'){
+        $('calc-hh-size').value = $('ca-sub-demo').value === 'upd' ? 6.92 : 7.9;
+    }
+    runMasterplanCalculator();
+};
+window.toggleRefMix = function(){
+    var on = $('ca-mix-on').checked;
+    $('ca-mix-fields').style.display = on ? 'grid' : 'none';
+    runMasterplanCalculator();
+};
+window.applyRakParcelPreset = function(){
+    var t = $('rak-parcel-type').value;
+    var c = $('calc-code').value;
+    if(t === 'custom') return;
+    var map = {
+        parcel_conv: {plot:900, w:30, cov:65, f:2, s:1.5, r:1.5, fl:2, park:2, hh: c==='rak_rur'?8.7:(c==='rak_urb'?6.57:($('ca-sub-demo').value==='upd'?6.92:7.9))},
+        parcel_23:   {plot:600, w:20, cov:70, f:2, s:1.5, r:1.5, fl:2, park:2, hh:5.1},
+        parcel_half: {plot:450, w:15, cov:65, f:3, s:0,   r:1.5, fl:2, park:1, hh:3.5},
+        parcel_qtr:  {plot:225, w:15, cov:70, f:3, s:0,   r:0,   fl:3, park:1, hh:2.5},
+        rak_inv:  {plot:900, w:30, cov:65, f:2, s:1.5, r:1.5, fl:2, park:2, hh: c==='rak_rur'?5.9:(c==='rak_urb'?4.39:($('ca-sub-demo').value==='upd'?5.06:4.5))},
+        rak_apt:  {plot:900, w:30, cov:60, f:2, s:1.5, r:1.5, fl:5, park:1.5, hh: c==='rak_urb'?2.9:4.0}
+    };
+    var p = map[t];
+    if(!p) return;
+    $('calc-plot-size').value = p.plot;
+    $('calc-plot-w').value = p.w;
+    $('calc-cover').value = p.cov;
+    $('cs-f').value = p.f; $('cs-s').value = p.s; $('cs-r').value = p.r;
+    $('calc-floors').value = p.fl;
+    $('calc-park').value = p.park;
+    $('calc-hh-size').value = p.hh;
+    runMasterplanCalculator();
+};
+
+// Editable legacy values store
+function getLegacyEdits(codeKey){
+    try { return JSON.parse(localStorage.getItem('um_sv13_' + codeKey) || '{}'); } catch(e){ return {}; }
+}
+window.updateLegacyCell = function(codeKey, origIdx, field, val){
+    var edits = getLegacyEdits(codeKey);
+    if(!edits[origIdx]) edits[origIdx] = {};
+    edits[origIdx][field] = parseFloat(val) || 0;
+    try { localStorage.setItem('um_sv13_' + codeKey, JSON.stringify(edits)); } catch(e){}
+    runMasterplanCalculator();
+};
+
+window.calcCodeChange = function(){
+    var c = $('calc-code').value;
+    if(!PROFILES[c]){ c = 'rak_sub'; try{$('calc-code').value = c;}catch(e){} }
+    var P = PROFILES[c] || PROFILES.rak_sub;
+    $('cs-f').value = P.sb[0]; $('cs-s').value = P.sb[1]; $('cs-r').value = P.sb[2];
+    $('calc-park').value = P.park;
+    $('calc-hh-size').value = (c === 'rak_sub' && $('ca-sub-demo').value === 'upd') ? 6.92 : P.hh;
+    $('calc-plot-size').value = P.plot;
+    $('calc-plot-w').value = P.w;
+    $('calc-cover').value = P.cov;
+    $('calc-floors').value = P.fl;
+    $('ut-waterL').value = P.wat[0]; $('ut-waterH').value = P.wat[1];
+    $('ut-kwL').value = P.kw[0]; $('ut-kwH').value = P.kw[1];
+    $('ut-div').value = P.div;
+    $('ut-cwL').value = P.cw[0]; $('ut-cwH').value = P.cw[1];
+    $('ut-kva').value = 1000; $('ut-sew').value = 80;
+    $('ut-level').value = 'low';
+
+    $('rak-parcel-box').style.display = P.isRak ? '' : 'none';
+    $('ca-sub-demo-box').style.display = (c === 'rak_sub') ? 'flex' : 'none';
+    $('ca-mix-wrap').style.display = P.isRefMan ? '' : 'none';
+    $('ca-vpriv-wrap').style.display = (c === 'rak_urb') ? 'none' : '';
+    $('ca-urb-villas').style.display = (c === 'rak_urb') ? 'grid' : 'none';
+    $('ca-agri-wrap').style.display = (c === 'rak_rur') ? '' : 'none';
+    $('ca-cdrisk-wrap').style.display = (c === 'rak_urb') ? '' : 'none';
+
+    $('code-note').innerHTML =
+        '<b class="text-emerald-300">موثّق من المراجع الرسمية:</b><ul class="list-disc pr-4 space-y-0.5 mt-0.5">'+P.ok.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>' +
+        '<b class="text-amber-300 block mt-1">ملاحظات تقديرية:</b><ul class="list-disc pr-4 space-y-0.5 mt-0.5">'+P.est.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';
+
+    try { localStorage.setItem('um_code_v13', c); } catch(e){}
+    runMasterplanCalculator();
+};
+
+// ---------- 4. BUILD HIERARCHICAL SERVICE ROWS FOR الدليل المرجعي ----------
+function computeRefFacilities(codeKey, ha, popEm, popMix, totalUnits, aptUnits, trf, agriM2, cdRisk){
+    var pop = popEm + popMix;
+    var rows = []; // {tier, cat, tag, name, basis, cnt, landU, gfaU}
+    function add(tier, cat, tag, name, basis, cnt, landU, gfaU){
+        rows.push({tier:tier, cat:cat, tag:tag, name:name, basis:basis, cnt:cnt, landU:landU, gfaU:gfaU});
+    }
+    var worshipers = pop * 0.35;
+    var studentsTotal = 0;
+    var openSpaceM2 = 0;
+
+    if(codeKey === 'rak_sub'){
+        var rawDaily = Math.round(ha / 38.5);
+        var jomaaCnt = Math.round(ha / 154.0);
+        var dailyCnt = Math.max(0, rawDaily - jomaaCnt);
+        var wDaily = rawDaily > 0 ? worshipers / rawDaily : 0;
+        var wJomaa = jomaaCnt > 0 ? worshipers / jomaaCnt : 0;
+        var dailyLand = rawDaily > 0 ? mround100(wDaily * 4.4 + (wDaily / 20) * 35) : 0;
+        var dailyGfa  = rawDaily > 0 ? Math.round(wDaily * 1.8 + 160) : 0;
+        var jomaaLand = jomaaCnt > 0 ? mround100(wJomaa * 3.5 + (wJomaa / 20) * 35) : 0;
+        var jomaaGfa  = jomaaCnt > 0 ? Math.round(wJomaa * 1.8 + 240) : 0;
+
+        // Tier 1: Cluster (350m)
+        add(1, 'center', 'مركز مجموعة سكنية', 'مسجد يومي (Daily Mosque)', 'نطاق 350م · 38.5 هكتار · 4.4 م²/مصلي + مواقف', dailyCnt, dailyLand, dailyGfa);
+        add(1, 'center', 'مركز مجموعة سكنية', 'حضانة / مرفق اجتماعي', '1 لكل مركز مجموعة سكنية (مرن)', dailyCnt, 1080, 700);
+        var mainClusterPark = dailyCnt;
+        var pocketPark = Math.max(0, Math.round(pop / 1000) - mainClusterPark);
+        add(1, 'center', 'مفتوح مجموعة سكنية', 'حديقة المجموعة السكنية رئيسية', 'مجاورة للمسجد اليومي (350م · 3,000 م²)', mainClusterPark, 3000, 25);
+        add(1, 'center', 'مفتوح مجموعة سكنية', 'حديقة جيب (Pocket Park)', '0.3 هكتار / 1,000 نسمة', pocketPark, 3000, 25);
+        add(1, 'center', 'تجاري يومي', 'مجموعة محال يومية (4 قسائم 15×18م)', '1,000–2,000 نسمة · 1 لكل مجموعة سكنية', dailyCnt, 1080, 1080);
+
+        // Tier 2: Neighborhood (700m)
+        add(2, 'center', 'مركز مجاورة', 'مسجد جامع (Jomaa Mosque)', 'نطاق 700م · 154 هكتار · 3.5 م²/مصلي + مواقف', jomaaCnt, jomaaLand, jomaaGfa);
+        add(2, 'center', 'مركز مجاورة', 'نقطة مرفق مرنة (Facility Point)', '6,000–10,000 نسمة (مدمج بدون قسيمة)', threshAvg(pop, 6000, 10000), 0, 125);
+        var nhRetCnt = Math.round(pop / 5000);
+        var nhRetGfaU = nhRetCnt > 0 ? Math.round((pop * 0.8) / nhRetCnt) : 0;
+        var nhRetLandU = nhRetCnt > 0 ? mround100((nhRetGfaU / 2) / 0.65) : 0;
+        add(2, 'center', 'تجاري مجاورة', 'تجاري مجاورة (Community Retail)', '0.8 م²/فرد · دوران · تغطية 65%', nhRetCnt, nhRetLandU, nhRetGfaU);
+        var nhParkCnt = Math.round(pop / 5000);
+        add(2, 'center', 'مفتوح مجاورة', 'حديقة مجاورة (Neighborhood Park)', '0.4 هكتار / 1,000 نسمة (700م · 20,000 م²)', nhParkCnt, 20000, 50);
+        add(2, 'center', 'اجتماعي', 'مركز مجتمعي (Community Center)', '5,000–10,000 نسمة (مختلط الجنسيات)', threshAvg(popMix, 5000, 10000), 1000, 750);
+        add(2, 'center', 'اجتماعي', 'مجلس حي (Majlis)', '5,000–10,000 نسمة (مواطنون)', threshAvg(popEm, 5000, 10000), 3600, 1350);
+
+        // Tier 2 Non-Center (Neighborhood Catchment 500-700m / 5k-10k)
+        var sC1 = popEm * 0.143 * 0.71;
+        var sC2 = popEm * 0.070 * 0.71;
+        var sC3 = popEm * 0.055 * 0.71;
+        var sPriv = popEm * 0.268 * 0.29 + popMix * 0.220;
+        studentsTotal = Math.round(popEm * 0.268 + popMix * 0.220);
+
+        add(2, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 1 (KG+C1)', 'سعة 1,200 طالب · نطاق 500م (أدنى 600 طالب)', sC1 >= 600 ? Math.round(sC1 / 1200) : 0, 36400, 20140);
+        var cl = greedyClinics(pop, [{key:'sm',min:6000,max:10000},{key:'md',min:12000,max:29999},{key:'lg',min:30000,max:40000}], 6000);
+        add(2, 'noncenter', 'صحي', 'عيادة صغيرة (Small Clinic)', '6,000–10,000 نسمة · نطاق 700م', cl.sm, 5500, 3000);
+        add(2, 'noncenter', 'وقود', 'محطة وقود صغيرة (Compact/Small)', '40% من الطلب · 5,000 نسمة (85×40م)', Math.round((pop * 0.4) / 5000), 3400, 1020);
+
+        // Tier 3: District (2 km / 10k-40k)
+        add(3, 'center', 'مركز حي', 'مكتبة عامة (Library)', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 2500, 2000);
+        add(3, 'center', 'مركز حي', 'مكتب حكومي (Government Office)', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 4000, 10000);
+        var distParkCnt = Math.round(pop / 20000);
+        add(3, 'center', 'مفتوح حي', 'حديقة حي / قطاع (District Park)', '0.4 هكتار / 1,000 نسمة (2 كم · 80,000 م²)', distParkCnt, 80000, 300);
+        var mallCnt = Math.round(pop / 27500);
+        var mallGfaU = mallCnt > 0 ? Math.round((pop * 1.2) / mallCnt) : 0;
+        var mallLandU = mallCnt > 0 ? mround100((mallGfaU / 3) / 0.50) : 0;
+        add(3, 'center', 'تجاري حي', 'مركز تسوق (Shopping Center)', '1.2 م²/فرد · 3 أدوار · تغطية 50%', mallCnt, mallLandU, mallGfaU);
+        add(3, 'center', 'مركز حي', 'مكتب بريد (Post Office)', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 5100, 7000);
+        add(3, 'center', 'رياضي', 'مركز رياضي (Sports Center)', '30,000–40,000 نسمة · 19,500 م²', threshAvg(pop, 30000, 40000), 19500, 6500);
+
+        // Tier 3 Non-Center (District Catchment 750m-2km)
+        var c2 = greedyAlloc(sC2, 600, [{key:'med',cap:1200},{key:'lrg',cap:1500}]);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 2 — متوسطة (1,200)', 'نطاق 750م', c2.med, 31600, 16193);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 2 — كبيرة (1,500)', 'نطاق 750م', c2.lrg, 39100, 23122);
+        var c3 = greedyAlloc(sC3, 600, [{key:'med',cap:1200},{key:'lrg',cap:1500}]);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 3 — متوسطة (1,200)', 'نطاق 2 كم', c3.med, 33800, 19105);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 3 — كبيرة (1,500)', 'نطاق 2 كم', c3.lrg, 39400, 23968);
+        var pk = greedyAlloc(sPriv, 550, [{key:'vs',cap:600},{key:'sm',cap:1200},{key:'md',cap:1750},{key:'lg',cap:2300},{key:'vl',cap:3450}]);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (صغيرة جداً — 600)', '10 م²/طالب · نطاق 2 كم', pk.vs, 9600, 6000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (صغيرة — 1,200)', '10 م²/طالب · نطاق 2 كم', pk.sm, 13200, 8000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (متوسطة — 1,750)', '10 م²/طالب · نطاق 2 كم', pk.md, 17500, 11000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (كبيرة — 2,300)', '10 م²/طالب · نطاق 2 كم', pk.lg, 21700, 13000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (كبيرة جداً — 3,450)', '10 م²/طالب · نطاق 2 كم', pk.vl, 31600, 17000);
+        add(3, 'noncenter', 'صحي', 'عيادة متوسطة (Medium Clinic)', '12,000–29,999 نسمة · 7–14 طبيب', cl.md, 7000, 3500);
+        add(3, 'noncenter', 'صحي', 'عيادة كبيرة (Large Clinic)', '30,000–40,000 نسمة · 15–20 طبيب', cl.lg, 10500, 4500);
+        add(3, 'noncenter', 'صحي', 'مركز رعاية صحية (Healthcare Center)', '30,000–40,000 نسمة · نطاق 2 كم', threshAvg(pop, 30000, 40000), 7500, 6500);
+        add(3, 'noncenter', 'دعم مجتمعي', 'مركز دعم مجتمعي (Support Center)', '30,000–40,000 نسمة · نطاق 2 كم', threshAvg(pop, 30000, 40000), 9000, 8000);
+        add(3, 'noncenter', 'وقود', 'محطة وقود كبيرة (Large Fuel Station)', '60% من الطلب · 15,000 نسمة', Math.round((pop * 0.6) / 15000), 9600, 2880);
+
+        // Tier 4: Sector / Project (> 40k / Regional)
+        add(4, 'noncenter', 'صحي إقليمي', 'مستشفى عام (Hospital)', '60,000–90,000 نسمة · نطاق 20 كم', threshAvg(pop, 60000, 90000), 40000, 40000);
+        add(4, 'noncenter', 'أمن', 'مركز شرطة (Police Station)', '1 لكل 50,000 نسمة', Math.round(pop / 50000), 6000, 5200);
+        var aptPct = totalUnits > 0 ? (aptUnits / totalUnits) : 0;
+        var cdStations = Math.round(ha / 2827.433);
+        add(4, 'noncenter', 'طوارئ', 'مركز دفاع مدني صغير (كثافة منخفضة)', 'نطاق 3 كم (2,827 هكتار) · شقق ≤ 50%', aptPct <= 0.5 ? cdStations : 0, 4800, 2400);
+        add(4, 'noncenter', 'طوارئ', 'مركز دفاع مدني متوسط (متعدد الأدوار)', 'نطاق 3 كم · شقق > 50%', aptPct > 0.5 ? cdStations : 0, 6400, 3200);
+
+        openSpaceM2 = (pocketPark + mainClusterPark)*3000 + nhParkCnt*20000 + distParkCnt*80000;
+    }
+    else if(codeKey === 'rak_rur'){
+        var resHa = Math.max(0.1, ha - (agriM2 / 10000));
+        var rawDailyR = Math.round(resHa / 38.4845);
+        var jomaaR = Math.round(resHa / 153.938);
+        var dailyR = Math.max(0, rawDailyR - jomaaR);
+        var wDailyR = rawDailyR > 0 ? worshipers / rawDailyR : 0;
+        var wJomaaR = jomaaR > 0 ? worshipers / jomaaR : 0;
+        var dailyLandR = rawDailyR > 0 ? mround100(wDailyR * 4.4 + (wDailyR / 20 + 2) * 35) : 0;
+        var dailyGfaR  = rawDailyR > 0 ? Math.round(wDailyR * 1.8 + 160) : 0;
+        var jomaaLandR = jomaaR > 0 ? mround100(wJomaaR * 5.6 + (wJomaaR / 20 + 3) * 35) : 0;
+        var jomaaGfaR  = jomaaR > 0 ? Math.round(wJomaaR * 1.8 + 240) : 0;
+
+        // Tier 1: Cluster (Town)
+        add(1, 'center', 'مجموعة سكنية بلدة', 'مسجد يومي (Daily Mosque)', '350م بعد خصم الزراعي · 4.4 م²/مصلي + مواقف (+2)', dailyR, dailyLandR, dailyGfaR);
+        add(1, 'center', 'مفتوح مجموعة سكنية', 'حديقة المجموعة السكنية (Cluster Park)', '3 م²/فرد · 1 لكل مسجد يومي', dailyR, 3000, 25);
+        add(1, 'center', 'تجاري يومي', 'محال المجموعة السكنية (4 قسائم 15×18م)', '1 لكل 1,500 نسمة (1,000–2,000)', Math.round(pop / 1500), 1080, 1080);
+
+        // Tier 2: Neighborhood / Town
+        add(2, 'center', 'مركز بلدة', 'مسجد جامع (Jomaa Mosque)', '700م · 5.6 م²/مصلي + مواقف (+3) · تغطية 50%', jomaaR, jomaaLandR, jomaaGfaR);
+        add(2, 'center', 'مركز بلدة', 'مرفق اجتماعي / حضانة', '3,000–6,000 نسمة', threshAvg(pop, 3000, 6000), 1080, 700);
+        add(2, 'center', 'مركز بلدة', 'نقطة مرفق (Facility Point)', '3,000–6,000 نسمة (مدمج)', threshAvg(pop, 3000, 6000), 0, 125);
+        var rRetCnt = Math.round(pop / 5000);
+        var rRetGfaU = rRetCnt > 0 ? Math.round((pop * 0.8) / rRetCnt) : 0;
+        var rRetLandU = rRetCnt > 0 ? Math.ceil(((rRetGfaU / 2) / 0.65) / 100) * 100 : 0;
+        add(2, 'center', 'تجاري بلدة', 'تجاري حي (Community Retail)', '0.8 م²/فرد · دوران · 65% تغطية', rRetCnt, rRetLandU, rRetGfaU);
+        var rNhPark = Math.round(pop / 5000);
+        add(2, 'center', 'مفتوح بلدة', 'حديقة حي (Neighborhood Park)', '0.4 هكتار / 1,000 نسمة', rNhPark, 20000, 50);
+        add(2, 'center', 'اجتماعي', 'مركز مجتمعي (Community Center)', '3,000–6,000 نسمة (مختلط)', threshAvg(popMix, 3000, 6000), 1250, 750);
+        add(2, 'center', 'اجتماعي', 'مجلس حي (Majlis)', '3,000–6,000 نسمة (مواطنون)', threshAvg(popEm, 3000, 6000), 3600, 1350);
+
+        var rC1 = popEm * 0.146 * 0.80;
+        var rC2 = popEm * 0.079 * 0.80;
+        var rC3 = popEm * 0.069 * 0.80;
+        var rPriv = popEm * 0.294 * 0.20 + popMix * 0.249;
+        studentsTotal = Math.round(popEm * 0.294 + popMix * 0.249);
+
+        add(2, 'noncenter', 'صحي', 'عيادة قروية (Village Clinic)', '50% من السكان · 4,000–5,500 نسمة', threshAvg(pop * 0.5, 4000, 5500), 4500, 2500);
+        add(2, 'noncenter', 'صحي', 'عيادة صغيرة (Small Clinic)', '50% من السكان · 6,000–10,000 نسمة', threshAvg(pop * 0.5, 6000, 10000), 5500, 3000);
+        add(2, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 1 (KG+C1)', 'سعة 1,200 طالب · 80% حكومي', rC1 >= 600 ? Math.round(rC1 / 1200) : 0, 36400, 20140);
+        add(2, 'noncenter', 'وقود', 'محطة وقود صغيرة (Small)', '40% من الطلب · 5,000 نسمة', Math.round((pop * 0.4) / 5000), 3400, 1020);
+
+        // Tier 3: District (Project 12k-20k)
+        add(3, 'center', 'قطاع ريفي', 'مكتبة عامة (Library)', '12,000–20,000 نسمة', threshAvg(pop, 12000, 20000), 3000, 2000);
+        add(3, 'center', 'قطاع ريفي', 'مكتب حكومي (Government Office)', '12,000–20,000 نسمة', threshAvg(pop, 12000, 20000), 5000, 10000);
+        add(3, 'center', 'قطاع ريفي', 'مكتب بريد (Post Office)', '12,000–20,000 نسمة', threshAvg(pop, 12000, 20000), 6000, 7000);
+        add(3, 'center', 'رياضي', 'مركز رياضي (Sports Center)', '12,000–20,000 نسمة', threshAvg(pop, 12000, 20000), 19500, 6500);
+        add(3, 'noncenter', 'صحي', 'مركز رعاية صحية (Healthcare Center)', '12,000–20,000 نسمة', threshAvg(pop, 12000, 20000), 10000, 5000);
+        var rc2 = greedyAlloc(rC2, 600, [{key:'med',cap:1200},{key:'lrg',cap:1500}]);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 2 — متوسطة', 'سعة 1,200 طالب', rc2.med, 31600, 16193);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 2 — كبيرة', 'سعة 1,500 طالب', rc2.lrg, 39100, 23122);
+        var rc3 = greedyAlloc(rC3, 600, [{key:'med',cap:1200},{key:'lrg',cap:1500}]);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 3 — متوسطة', 'سعة 1,200 طالب', rc3.med, 33800, 19105);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 3 — كبيرة', 'سعة 1,500 طالب', rc3.lrg, 39400, 23968);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (صغيرة جداً — 600)', 'تُخصص تلقائياً لمرونة الدمج (صـ 54)', rPriv >= 550 ? Math.round(rPriv / 600) : 0, 9600, 6000);
+        add(3, 'noncenter', 'وقود', 'محطة وقود كبيرة (Large)', '60% من الطلب · 15,000 نسمة', Math.round((pop * 0.6) / 15000), 9600, 2880);
+
+        // Tier 4: Regional Rural Project
+        var cdR = Math.round((ha * 10000) / (Math.PI * 10000 * 10000));
+        var ambR = Math.max(0, Math.round(((ha * 10000) / (Math.PI * 6000 * 6000)) - cdR));
+        add(4, 'noncenter', 'طوارئ', 'مركز دفاع مدني (Civil Defense)', 'نطاق 10 كم (314 كم²)', cdR, 4800, 2400);
+        add(4, 'noncenter', 'طوارئ', 'نقطة إسعاف (Ambulance Point)', 'نطاق 6 كم (113 كم²) مكمّلة للدفاع المدني', ambR, 1000, 500);
+        add(4, 'noncenter', 'أمن', 'مركز شرطة (Police Station)', '1 لكل 30,000 نسمة', Math.round(pop / 30000), 6000, 5200);
+        add(4, 'noncenter', 'دعم مجتمعي', 'مركز دعم مجتمعي (Support Center)', '20,000–30,000 نسمة', threshAvg(pop, 20000, 30000), 12000, 8000);
+
+        openSpaceM2 = dailyR * 3000 + rNhPark * 20000;
+    }
+    else if(codeKey === 'rak_urb'){
+        var jomaaU = Math.round(ha / 38.5);
+        var wJomaaU = jomaaU > 0 ? worshipers / jomaaU : 0;
+        var jomaaLandU = jomaaU > 0 ? mround100(wJomaaU * 1.8 + (wJomaaU / 30) * 30) : 0;
+        var jomaaGfaU  = jomaaU > 0 ? Math.round(wJomaaU * 1.8 + 240) : 0;
+        var nhCenters = threshAvg(pop, 5000, 10000);
+        var posHa = ha * 0.5 * 0.2;
+        openSpaceM2 = posHa * 10000;
+
+        // Tier 1: Local Urban (350m)
+        add(1, 'center', 'ديني محلي', 'مسجد جامع حضري (Jomaa · G+2+قبو)', 'نطاق 350م · 38.5 هكتار · 1.8 م²/مصلي', jomaaU, jomaaLandU, jomaaGfaU);
+        var posLoc = posHa > 0.5 ? Math.floor(posHa / 0.5) : 0;
+        add(1, 'center', 'مفتوح محلي', 'حديقة محلية حضرية (Local POS · 0.5 هـ)', 'من حصة POS الإجمالية 10% (نطاق 350م)', posLoc, 5000, 0);
+
+        // Tier 2: Urban Neighborhood (5k-10k)
+        add(2, 'center', 'مركز مجاورة', 'مركز مجتمعي (Community Center)', '5,000–10,000 نسمة', threshAvg(pop, 5000, 10000), 750, 750);
+        add(2, 'center', 'مركز مجاورة', 'مركز تعلم مبكر / حضانة', '1 لكل مركز حي حضري', nhCenters, 1080, 700);
+        add(2, 'center', 'أمن محلي', 'نقطة شرطة مجتمعية', '5,000–10,000 نسمة (مدمج)', threshAvg(pop, 5000, 10000), 0, 150);
+        var uRetCnt = threshAvg(pop, 5000, 10000);
+        var uRetGfaU = uRetCnt > 0 ? Math.round((pop * 0.8) / uRetCnt) : 0;
+        var uRetLandU = uRetCnt > 0 ? mround100((uRetGfaU / 2) / 0.65) : 0;
+        add(2, 'center', 'تجاري مجاورة', 'تجاري حي (Neighborhood Retail)', '0.8 م²/فرد · دوران · تغطية 65%', uRetCnt, uRetLandU, uRetGfaU);
+        var posNh = posHa > 2 ? Math.floor(posHa / 2) : 0;
+        add(2, 'center', 'مفتوح مجاورة', 'حديقة مجاورة حضرية (Neighborhood POS · 2 هـ)', 'نطاق 700م (بديل توزيع حصة POS 10%)', posNh, 20000, 0);
+
+        var uKG  = popEm * 0.072 * 0.646;
+        var uC1  = popEm * 0.097 * 0.646;
+        var uC23 = popEm * (0.085 + 0.064) * 0.646;
+        var uPrv = popEm * 0.318 * 0.354 + popMix * 0.226;
+        studentsTotal = Math.round(popEm * 0.318 + popMix * 0.226);
+
+        add(2, 'noncenter', 'تعليمي', 'روضة حكومية (Public KG)', 'سعة 360 طفل · حد أدنى 180', uKG >= 180 ? Math.round(uKG / 360) : 0, 1800, 4950);
+        add(2, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 1', 'سعة 1,250 طالب · حد أدنى 625', uC1 >= 625 ? Math.round(uC1 / 1250) : 0, 27000, 16000);
+
+        // Tier 3: Urban District (30k-40k)
+        add(3, 'center', 'مركز حي', 'مكتبة عامة (Library)', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 1500, 2000);
+        add(3, 'center', 'مركز حي', 'مكتب بريد (Post Office)', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 4000, 7000);
+        add(3, 'center', 'مركز حي', 'مكاتب بلدية وإدارية', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 3000, 10000);
+        add(3, 'center', 'رياضي', 'مركز رياضي مدمج (Constrained)', '30,000–40,000 نسمة', threshAvg(pop, 30000, 40000), 5600, 5200);
+        var uMallCnt = threshAvg(pop, 15000, 80000);
+        var uMallGfaU = uMallCnt > 0 ? Math.round((pop * 1.2) / uMallCnt) : 0;
+        var uMallLandU = uMallCnt > 0 ? mround100((uMallGfaU / 3) / 0.50) : 0;
+        add(3, 'center', 'تجاري حي', 'مول قطاع (District Mall)', '1.2 م²/فرد · 3 أدوار · تغطية 50%', uMallCnt, uMallLandU, uMallGfaU);
+        var posDst = posHa > 20 ? Math.floor(posHa / 20) : 0;
+        add(3, 'center', 'مفتوح حي', 'حديقة حي حضرية (District POS · 20 هـ)', 'نطاق 2 كم (من حصة POS 10%)', posDst, 200000, 0);
+
+        var uc23 = greedyAlloc(uC23, 625, [{key:'med',cap:1260},{key:'lrg',cap:2100}]);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 2+3 — متوسطة (1,260)', 'مستوى الحي الحضري', uc23.med, 27000, 15000);
+        add(3, 'noncenter', 'تعليمي', 'مدرسة حكومية حلقة 2+3 — كبيرة (2,100)', 'مستوى الحي الحضري', uc23.lrg, 50000, 21600);
+        var upk = greedyAlloc(uPrv, 550, [{key:'vs',cap:600},{key:'sm',cap:1200},{key:'md',cap:1750},{key:'lg',cap:2300},{key:'vl',cap:3450}]);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (600 طالب)', '10 م²/طالب', upk.vs, 9600, 6000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (1,200 طالب)', '10 م²/طالب', upk.sm, 13200, 12000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (1,750 طالب)', '10 م²/طالب', upk.md, 17500, 17500);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (2,300 طالب)', '10 م²/طالب', upk.lg, 21700, 23000);
+        add(3, 'noncenter', 'تعليمي خاص', 'مدرسة خاصة K12 (3,450 طالب)', '10 م²/طالب', upk.vl, 31600, 34500);
+        var ucl = greedyClinics(pop, [{key:'md',min:12000,max:29999},{key:'lg',min:30000,max:40000}], 6000);
+        add(3, 'noncenter', 'صحي', 'عيادة متوسطة (Medium Clinic)', '12,000–29,999 نسمة', ucl.md, 7000, 3000);
+        add(3, 'noncenter', 'صحي', 'عيادة كبيرة (Large Clinic)', '30,000–40,000 نسمة', ucl.lg, 10500, 4000);
+        add(3, 'noncenter', 'وقود', 'محطة وقود حضرية (Urban Petrol)', '1 لكل 15,000 نسمة', Math.round(pop / 15000), 6000, 0);
+
+        // Tier 4: Sub-Regional (50k-80k+)
+        add(4, 'center', 'شبه إقليمي', 'مركز دعم مجتمعي', '1 لكل 80,000 نسمة', Math.round(pop / 80000), 7000, 8000);
+        add(4, 'center', 'شبه إقليمي', 'مركز ثقافي (Cultural Center)', '1 لكل 80,000 نسمة', Math.round(pop / 80000), 10000, 21000);
+        var posMun = posHa > 100 ? Math.floor(posHa / 100) : 0;
+        add(4, 'center', 'مفتوح بلدية', 'حديقة بلدية (Municipality POS · 100 هـ)', 'نطاق 5 كم', posMun, 1000000, 0);
+        var uhsp = greedyClinics(pop, [{key:'md',min:60000,max:90000},{key:'lg',min:90000,max:110000}], 60000);
+        add(4, 'noncenter', 'صحي إقليمي', 'مستشفى متوسط (60–90 ألف)', 'نطاق إقليمي', uhsp.md, 40000, 0);
+        add(4, 'noncenter', 'صحي إقليمي', 'مستشفى كبير (90–110 ألف)', 'نطاق إقليمي', uhsp.lg, 50000, 0);
+        add(4, 'noncenter', 'أمن', 'مركز شرطة (Police Station)', '1 لكل 50,000 نسمة', Math.round(pop / 50000), 6000, 5200);
+        var cdMap = {A:[8000,4000,'A — خطورة عالية جداً'], B:[6400,3200,'B — خطورة عالية'], C:[4800,2400,'C — خطورة متوسطة'], D:[1800,900,'D — خطورة منخفضة']};
+        var cdSpec = cdMap[cdRisk || 'C'];
+        add(4, 'noncenter', 'طوارئ', 'مركز دفاع مدني حضري ('+cdSpec[2]+')', 'نطاق 2.5 كم (1,963 هكتار)', Math.round(ha / 1963.495), cdSpec[0], cdSpec[1]);
+    }
+
+    // Tier 0: Utilities (DSS 5x9 = 45m2)
+    add(0, 'util', 'كهرباء', 'محطات محولات توزيع (DSS · 5×9م)', 'محسوبة بالحد الأدنى × معامل التباين', trf, 45, 45);
+
+    return { rows: rows, worshipers: Math.round(worshipers), students: studentsTotal, openSpaceM2: openSpaceM2 };
+}
+
+// ---------- 5. MAIN CALCULATOR LOOP ----------
+window.runMasterplanCalculator = function(){
+    var codeKey = $('calc-code').value || 'rak_sub';
+    var P = PROFILES[codeKey] || PROFILES.rak_sub;
+    var u = $('calc-unit').value;
+    var mode = $('calc-mode').value;
+    var plot = Math.max(50, parseFloat($('calc-plot-size').value) || 900);
+    var hh = Math.max(1, parseFloat($('calc-hh-size').value) || P.hh);
+    var far = Math.max(0.1, parseFloat($('calc-far').value) || 1.2);
+    var fl = Math.max(0.5, parseFloat($('calc-floors').value) || 2);
+    var gm = $('calc-gfa-mode').value;
+    var ratio = Math.min(100, Math.max(1, parseFloat($('calc-cover').value) || 65)) / 100;
+    var V = function(id, d){ var e = $(id); return e ? (parseFloat(e.value) || 0) : d; };
+
+    var Pct = {
+        res: +$('calc-pct-res').value || 0,
+        roads: +$('calc-pct-roads').value || 0,
+        open: +$('calc-pct-open').value || 0,
+        fac: +$('calc-pct-fac').value || 0,
+        com: +$('calc-pct-com').value || 0
+    };
+    ['res','roads','open','fac','com'].forEach(function(k){ $('lbl-pct-'+k).textContent = Pct[k] + '%'; });
+    var sum = Pct.res + Pct.roads + Pct.open + Pct.fac + Pct.com;
+    var b = $('calc-total-pct-badge');
+    if(sum === 100){
+        b.className = 'text-xs font-mono px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        b.textContent = 'المجموع: 100% (متوازن ✓)';
+    } else {
+        b.className = 'text-xs font-mono px-2.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40';
+        b.textContent = 'المجموع: ' + sum + '% (' + (sum > 100 ? 'زيادة ' + (sum - 100) : 'نقص ' + (100 - sum)) + '%)';
+    }
+
+    var m2, plots, pop, popEm, popMix, totalUnits, aptUnits = 0, derived = false;
+    var mixOn = P.isRefMan && $('ca-mix-on').checked;
+
+    if(mode === 'pop' && !mixOn){
+        var pin = Math.max(0, parseFloat($('calc-pop-input').value) || 0);
+        plots = Math.ceil(pin / hh - 1e-9);
+        pop = Math.round(pin);
+        m2 = Math.max(100, plots * plot / (Math.max(Pct.res, 1) / 100));
+        derived = true;
+    } else {
+        var v = parseFloat($('calc-area-input').value) || 0;
+        m2 = Math.max(100, u === 'ha' ? v * 10000 : v);
+    }
+    var ha = m2 / 10000;
+    $('calc-area-ha').value = ha;
+
+    var M = {};
+    ['res','roads','open','fac','com'].forEach(function(k){ M[k] = m2 * Pct[k] / 100; });
+
+    if(mixOn){
+        var vInv = Math.max(0, V('ca-v-inv', 0));
+        aptUnits = Math.max(0, V('ca-apts', 0));
+        if(codeKey === 'rak_urb'){
+            var u1 = V('ca-u-1515',0), u2 = V('ca-u-1530',0), u3 = V('ca-u-2030',0), u4 = V('ca-u-3030',0);
+            var vPriv = u1 + u2 + u3 + u4;
+            popEm = Math.round(u1*2.5 + u2*3.5 + u3*5.1 + u4*6.57);
+            popMix = Math.round(vInv*4.39 + aptUnits*2.9);
+            plots = vPriv + vInv;
+            totalUnits = vPriv + vInv + aptUnits;
+        } else {
+            var vPriv2 = Math.max(0, V('ca-v-priv', 0));
+            var useUpd = (codeKey === 'rak_sub' && $('ca-sub-demo').value === 'upd');
+            var emF  = codeKey === 'rak_rur' ? 8.7 : (useUpd ? 6.92 : 7.9);
+            var invF = codeKey === 'rak_rur' ? 5.9 : (useUpd ? 5.06 : 4.5);
+            var aptF = codeKey === 'rak_rur' ? 4.0 : (useUpd ? 3.28 : 4.0);
+            popEm = Math.round(vPriv2 * emF);
+            popMix = Math.round(vInv * invF + aptUnits * aptF);
+            plots = vPriv2 + vInv;
+            totalUnits = vPriv2 + vInv + aptUnits;
+        }
+        pop = popEm + popMix;
+    } else {
+        if(!derived){
+            plots = Math.floor(M.res / plot + 1e-9);
+            pop = Math.round(plots * hh);
+        }
+        totalUnits = plots;
+        var pType = P.isRak ? $('rak-parcel-type').value : 'custom';
+        if(pType === 'rak_inv' || pType === 'rak_apt'){
+            popEm = 0; popMix = pop;
+            if(pType === 'rak_apt') aptUnits = plots;
+        } else {
+            popEm = pop; popMix = 0;
+        }
+    }
+
+    $('calc-area-m2-label').textContent = (derived ? 'مساحة مشتقة: ' : '') + N(m2) + ' م² = ' + ha.toLocaleString('en', {maximumFractionDigits: 2}) + ' هكتار';
+
+    // Setbacks & Envelope
+    var w = Math.max(1, V('calc-plot-w', 30)), f = V('cs-f', 2), sb = V('cs-s', 1.5), rr = V('cs-r', 1.5);
+    var dd = plot / w, fw = w - 2*sb, fd = dd - f - rr;
+    var envA = (fw > 0 && fd > 0) ? fw * fd : 0;
+    var envF = Math.min(1, envA / plot);
+    var cov = Math.min(envF, ratio);
+    $('lbl-cover').textContent = '(= ' + Math.round(plot * cov) + ' م² بصمة من ' + plot + ' م² · حدود البناء بعد الارتدادات ' + Math.round(envA) + ' م²)';
+
+    var gd = ha > 0 ? pop / ha : 0;
+    var nd = M.res > 0 ? pop / (M.res / 10000) : 0;
+    var foot = (M.res + M.com) * cov;
+    var gfa = gm === 'floors' ? foot * fl : (M.res + M.com) * far;
+    var floors = foot > 0 ? gfa / foot : 0;
+    var farEq = gfa / ((M.res + M.com) || 1);
+    var unb = plots * plot * (1 - cov);
+    var comG = gfa * M.com / ((M.res + M.com) || 1);
+
+    // Parking & Musalla
+    var resPark = Math.round(totalUnits * (parseFloat($('calc-park').value) || 0));
+    var comPark = P.isRak ? Math.ceil(comG / 70) : Math.ceil(comG / 50);
+    var totPark = resPark + comPark;
+    var musallaWP = Math.round(comPark * 0.35);
+
+    // KPI Cards
+    $('out-plots').textContent = N(totalUnits);
+    $('out-plots').nextElementSibling.textContent = mixOn ? (N(plots) + ' فيلا + ' + N(aptUnits) + ' شقة') : 'قطعة أرض / وحدة سكنية';
+    $('out-pop').textContent = N(pop);
+    $('out-pop').nextElementSibling.textContent = P.isRefMan ? ('مواطنون ' + N(popEm) + ' · مختلط ' + N(popMix)) : 'نسمة (Residents)';
+
+    var dens = function(x){ return u === 'ha' ? x.toFixed(1) : (x/10).toFixed(2); };
+    var dl = u === 'ha' ? 'نسمة / هكتار' : 'نسمة / 1000 م²';
+    $('out-gross-density').textContent = dens(gd);
+    $('out-gross-density').nextElementSibling.textContent = dl;
+    $('out-net-density').textContent = dens(nd);
+    $('out-net-density').nextElementSibling.textContent = dl + ' سكني صافٍ';
+    $('out-gfa').textContent = A(gfa).replace(/ (م²|هكتار)$/, '');
+    $('out-gfa').nextElementSibling.textContent = (u === 'ha' ? 'هكتار' : 'م²') + ' مبني · FAR مكافئ ' + farEq.toFixed(2);
+    $('out-green-per-capita').textContent = pop > 0 ? (M.open / pop).toFixed(1) : '0';
+    $('out-foot').textContent = A(foot).replace(/ (م²|هكتار)$/, '');
+    $('out-foot-s').textContent = (u === 'ha' ? 'هكتار' : 'م²') + ' = ' + (cov*100).toFixed(0) + '% من القسيمة';
+    $('out-floors').textContent = floors.toFixed(1);
+    $('out-floors-s').textContent = gm === 'floors' ? 'الأدوار المدخلة' : 'مكافئ من FAR';
+    $('out-env').textContent = (envF * 100).toFixed(0) + '%';
+    $('out-env-s').textContent = 'حدود بناء ' + (fw>0?fw.toFixed(1):0) + '×' + (fd>0?fd.toFixed(1):0) + ' م';
+    $('out-park').textContent = N(totPark);
+    $('out-park-s').textContent = 'سكني ' + N(resPark) + ' + تجاري ' + N(comPark) + (P.isRak ? ' (1/70م²)' : '');
+    $('out-unbuilt').textContent = A(unb).replace(/ (م²|هكتار)$/, '');
+    $('out-unbuilt-s').textContent = u === 'ha' ? 'هكتار' : 'م²';
+    $('out-landpc').textContent = pop > 0 ? (m2 / pop).toFixed(0) : '0';
+    $('out-landpc-s').textContent = 'م² / فرد (إجمالي)';
+
+    // Visual Stacked Bar
+    var C = [['#f59e0b',Pct.res,'سكني','text-slate-950'],['#64748b',Pct.roads,'طرق','text-white'],['#10b981',Pct.open,'حدائق','text-slate-950'],['#0ea5e9',Pct.fac,'خدمات','text-slate-950'],['#f43f5e',Pct.com,'تجاري','text-white']];
+    $('calc-visual-bar').innerHTML = C.map(function(c){
+        return '<div style="width:'+(sum?c[1]/sum*100:0)+'%;background:'+c[0]+'" class="h-full flex items-center justify-center text-[10px] font-mono font-bold '+c[3]+' overflow-hidden" title="'+c[2]+' '+c[1]+'%">'+(c[1]>=8?c[1]+'%':'')+'</div>';
+    }).join('');
+
+    var R = [
+        ['الإسكان الصافي (Net Residential)','res','48% – 55% (50% صافي قسائم)','text-amber-300'],
+        ['شبكة الطرق والمواقف (Roads & ROW)','roads','18% – 25% (الأمثل اقتصادياً)','text-slate-300'],
+        ['المناطق المفتوحة والحدائق (Open Space)','open','10% – 15% (3–5% حدائق / 10% حضري)','text-emerald-400'],
+        ['المرافق والخدمات العامة (Public Facilities)','fac','8% – 12% (~7–12% حسب الحجم)','text-sky-400'],
+        ['التجاري والاستعمال المختلط (Commercial)','com','4% – 7% (مراكز المجموعة السكنية وحيّية)','text-rose-400']
+    ];
+    $('calc-table-body').innerHTML = R.map(function(r){
+        return '<tr><td class="p-2.5 font-bold '+r[3]+'">'+r[0]+'</td><td class="p-2.5 font-mono font-bold">'+Pct[r[1]]+'%</td><td class="p-2.5 font-mono">'+(M[r[1]]/10000).toLocaleString('en',{maximumFractionDigits:2})+' Ha</td><td class="p-2.5 font-mono">'+N(M[r[1]])+' m²</td><td class="p-2.5 text-slate-400">'+r[2]+'</td></tr>';
+    }).join('');
+
+    // Utilities (Minimum by Default + Diversity Factor)
+    var g = function(k){ return parseFloat($('ut-'+k).value) || 0; };
+    var lv = ({low: 0, mid: 0.5, high: 1})[$('ut-level').value];
+    if(lv === undefined) lv = 0;
+    var lvLbl = lv === 0 ? 'حد أدنى' : (lv === 0.5 ? 'متوسط' : 'حد أعلى');
+    var divF = Math.max(0.2, Math.min(1.0, g('div') || 0.65));
+    var wL = g('waterL'), wH = Math.max(wL, g('waterH')), sewF = g('sew') / 100;
+    var kL = g('kwL'), kH = Math.max(kL, g('kwH')), cL = g('cwL'), cH = Math.max(cL, g('cwH'));
+    var KW = function(k, c){ return totalUnits * k + comG * c / 1000; };
+    var kLo = KW(kL, cL) * divF;
+    var kHi = KW(kH, cH) * divF;
+    var kDesign = KW(kL + (kH - kL)*lv, cL + (cH - cL)*lv) * divF;
+    var kva = kDesign / 0.9;
+    var kvaCap = Math.max(100, g('kva') || 1000);
+    var trf = pop > 0 ? Math.max(1, Math.ceil(kva / kvaCap)) : 0;
+    var waste = pop * g('waste') / 1000;
+    var wD = pop * (wL + (wH - wL)*lv) / 1000;
+
+    $('ut-w').textContent = N(pop*wL/1000) + '–' + N(pop*wH/1000) + ' م³/يوم';
+    $('ut-w-s').textContent = 'المعتمد ('+lvLbl+') ' + N(wD) + ' · ذروة ×1.5 ≈ ' + N(wD*1.5);
+    $('ut-s').textContent = N(pop*wL/1000*sewF) + '–' + N(pop*wH/1000*sewF) + ' م³/يوم';
+    $('ut-s-s').textContent = 'المعتمد ' + N(wD*sewF) + ' م³/يوم';
+    $('ut-p').textContent = (kDesign/1000).toFixed(2) + ' م.و (' + trf + ' محول)';
+    $('ut-p-s').textContent = lvLbl + ' × تباين ' + divF.toFixed(2) + ' ≈ ' + N(kva) + ' ك.ف.أ (نطاق ' + (kLo/1000).toFixed(1) + '–' + (kHi/1000).toFixed(1) + ' م.و)';
+    $('ut-g').textContent = waste.toFixed(1) + ' طن/يوم';
+    $('ut-g-s').textContent = 'للتجميع والنقل اليومي';
+    if($('ut-summary-chip')) $('ut-summary-chip').textContent = 'المياه: ' + N(wD) + ' م³/يوم · الكهرباء: ' + (kDesign/1000).toFixed(2) + ' م.و (' + trf + ' محول)';
+
+    // ---------- 6. DETECT PLANNING SCALE & UPDATE HIERARCHY BAR ----------
+    var det = detectPlanningScale(codeKey, ha, pop, derived);
+    var activeScaleNum = HIER_STATE.scaleMode === 'auto' ? det.tier : (HIER_STATE.scaleMode === 'all' ? 4 : parseInt(HIER_STATE.scaleMode, 10));
+    var showAll = (HIER_STATE.scaleMode === 'all');
+
+    // Sync checkboxes & buttons
+    $('hchk-noncenter').checked = HIER_STATE.includeNonCenter;
+    $('hchk-hidezero').checked = HIER_STATE.hideZero;
+    ['auto','1','2','3','4','all'].forEach(function(k){
+        var el = $('hbtn-'+k); if(!el) return;
+        var active = (HIER_STATE.scaleMode === k);
+        el.className = 'h-scale-btn px-2.5 py-1.5 rounded-lg text-xs font-bold border transition ' +
+            (active ? 'bg-teal-600 text-white border-teal-400 shadow' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700');
+    });
+    ['cumulative','exact'].forEach(function(k){
+        var el = $('hscope-'+k); if(!el) return;
+        var active = (HIER_STATE.scopeMode === k);
+        el.className = 'px-2.5 py-1 rounded-lg font-bold border transition ' +
+            (active ? 'bg-amber-500/25 text-amber-300 border-amber-500/50' : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700');
+    });
+
+    // Detected Banner
+    var detMeta = TIER_META[det.tier];
+    var estClusters = Math.max(1, Math.round(ha / 38.5));
+    var estNH = Math.max(1, Math.round(pop / 5000));
+    $('hier-detected-banner').innerHTML =
+        '<div class="space-y-0.5">' +
+            '<div class="flex flex-wrap items-center gap-2">' +
+                '<span class="text-xs font-bold text-slate-300">التصنيف التلقائي لموقعك:</span>' +
+                '<span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold border '+detMeta.badge+'"><i class="fa-solid '+detMeta.icon+' ml-1"></i>'+detMeta.ar+' ('+detMeta.en+')</span>' +
+                (HIER_STATE.scaleMode !== 'auto' ? '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold">عرض يدوي: '+(showAll?'الكل':TIER_META[activeScaleNum].ar)+'</span>' : '') +
+            '</div>' +
+            '<div class="text-[11px] text-slate-400">'+det.desc+'</div>' +
+            (det.mismatch ? '<div class="text-[11px] text-amber-300 pt-0.5"><i class="fa-solid fa-circle-info ml-1"></i>'+det.mismatch+'</div>' : '') +
+        '</div>' +
+        '<div class="text-[11px] font-mono text-teal-300 bg-slate-950/70 px-3 py-1.5 rounded-lg border border-slate-800 shrink-0">' +
+            'تقدير البنية: ≈ ' + estClusters + ' مجموعة سكنية · ' + (det.tier >= 2 ? (estNH + ' مجاورة') : 'أقل من مجاورة') +
+        '</div>';
+
+    // 4-Step Visual Stepper
+    $('hier-stepper').innerHTML = [1, 2, 3, 4].map(function(t){
+        var tm = TIER_META[t];
+        var isDetected = (t === det.tier);
+        var isIncluded = showAll ? true : (HIER_STATE.scopeMode === 'exact' ? (t === activeScaleNum) : (t <= activeScaleNum));
+        var cls = isIncluded
+            ? ('cursor-pointer p-2 rounded-lg border font-bold transition ' + tm.hdr + (isDetected ? ' ring-1 ring-amber-400' : ''))
+            : 'cursor-pointer p-2 rounded-lg border border-slate-800 bg-slate-950/40 text-slate-500 opacity-55 hover:opacity-90 transition';
+        return '<div onclick="setHierScale(\''+t+'\')" class="'+cls+'">' +
+            '<div><i class="fa-solid '+tm.icon+' ml-1"></i>'+tm.ar+'</div>' +
+            '<div class="text-[10px] opacity-80 font-mono mt-0.5">'+(isDetected ? '★ مستوى موقعك' : (isIncluded ? 'مشمول بالعرض' : 'خارج نطاق الموقع'))+'</div>' +
+        '</div>';
+    }).join('');
+
+    // Helper: does tier pass filter?
+    function tierVisible(t){
+        if(t === 0) return true; // Utilities always shown in its own clean group
+        if(showAll) return true;
+        return HIER_STATE.scopeMode === 'exact' ? (t === activeScaleNum) : (t <= activeScaleNum);
+    }
+
+    // ---------- 7. RENDER GROUPED HIERARCHICAL SERVICES ----------
+    var allRows = [];
+    var isEditableLegacy = !P.isRefMan;
+    var infillBox = $('ca-infill-box');
+    var pillsEl = $('ca-summary-pills');
+    infillBox.classList.add('hidden');
+    pillsEl.innerHTML = '';
+
+    if(P.isRefMan){
+        $('sv-section-title').textContent = 'رابعاً: خدمات ومرافق «' + (showAll ? 'جميع المستويات' : TIER_META[activeScaleNum].ar) + '» — ' + P.n;
+        $('sv-section-sub').textContent = (HIER_STATE.scopeMode === 'cumulative' && !showAll)
+            ? 'وضع تراكمي: يعرض خدمات المستوى المحدد مضافاً إليها خدمات المستويات الأدنى المندمجة داخله.'
+            : (showAll ? 'يعرض كافة المستويات التخطيطية من المجموعة السكنية حتى القطاع الشامل.' : 'وضع معزول: يعرض الخدمات المضافة على هذا المستوى فقط دون المستويات الأدنى.');
+
+        var cfRes = computeRefFacilities(codeKey, ha, popEm, popMix, totalUnits, aptUnits, trf, V('ca-agri-m2', 0), $('ca-cd-risk') ? $('ca-cd-risk').value : 'C');
+        allRows = cfRes.rows;
+
+        pillsEl.innerHTML =
+            '<span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-teal-300">المصلون (35%): '+N(cfRes.worshipers)+'</span>' +
+            '<span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-amber-300">الطلاب: '+N(cfRes.students)+'</span>' +
+            '<span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-emerald-300">الحدائق: '+(cfRes.openSpaceM2/m2*100).toFixed(1)+'%</span>' +
+            '<span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-sky-300">مصليات التجاري: '+musallaWP+' م²</span>';
+
+        if(pop > 0 && pop < 3000){
+            infillBox.classList.remove('hidden');
+            infillBox.innerHTML =
+                '<b><i class="fa-solid fa-circle-info ml-1"></i> تنبيه الإحلال والتجمعات الصغيرة (&lt; 3,000 نسمة — نهج نصيب الفرد):</b> ' +
+                'ينطبق نهج <b>نصيب الفرد (Per Capita GFA)</b>: عيادات = <b>'+(pop*0.50).toFixed(0)+' م²</b> (أدنى 3,000 م²) · تجاري = <b>'+(pop*0.80).toFixed(0)+' م²</b> · مركز مجتمعي = <b>'+(pop*0.13).toFixed(0)+' م²</b> · حضانة = <b>'+(pop*0.12).toFixed(0)+' م²</b>.';
+        }
+    } else {
+        $('sv-section-title').textContent = 'رابعاً: خدمات ومرافق «' + (showAll ? 'جميع المستويات' : TIER_META[activeScaleNum].ar) + '» — ' + P.n;
+        $('sv-section-sub').textContent = 'الخدمات مقسّمة هرمياً حسب مستوى الموقع، وقابلة للتعديل المباشر في خانات (نسمة/وحدة) و(مساحة الوحدة).';
+        var baseList = EG_SV;
+        var edits = getLegacyEdits(codeKey);
+        allRows = baseList.map(function(r, idx){
+            var ed = edits[idx] || {};
+            var per = r[4] ? (ed.per || r[4]) : 0;
+            var ar  = ed.area || r[5];
+            var fr  = per ? pop / per : 1;
+            var cnt = pop <= 0 ? 0 : (per ? (fr >= 0.5 ? Math.ceil(fr) : 0) : trf);
+            return { tier:r[0], cat:r[1], tag:r[2], name:r[3], basis:r[6]||'', per:per, landU:ar, gfaU:0, cnt:cnt, origIdx:idx };
+        });
+    }
+
+    // Group rows by tier order [1, 2, 3, 4, 0]
+    var order = [1, 2, 3, 4, 0];
+    var groupsHtml = '';
+    var grandLand = 0, grandGfa = 0, grandCount = 0;
+    var hiddenTiers = [];
+
+    order.forEach(function(t){
+        var tierRowsAll = allRows.filter(function(r){ return r.tier === t; });
+        if(tierRowsAll.length === 0) return;
+
+        if(!tierVisible(t)){
+            if(t > 0) hiddenTiers.push(TIER_META[t].ar);
+            return;
+        }
+
+        var filtered = tierRowsAll.filter(function(r){
+            if(!HIER_STATE.includeNonCenter && r.cat === 'noncenter') return false;
+            if(HIER_STATE.hideZero && r.cnt <= 0) return false;
+            return true;
+        });
+
+        var tm = TIER_META[t];
+        var gLand = 0, gGfa = 0, gCnt = 0;
+        filtered.forEach(function(r){ gLand += r.cnt * r.landU; gGfa += r.cnt * (r.gfaU || 0); gCnt += r.cnt; });
+
+        
+        grandLand += gLand; grandGfa += gGfa; grandCount += gCnt;
+
+        var tblHead = isEditableLegacy
+            ? '<tr><th class="p-2">التصنيف</th><th class="p-2">الخدمة / المرفق</th><th class="p-2">نسمة/وحدة</th><th class="p-2">مساحة الوحدة (م²)</th><th class="p-2 font-mono">العدد</th><th class="p-2 font-mono">إجمالي الأرض</th></tr>'
+            : '<tr><th class="p-2">التصنيف</th><th class="p-2">الخدمة / المرفق</th><th class="p-2">المعيار / النطاق</th><th class="p-2 font-mono">العدد</th><th class="p-2 font-mono">أرض/وحدة</th><th class="p-2 font-mono">إجمالي الأرض</th><th class="p-2 font-mono">إجمالي GFA</th></tr>';
+
+        var rowsHtml = filtered.length === 0
+            ? '<tr><td colspan="7" class="p-3 text-center text-slate-400 text-xs">لا توجد خدمات مطلوبة (&gt; 0) ضمن هذا المستوى حالياً — ألغِ «إظهار المطلوب فقط» لرؤية كافة المعايير.</td></tr>'
+            : filtered.map(function(r){
+                var tLand = r.cnt * r.landU;
+                var tGfa  = r.cnt * (r.gfaU || 0);
+                var rowCls = r.cnt > 0 ? '' : 'opacity-45';
+                var typeChip = r.cat === 'noncenter'
+                    ? '<span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[10px]">'+r.tag+'</span>'
+                    : '<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">'+r.tag+'</span>';
+                if(isEditableLegacy){
+                    return '<tr class="'+rowCls+'">' +
+                        '<td class="p-2">'+typeChip+'</td>' +
+                        '<td class="p-2 font-bold text-white">'+r.name+(r.basis?'<div class="text-[10px] font-normal text-slate-400">'+r.basis+'</div>':'')+'</td>' +
+                        '<td class="p-2">'+(r.per ? '<input type="number" min="1" value="'+r.per+'" onchange="updateLegacyCell(\''+codeKey+'\','+r.origIdx+',\'per\',this.value)" class="w-20 rounded bg-slate-900 border border-slate-700 px-2 py-1 font-mono text-xs text-white">' : '<span class="text-slate-400 text-[11px]">حسب الحمل</span>')+'</td>' +
+                        '<td class="p-2"><input type="number" min="1" value="'+r.landU+'" onchange="updateLegacyCell(\''+codeKey+'\','+r.origIdx+',\'area\',this.value)" class="w-20 rounded bg-slate-900 border border-slate-700 px-2 py-1 font-mono text-xs text-white"></td>' +
+                        '<td class="p-2 font-mono font-bold '+(r.cnt>0?'text-amber-300':'text-slate-500')+'">'+r.cnt+'</td>' +
+                        '<td class="p-2 font-mono text-teal-300">'+(tLand>0?A(tLand):'—')+'</td>' +
+                    '</tr>';
+                }
+                return '<tr class="'+rowCls+'">' +
+                    '<td class="p-2">'+typeChip+'</td>' +
+                    '<td class="p-2 font-bold text-white">'+r.name+'</td>' +
+                    '<td class="p-2 text-[11px] text-slate-400">'+r.basis+'</td>' +
+                    '<td class="p-2 font-mono font-bold '+(r.cnt>0?'text-amber-300':'text-slate-500')+'">'+r.cnt+'</td>' +
+                    '<td class="p-2 font-mono">'+(r.landU>0?N(r.landU)+' م²':'مدمج')+'</td>' +
+                    '<td class="p-2 font-mono text-teal-300">'+(tLand>0?A(tLand):'—')+'</td>' +
+                    '<td class="p-2 font-mono text-sky-300">'+(tGfa>0?N(tGfa)+' م²':'—')+'</td>' +
+                '</tr>';
+            }).join('');
+
+        groupsHtml +=
+            '<details open class="um-pin-det rounded-xl border border-slate-700 overflow-hidden bg-slate-900/70">' +
+                '<summary class="cursor-pointer px-3.5 py-2.5 border-b flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-extrabold list-none '+tm.hdr+'">' +
+                    '<span><i class="fa-solid '+tm.icon+' ml-1.5"></i>'+tm.ar+' <span class="font-mono text-[11px] opacity-80">('+tm.en+')</span></span>' +
+                    '<span class="flex flex-wrap items-center gap-2 font-mono text-[11px]">' +
+                        '<span class="px-2 py-0.5 rounded bg-slate-950/60 border border-slate-700">العدد: '+gCnt+'</span>' +
+                        '<span class="px-2 py-0.5 rounded bg-slate-950/60 border border-slate-700">الأرض: '+A(gLand)+' ('+(gLand/m2*100).toFixed(1)+'%)</span>' +
+                        (gGfa > 0 ? '<span class="px-2 py-0.5 rounded bg-slate-950/60 border border-slate-700">GFA: '+N(gGfa)+' م²</span>' : '') +
+                    '</span>' +
+                '</summary>' +
+                '<div class="overflow-x-auto"><table class="w-full text-right text-xs"><thead class="bg-slate-800/90 text-slate-300">'+tblHead+'</thead><tbody class="divide-y divide-slate-800/80">'+rowsHtml+'</tbody></table></div>' +
+            '</details>';
+    });
+
+
+    // Grand Total Summary Bar
+    groupsHtml +=
+        '<div class="p-3.5 rounded-xl bg-gradient-to-l from-slate-900 to-teal-950/50 border border-teal-500/40 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-extrabold">' +
+            '<span class="text-amber-300"><i class="fa-solid fa-sigma ml-1"></i> إجمالي الخدمات والمرافق المعروضة ('+(grandLand/m2*100).toFixed(1)+'% من مساحة الموقع)</span>' +
+            '<div class="flex flex-wrap items-center gap-3 font-mono">' +
+                '<span class="text-white">الوحدات: '+grandCount+'</span>' +
+                '<span class="text-teal-300">الأرض: '+A(grandLand)+'</span>' +
+                (grandGfa > 0 ? '<span class="text-sky-300">GFA: '+N(grandGfa)+' م²</span>' : '') +
+            '</div>' +
+        '</div>';
+
+    $('sv-groups-container').innerHTML = groupsHtml;
+
+    // Hidden Higher Tiers Note
+    var hiddenEl = $('sv-hidden-note');
+    if(hiddenTiers.length > 0){
+        hiddenEl.classList.remove('hidden');
+        hiddenEl.innerHTML =
+            '<div class="flex flex-wrap items-center justify-between gap-2">' +
+                '<span><i class="fa-solid fa-eye-slash text-amber-400 ml-1.5"></i> مستويات غير معروضة حالياً (أعلى من أو خارج نطاق التصفية): <b class="text-amber-300">'+hiddenTiers.join(' · ')+'</b> — تُخدم عادةً على مستوى تخطيطي أعلى خارج حدود موقعك.</span>' +
+                '<button onclick="setHierScale(\'all\')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-teal-300 border border-slate-700 text-[11px] font-bold shrink-0">عرض جميع المستويات</button>' +
+            '</div>';
+    } else {
+        hiddenEl.classList.add('hidden');
+    }
+
+    // Budget vs Required Balance
+    var budgetCompare = P.isRefMan ? (M.fac + M.open) : M.fac;
+    var diff = budgetCompare - grandLand;
+    $('sv-bal').innerHTML = '<div class="p-3 rounded-xl border text-xs '+(diff>=0?'bg-teal-950/50 border-teal-500/40 text-teal-200':'bg-rose-950/50 border-rose-500/40 text-rose-200')+'">' +
+        'المخصص في ميزانيتك ('+(P.isRefMan ? ('خدمات '+A(M.fac)+' + حدائق '+A(M.open)+' = <b>'+A(budgetCompare)+'</b>') : ('خدمات <b>'+A(budgetCompare)+'</b>'))+') مقابل المطلوب ضمن المستوى المعروض (<b>'+A(grandLand)+'</b>): ' +
+        (diff>=0 ? '<b>فائض '+A(diff)+'</b> يغطي احتياج المستوى بالكامل.' : '<b>عجز '+A(-diff)+'</b> — ارفع نسب الخدمات/الحدائق أو راجع المرافق القائمة بالمحيط.') +
+    '</div>';
+
+    // Code D Utility Plot Reference Footer
+    $('util-note').innerHTML = P.isRak
+        ? '<b class="text-amber-300"><i class="fa-solid fa-bolt ml-1"></i> مرجع أبعاد قطع المرافق (قيم مرجعية عامة):</b> محطة توزيع DSS = <b>5×9م (45 م²)</b> · رئيسية PSS = <b>100×80م</b> · شبكة Grid = <b>300×300م</b> · رفع صرف صحي = <b>50×50م</b> · تصريف أمطار = <b>50×50م</b> · غاز/إطفاء = <b>30×30م</b> · خزان مياه = <b>100×100م</b>.'
+        : '<b class="text-sky-300">مرجع المرافق:</b> تُنسق مواقع المحولات والخزانات ومحطات الرفع مع شركات المرافق المختصة بالمحافظة.';
+
+    // Diagnostics Alerts
+    var al = [];
+    if(sum !== 100) al.push(['rose','fa-triangle-exclamation','مجموع نسب الاستعمالات '+sum+'% وليس 100%. اضغط زر «موازنة 100%».']);
+    if(Pct.roads > 28) al.push(['amber','fa-road-circle-exclamation','نسبة الطرق ('+Pct.roads+'%) مرتفعة (> 28%) وترفع تكلفة البنية التحتية والجزر الحرارية.']);
+    else if(Pct.roads < 15) al.push(['amber','fa-road','نسبة الطرق ('+Pct.roads+'%) منخفضة وقد لا تكفي لحرم الشوارع والمواقف والمرافق.']);
+    if(Pct.open < 8) al.push(['rose','fa-tree','نسبة المناطق المفتوحة ('+Pct.open+'%) أقل من الموصى به (10–12%).']);
+    if(envF <= 0) al.push(['rose','fa-ruler-combined','الارتدادات المدخلة تلتهم القسيمة بالكامل!']);
+    if(P.isRak){
+        al.push(['teal','fa-mosque','مواقف التجاري ('+N(comPark)+' موقف بمعدل 1/70م² للمحال والمكاتب؛ وللمطاعم 1/50م²) ← تستوجب مصليات  بإجمالي <b>'+musallaWP+' م²</b> ('+Math.ceil(musallaWP/2)+'م² رجال + '+Math.ceil(musallaWP/2)+'م² نساء).']);
+    }
+    al.push(['teal','fa-bolt','ملخص الموقع ('+N(m2)+' م² = '+ha.toFixed(2)+' هكتار · مستوى '+detMeta.ar+'): '+N(pop)+' نسمة · '+N(totalUnits)+' وحدة · عدد المحولات ('+lvLbl+' × تباين '+divF+'): <b>'+trf+' محول</b> بمساحة DSS = '+N(trf*P.dssArea)+' م².']);
+
+    var sm = {rose:'bg-rose-950/50 border-rose-500/40 text-rose-200', amber:'bg-amber-950/50 border-amber-500/40 text-amber-200', teal:'bg-teal-950/50 border-teal-500/40 text-teal-200'};
+    $('calc-diagnostics').innerHTML = al.map(function(a){
+        return '<div class="p-3 rounded-xl border '+sm[a[0]]+' text-xs flex items-start gap-2.5"><i class="fa-solid '+a[1]+' mt-0.5 text-sm"></i><span>'+a[2]+'</span></div>';
+    }).join('');
+};
+
+window.applyCalcPreset = function(p){
+    HIER_STATE.scaleMode = 'auto';
+    HIER_STATE.scopeMode = 'cumulative';
+    saveHierState();
+    $('calc-code').value = 'rak_sub';
+    $('ca-sub-demo').value = 'pdf';
+    /* Presets are area-based: force the area-basis mode so the preset area always
+       drives the engine (previously a preset clicked while in population mode set
+       the hidden area but the engine kept recomputing from the population input). */
+    if($('calc-mode') && $('calc-mode').value !== 'area'){ $('calc-mode').value = 'area'; calcModeChange(); }
+    if(p === 'rak_cluster'){
+        $('ca-mix-on').checked = false; toggleRefMix();
+        $('calc-area-input').value = $('calc-unit').value === 'ha' ? 25 : 250000;
+        $('calc-pct-res').value = 50; $('calc-pct-roads').value = 22; $('calc-pct-open').value = 12; $('calc-pct-fac').value = 10; $('calc-pct-com').value = 6;
+        calcCodeChange(); $('rak-parcel-type').value = 'parcel_conv'; applyRakParcelPreset();
+    } else if(p === 'rak_nh'){
+        $('ca-mix-on').checked = false; toggleRefMix();
+        $('calc-area-input').value = $('calc-unit').value === 'ha' ? 82 : 820000;
+        $('calc-pct-res').value = 50; $('calc-pct-roads').value = 22; $('calc-pct-open').value = 12; $('calc-pct-fac').value = 10; $('calc-pct-com').value = 6;
+        calcCodeChange(); $('rak-parcel-type').value = 'parcel_conv'; applyRakParcelPreset();
+    } else if(p === 'rak_dist'){
+        $('ca-mix-on').checked = false; toggleRefMix();
+        $('calc-area-input').value = $('calc-unit').value === 'ha' ? 280 : 2800000;
+        $('calc-pct-res').value = 50; $('calc-pct-roads').value = 22; $('calc-pct-open').value = 12; $('calc-pct-fac').value = 10; $('calc-pct-com').value = 6;
+        calcCodeChange(); $('rak-parcel-type').value = 'parcel_conv'; applyRakParcelPreset();
+    } else if(p === 'rak_sector'){
+        calcCodeChange();
+        $('calc-area-input').value = $('calc-unit').value === 'ha' ? 1181.987 : 11819870;
+        $('ca-mix-on').checked = true; toggleRefMix();
+        $('ca-v-priv').value = 4801; $('ca-v-inv').value = 360; $('ca-apts').value = 1950;
+        $('calc-pct-res').value = 50; $('calc-pct-roads').value = 22; $('calc-pct-open').value = 12; $('calc-pct-fac').value = 10; $('calc-pct-com').value = 6;
+        runMasterplanCalculator();
+    }
+    if(window.showToast) showToast('تم تحميل نموذج المستوى التخطيطي في الحاسبة!');
+};
+
+// Migrate legacy storage names to the generic naming scheme (backward compatibility)
+(function(){
+ var codeMap={};
+ var valMap={'ndg_conv':'parcel_conv','ndg_half':'parcel_half','ndg_qtr':'parcel_qtr','xls':'upd','parcel_23':'parcel_23'};
+ var idMap={'cfpm-sub-demo':'ca-sub-demo','cfpm-mix-on':'ca-mix-on','cfpm-mix-fields':'ca-mix-fields','cfpm-mix-wrap':'ca-mix-wrap','cfpm-infill-box':'ca-infill-box','cfpm-summary-pills':'ca-summary-pills','cf-v-priv':'ca-v-priv','cf-v-inv':'ca-v-inv','cf-apts':'ca-apts','cf-agri-m':'ca-agri-m','cf-cd-risk':'ca-cd-risk','cf-urb-villas':'ca-urb-villas','cf-agri-wrap':'ca-agri-wrap','cf-vpriv-wrap':'ca-vpriv-wrap','cf-cdrisk-wrap':'ca-cdrisk-wrap','ndg-merge-sub':'merge-sub','ndg-util-note':'util-note'};
+ function fixObj(o){var ch=false;Object.keys(o).forEach(function(k){var nk=idMap[k];if(!nk&&k.indexOf('cf-u-')===0)nk='ca-u-'+k.slice(5);if(nk){o[nk]=o[k];delete o[k];ch=true}});Object.keys(o).forEach(function(k){var v=o[k];if(typeof v==='string'){if(codeMap[v]){o[k]=codeMap[v];ch=true}else if(valMap[v]){o[k]=valMap[v];ch=true}}});return ch}
+ try{
+  ['um_code_v13','um_code_v12'].forEach(function(k){var v=localStorage.getItem(k);if(v&&codeMap[v])localStorage.setItem(k,codeMap[v])});
+  var i,k;
+  var jsonKeys=['um_fields_v17'];for(i=0;i<localStorage.length;i++){k=localStorage.key(i);if(/^um_sv13_/.test(k))jsonKeys.push(k)}
+  jsonKeys.forEach(function(k){var raw=localStorage.getItem(k);if(!raw)return;try{var o=JSON.parse(raw);var ch=fixObj(o);if(o.__details&&typeof o.__details==='object'&&fixObj(o.__details))ch=true;if(ch)localStorage.setItem(k,JSON.stringify(o))}catch(e){}});
+ }catch(e){}
+})();
+
+// Initialize Calculator & Scorer
+var savedCode = 'rak_sub';
+try { savedCode = localStorage.getItem('um_code_v13') || localStorage.getItem('um_code_v12') || 'rak_sub'; } catch(e){}
+$('calc-code').value = PROFILES[savedCode] ? savedCode : 'rak_sub';
+runSettlementScorer();
+calcCodeChange();
+})();
+</script>
+<script>
+/* ============================================================================
+   URBANMIND V12 — RAK 2026 ARCHITECTURAL REGULATIONS + الدليل المرجعي + Code D IN CODE TAB
+   ============================================================================ */
+(function(){
+var w = document.querySelector('#tab-code .um-wrap');
+if(!w) return;
+
+function UL(a){ return '<ul>' + a.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
+function T(h, rows, foot){
+    return '<table class="um-tbl"><thead><tr>' + h.map(function(x){ return '<th>'+x+'</th>'; }).join('') + '</tr></thead><tbody>' +
+        rows.map(function(r){ return '<tr>' + r.map(function(x){ return '<td>'+x+'</td>'; }).join('') + '</tr>'; }).join('') +
+        (foot || []).map(function(r){ return '<tr style="font-weight:800"><td>' + r.join('</td><td>') + '</td></tr>'; }).join('') +
+    '</tbody></table>';
+}
+function n(x){ return Math.round(x).toLocaleString('en'); }
+function ha(m){ return (m/10000).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:3}); }
+function fac(rows,sub,par,tot){
+    var f=function(a){return [a[0],a[1],n(a[2]),ha(a[2])]};
+    return T(['الخدمة','معيار السكان (نسمة)','أدنى مساحة موقع (م²)','(هكتار)'],rows.map(f),[['المجموع الفرعي','',n(sub),ha(sub)],['مواقف وشوارع (20%)','',n(par),ha(par)],['الإجمالي','',n(tot),ha(tot)]]);
+}
+
+// 1. Direct Official Link Banner for RAK 2026 Architectural Regulations PDF
+var rakPdfUrl = 'https://mun.rak.ae/wp-content/uploads/Architectural-Regulations-R5-2026.pdf';
+var rakBanner =
+    '<div class="p-4 rounded-2xl bg-gradient-to-l from-amber-950/40 via-slate-900 to-teal-950/40 border border-amber-500/40 my-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">' +
+        '<div class="space-y-1">' +
+            '<div class="text-xs font-mono text-amber-300 font-bold">المرجع الرسمي المعتمد — بلدية رأس الخيمة (تعميم رقم 7 لسنة 2026)</div>' +
+            '<div class="text-base font-extrabold text-white">لائحة شروط ومواصفات البناء بإمارة رأس الخيمة (الاشتراطات المعمارية R5 — 2026)</div>' +
+            '<div class="text-xs text-slate-300">62 مادة في 8 أبواب رئيسية + المادة E21 لموجهات الواجهات المعمارية (تحل محل القرار 18 لسنة 2018 · 141 صفحة).</div>' +
+        '</div>' +
+        '<a href="'+rakPdfUrl+'" target="_blank" rel="noopener noreferrer" class="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">' +
+            '<i class="fa-solid fa-file-pdf text-base"></i>' +
+            '<span>فتح الكود الرسمي PDF (2026)</span>' +
+            '<i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>' +
+        '</a>' +
+    '</div>';
+
+var warnEl = w.querySelector('.um-warn');
+if(warnEl) warnEl.insertAdjacentHTML('afterend', rakBanner);
+
+// 2. Append Structured Index & Key Highlights of RAK 2026 R5 inside existing RAK <details>
+var dets = w.querySelectorAll('details.um-det');
+var rakDet = dets[dets.length - 1];
+if(rakDet){
+    var rakIn = rakDet.querySelector('.um-in');
+    var r5Summary =
+        '<h4 class="um-sec" style="font-size:1.05rem">فهرس أبواب لائحة شروط ومواصفات البناء 2026 (R5 — 62 مادة)</h4>' +
+        T(['الباب / المحور','المواد','أبرز ما يهم المخطط العمراني والحاسبة'], [
+            ['الأساس والمحددات','م 1–5','التعاريف والجهات (م1)، المحددات التخطيطية (م4: الاستعمال، FAR، الارتفاع، الارتدادات، المواقف من المخطط العام)، والمساحات (م5).'],
+            ['أولاً: المباني السكنية','م 6–10','السكن الخاص/الفيلا (م6: ارتداد 1.5م، موقفان، ملاحق ≤50%)، السكن الاستثماري (م7: شارع 2م/جار 1.5م)، العمال (م8)، الموظفين (م9)، سكني-تجاري (م10).'],
+            ['ثانياً ورابعاً: التجاري والفندقي والصناعي','م 11–15','المباني التجارية والإدارية (م11: 1 موقف/70م²، مطاعم 1/50م²)، إشغال الأرصفة (م13)، الفنادق والمنتجعات (م14)، الصناعي (م15: تغطية 50%، شارع 3م).'],
+            ['خامساً: المباني المجتمعية والواجهات','م 16–20 + E21','المساجد (م16: 1 موقف/20 مصلي + الإمام والمؤذن + أصحاب الهمم)، التعليمية (م17)، الصحية (م18)، صالات الأفراح (م19)، محطات الوقود (م20)، موجهات الواجهات (E21).'],
+            ['سادساً: اشتراطات عامة ومواقف وبيئة','م 21–37','الارتفاعات (م21)، الارتدادات (م22)، البلكونات (م23)، المظلات (م24)، البدروم والبوديوم والسطح (م25–27)، مواقف المركبات (م31)، أصحاب الهمم (م33)، الطاقة/برجيل (م34)، الحريق (م35).'],
+            ['سابعاً وثامناً: الحركة والمرافق والأحكام','م 38–62','الممرات والأروقة والأدراج والمصاعد والتحميل (م38–43)، خدمات المرافق والمياه والصرف والنفايات (م44–50)، المنشآت الزراعية (م53)، التحفيز (م54)، دراسات الأثر المروري TIS (م59)، الطلب عبر المركبات (م60).']
+        ]) +
+        '<div class="mt-2"><a href="'+rakPdfUrl+'" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-amber-300 underline"><i class="fa-solid fa-link ml-1"></i> رابط التحميل المباشر للائحة 2026: '+rakPdfUrl+'</a></div>';
+    if(rakIn) rakIn.insertAdjacentHTML('beforeend', r5Summary);
+}
+
+})();
+</script>
+
+<script>
+/* ============================================================================
+   URBANMIND V14 — FORMULAS, EQUATIONS & UNIT CONVERTER TAB (TAB 13)
+   ============================================================================ */
+(function(){
+var FORMULAS = [{"id": "gross-density", "cat": "كثافات", "sym": "Gross Density (PPH)", "ar": "الكثافة السكانية الإجمالية", "en": "Gross Population Density", "ref": "APA / Time-Saver / RAK Code A", "def": "عدد السكان المقيمين مقسوماً على المساحة الكلية للمخطط أو المجاورة شاملةً الطرق والحدائق والخدمات والتجاري. تُعد المؤشر الأساسي لتصنيف مستوى التجمع العمراني ومقارنة كثافة الأحياء والمدن.", "eqAr": {"type": "frac", "lhs": "الكثافة الإجمالية", "num": "إجمالي عدد السكان (نسمة)", "den": "المساحة الكلية للموقع (هكتار)"}, "eqEn": {"type": "frac", "lhs": "Gross Density", "num": "Total Population (persons)", "den": "Total Site Area (Ha)"}, "unit": "نسمة / هكتار (pph)", "bench": "ريفي: ≤ 8 | ضواحي: 9–50 | حضري متوسط: 50–120 | كثيف: > 120", "ex": "مجاورة مساحتها الكلية 90 هكتاراً (900,000 م²) ويقطنها 4,500 نسمة ← الكثافة الإجمالية = 4,500 ÷ 90 = <b>50.0 نسمة / هكتار</b>.", "pitfall": "الخلط بين الكثافة الإجمالية والصافية خطأ جسيم؛ الكثافة الإجمالية تكون عادةً حوالي 50% من الكثافة الصافية في المجاورات المتوازنة."}, {"id": "net-density", "cat": "كثافات", "sym": "Net Density", "ar": "الكثافة السكانية الصافية", "en": "Net Residential Population Density", "ref": "Time-Saver Standards / GOPP", "def": "عدد السكان مقسوماً على مساحة الأراضي السكنية الصافية فقط (القسائم والبلوكات السكنية، بعد استبعاد الطرق الرئيسية والحدائق العامة والمدارس والخدمات).", "eqAr": {"type": "frac", "lhs": "الكثافة الصافية", "num": "إجمالي عدد السكان (نسمة)", "den": "المساحة السكنية الصافية فقط (هكتار)"}, "eqEn": {"type": "frac", "lhs": "Net Density", "num": "Total Population (persons)", "den": "Net Residential Land Area (Ha)"}, "unit": "نسمة / هكتار سكني صافٍ", "bench": "فيلات إماراتية 30×30م: ~88 ن/هـ صافٍ | عمارات متوسطة: 150–300 | عالية: > 350", "ex": "في نفس المجاورة (4,500 نسمة)، إذا كانت الأراضي السكنية الصافية تمثل 50% (= 45 هكتاراً) ← الكثافة الصافية = 4,500 ÷ 45 = <b>100.0 نسمة / هكتار صافٍ</b>.", "pitfall": "في لائحة قانون 119 المصري، تُستبعد الجبانات والأراضي الزراعية والصحراوية والمسطحات المائية عند حساب الكثافة الإجمالية للعمران."}, {"id": "du-density", "cat": "كثافات", "sym": "DU/Ha", "ar": "كثافة الوحدات السكنية (إجمالية وصافية)", "en": "Dwelling Unit Density (Gross & Net)", "ref": "APA / SmartCode / RAK Tables", "def": "عدد الوحدات السكنية (فيلات أو شقق) لكل هكتار واحد، وهو مؤشر أدق من الكثافة السكانية في الدراسات العقارية وشبكات المرافق لأنه لا يتأثر بتغير حجم الأسرة عبر الزمن.", "eqAr": {"type": "frac", "lhs": "كثافة الوحدات", "num": "إجمالي عدد الوحدات السكنية", "den": "المساحة الكلية أو السكنية الصافية (هكتار)"}, "eqEn": {"type": "frac", "lhs": "DU Density", "num": "Total Dwelling Units (DU)", "den": "Gross or Net Area (Ha)"}, "unit": "وحدة سكنية / هكتار (du/ha)", "bench": "مواطنون ضواحي: 4–6 وحدة/هـ إجمالي | تاون هاوس: 15–30 | شقق: 40–100+", "ex": "مشروع يضم 500 وحدة سكنية على 80 هكتاراً (منها 40 هكتاراً سكنياً صافياً) ← الكثافة الإجمالية = 500 ÷ 80 = <b>6.25 وحدة/هكتار</b>، والصافية = 500 ÷ 40 = <b>12.5 وحدة/هكتار</b>.", "pitfall": "دائماً حدد بوضوح في جدول المخطط هل القيمة إجمالية (Gross DU/Ha) أم صافية (Net DU/Ha)."}, {"id": "occupancy-rate", "cat": "كثافات", "sym": "PPR", "ar": "معدل التزاحم (إشغال الغرفة)", "en": "Room Occupancy Rate (Persons per Room)", "ref": "UN-Habitat / Housing Standards", "def": "مؤشر لقياس جودة الحياة السكنية والازدحام الداخلي داخل الوحدة السكنية بقسمة عدد أفراد الأسرة على عدد الغرف الصالحة للمعيشة والنوم (دون المطابخ والحمامات).", "eqAr": {"type": "frac", "lhs": "معدل التزاحم", "num": "عدد أفراد الأسرة بالوحدة", "den": "عدد غرف السكن (نوم + معيشة)"}, "eqEn": {"type": "frac", "lhs": "Occupancy Rate", "num": "Household Members", "den": "Habitable Rooms"}, "unit": "فرد / غرفة", "bench": "مريح: ≤ 1.0 | مقبول: 1.0–1.5 | مزدحم: > 2.0 | مزدحم بشدة: > 3.0", "ex": "أسرة من 6 أفراد تسكن في شقة بها 3 غرف نوم وصالة معيشة (4 غرف) ← معدل التزاحم = 6 ÷ 4 = <b>1.5 فرد / غرفة</b> (مقبول).", "pitfall": "لا تدخل الممرات والمطابخ ودورات المياه ضمن عدد الغرف الصالحة للسكن عند حساب مؤشر التزاحم."}, {"id": "gross-net-rel", "cat": "كثافات", "sym": "Gross / Net Ratio", "ar": "العلاقة الرياضية بين الكثافة الإجمالية والصافية", "en": "Gross-to-Net Density Conversion", "ref": "Urban Planning Mathematics", "def": "معادلة تحويل سريعة تربط الكثافة الإجمالية بالكثافة الصافية عبر نسبة الاستعمال السكني الصافي من إجمالي مساحة الموقع.", "eqAr": {"type": "linear", "expr": "الكثافة الإجمالية  =  الكثافة الصافية  ×  نسبة المساحة السكنية الصافية"}, "eqEn": {"type": "linear", "expr": "Gross Density  =  Net Density  ×  (Net Residential Area / Total Area)"}, "unit": "نسمة / هكتار أو وحدة / هكتار", "bench": "نسبة السكني الصافي عادةً 0.45 إلى 0.55", "ex": "إذا كانت الكثافة الصافية المستهدفة 100 نسمة/هكتار ونسبة السكني الصافي بالميزانية 50% (0.50) ← الكثافة الإجمالية = 100 × 0.50 = <b>50 نسمة / هكتار</b>.", "pitfall": "تُفيد هذه العلاقة في التحقق الفوري من اتساق جداول المخطط العام مع ميزانية الأراضي."}, {"id": "far-fsi", "cat": "كتل ومساحات", "sym": "FAR / FSI", "ar": "معامل الاستغلال البنائي (معامل المسطحات البنائية)", "en": "Floor Area Ratio / Floor Space Index", "ref": "APA / Spacemate / RAK 2026 Art.4", "def": "النسبة بين إجمالي المساحات الدورية المبنية في جميع الأدوار (GFA) إلى مساحة قطعة الأرض. يتحكم مباشرةً في كثافة البناء والحجم الكلي المسموح تشييده على القطعة.", "eqAr": {"type": "frac", "lhs": "معامل الاستغلال", "num": "إجمالي المسطحات البنائية لجميع الأدوار", "den": "مساحة قطعة الأرض"}, "eqEn": {"type": "frac", "lhs": "FAR (FSI)", "num": "Gross Floor Area (GFA)", "den": "Plot Land Area"}, "unit": "نسبة لا بُعدية (مثال: 1.5 أو 2.0)", "bench": "فيلات T3: 0.6–1.3 | عمارات T4: 1.5–3.0 | مراكز T5–T6: 3.5–10+", "ex": "قطعة أرض مساحتها 1,200 م² أُنشئ عليها مبنى بإجمالي مساحة دورية 3,600 م² ← معامل الدورية = 3,600 ÷ 1,200 = <b>3.0</b>.", "pitfall": "معامل FAR وحده لا يحدد شكل المبنى؛ لا بد من قراءته مع النسبة البنائية (BCP) والارتفاع الأقصى."}, {"id": "bcp-gsi", "cat": "كتل ومساحات", "sym": "BCP / GSI", "ar": "النسبة البنائية (النسبة البنائية الأرضية)", "en": "Building Coverage Percentage / Ground Space Index", "ref": "RAK Code A / Code D / Spacemate", "def": "نسبة مسطح البصمة الأرضية للمبنى (مسقط الدور الأرضي والملاحق المسقوفة) إلى إجمالي مساحة قطعة الأرض. تحدد مقدار الفراغ المفتوح والارتدادات المتبقية على مستوى الأرض.", "eqAr": {"type": "frac", "lhs": "النسبة البنائية (%)", "num": "مسطح الدور الأرضي (بصمة المبنى)", "den": "مساحة قطعة الأرض", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "BCP (%)", "num": "Building Footprint Area", "den": "Plot Land Area", "mul": "× 100"}, "unit": "نسبة مئوية (%) أو كسر عشري (GSI)", "bench": "فيلة تقليدية Code D: 65% | ثلثان: 70% | مدمج > 3 قطع: 50% | صناعي 2026: 50%", "ex": "قسيمة فيلا مساحتها 900 م² ومساحة الدور الأرضي والملاحق 585 م² ← النسبة البنائية = (585 ÷ 900) × 100 = <b>65%</b> (GSI = 0.65).", "pitfall": "لا يمكن للبصمة الفعلية أن تتجاوز حدود البناء بعد الارتدادات الهندسي حتى لو كانت نسبة BCP النظامية أعلى."}, {"id": "avg-floors", "cat": "كتل ومساحات", "sym": "L = FAR / GSI", "ar": "متوسط عدد الأدوار المكافئ", "en": "Average Number of Floors (Spacemate L)", "ref": "Spacemate — Berghauser Pont & Haupt", "def": "يربط مباشرةً بين معامل الاستغلال البنائي (FAR) والنسبة البنائية الأرضية (GSI) لاستنتاج عدد الأدوار الفعلي اللازم لتحقيق كامل إجمالي المسطحات البنائية المسموحة.", "eqAr": {"type": "frac", "lhs": "متوسط عدد الأدوار", "num": "معامل الاستغلال البنائي", "den": "النسبة البنائية الأرضية (كسر عشري)"}, "eqEn": {"type": "frac", "lhs": "L (Floors)", "num": "FAR (FSI)", "den": "GSI (Coverage Decimal)"}, "unit": "عدد أدوار (Floors)", "bench": "G+1 = 2 | G+3 = 4 | G+5 = 6", "ex": "قطعة بمعامل FAR = 2.4 ونسبة تغطية 40% (0.40) ← عدد الأدوار = 2.4 ÷ 0.40 = <b>6 أدوار</b> (أرضي + 5 متكرر).", "pitfall": "إذا فرض الكود حداً أقصى للارتفاع (مثلاً 4 أدوار) مع تغطية 40%، فإن أقصى FAR فعلي ممكن هو 1.6 فقط وليس 2.4."}, {"id": "osr-spacemate", "cat": "كتل ومساحات", "sym": "OSR", "ar": "معامل الفراغ المفتوح (مصفوفة Spacemate)", "en": "Open Space Ratio (Spacemate OSR)", "ref": "Spacemate — Berghauser Pont & Haupt", "def": "يقيس كمية الفراغ الأرضي غير المبني المتاح لكل متر مربع واحد من إجمالي المسطحات البنائية (GFA)، ويعبّر عن مدى ضغط الاستخدام البشري على الفراغ الخارجي.", "eqAr": {"type": "frac", "lhs": "معامل الفراغ المفتوح", "num": "1 − النسبة البنائية (كسر عشري)", "den": "معامل الاستغلال البنائي"}, "eqEn": {"type": "frac", "lhs": "OSR", "num": "1 − GSI", "den": "FSI (FAR)"}, "unit": "م² فراغ مفتوح / م² مبني (GFA)", "bench": "كثيف جداً: < 0.2 | متوازن: 0.25–0.50 | منخفض الكثافة/حدائقي: > 0.75", "ex": "مبنى بـ FAR = 2.4 وتغطية 40% (0.40) ← OSR = (1 − 0.40) ÷ 2.4 = <b>0.25 م² مفتوح/م² مبني</b>. لو تحول لبرج بتغطية 20% يرتفع OSR إلى <b>0.333</b>.", "pitfall": "تذكر استخدام GSI ككسر عشري (0.40) وليس كنسبة مئوية (40) داخل البسط."}, {"id": "gfa-bua-nla", "cat": "كتل ومساحات", "sym": "GFA / BUA / NLA", "ar": "العلاقة بين إجمالي المسطحات البنائية والمبنية وصافي التأجير", "en": "GFA, BUA & Net-to-Gross Efficiency Ratio", "ref": "RICS / Real Estate Feasibility", "def": "ثلاثة مفاهيم جوهرية في التخطيط واقتصاديات التطوير: GFA للمعاملات التخطيطية (FAR)، و BUA لحساب تكلفة المقاولات (يشمل المواقف والخدمات والأقبية)، و NLA/NSA للمبيعات والعوائد.", "eqAr": {"type": "frac", "lhs": "كفاءة التصميم (%)", "num": "صافي المساحة القابلة للتأجير أو البيع", "den": "إجمالي المسطحات البنائية", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "Efficiency (%)", "num": "NLA (or NSA)", "den": "GFA", "mul": "× 100"}, "unit": "م² · والكفاءة بالنسبة المئوية (%)", "bench": "كفاءة سكنية: 78%–85% | مكاتب: 75%–82% | مولات: 60%–70%", "ex": "مبنى إجمالي مساحته الدورية GFA = 10,000 م² وصافي المساحة التأجيرية NLA = 8,000 م² (كفاءة <b>80%</b>)، ومع إضافة بدروم جراجات 2,500 م² تصبح BUA = <b>12,500 م²</b>.", "pitfall": "حساب تكلفة الإنشاء على GFA وتجاهل جراجات البدرومات والسطح (BUA) يسبب عجزاً مالياً بنسبة 20%–35% في دراسة الجدوى."}, {"id": "setback-envelope", "cat": "كتل ومساحات", "sym": "Buildable Envelope", "ar": "مساحة حدود البناء الصافية بعد الارتدادات", "en": "Buildable Plot Envelope Area", "ref": "RAK Building Regs 2026 / Code D", "def": "أقصى مساحة أرضية مسموح بوضع البناء داخلها هندسياً بعد خصم الارتداد الأمامي (جهة الشارع) والخلفي والارتدادين الجانبيين من أبعاد القسيمة.", "eqAr": {"type": "linear", "expr": "مساحة الحدود بناء  =  (العرض − 2 × الارتداد الجانبي)  ×  (العمق − الأمامي − الخلفي)"}, "eqEn": {"type": "linear", "expr": "Envelope Area  =  (W − 2 × S_side)  ×  (D − S_front − S_rear)"}, "unit": "متر مربع (م²)", "bench": "البصمة المسموحة = الأصغر بين (مساحة المغلف) و(مساحة القسيمة × BCP)", "ex": "قسيمة 30×30م (900 م²) بارتداد أمامي 2م وجانبيين 1.5م وخلفي 1.5م ← (30 − 3) × (30 − 3.5) = 27 × 26.5 = <b>715.5 م² (79.5%)</b>؛ وبما أن BCP = 65% (= 585 م²) تكون البصمة المسموحة 585 م².", "pitfall": "في القسائم الصغيرة أو المثلثة قد يكون حدود البناء بعد الارتدادات أصغر من نسبة BCP، فيصبح الحدود بناء هو القيد الحاكم."}, {"id": "ca-apt-yield", "cat": "كتل ومساحات", "sym": "Ref. Manual Apt Yield", "ar": "تقدير عدد الشقق من منطقة التخطيط (معادلة الدليل المرجعي)", "en": "Residential Apartment Units Yield (Ref. Manual)", "ref": "RAK Code A Code A p.47 & Code B p.30", "def": "المعادلة المعتمدة في بلدية رأس الخيمة لتقدير عدد الشقق السكنية في مرحلة المخطط المبدئي (Concept) انطلاقاً من مساحة نطاق الشقق، مع خصم 50% للطرق والخدمات و10% للممرات والسلالم.", "eqAr": {"type": "frac", "lhs": "عدد الشقق", "num": "(مساحة المنطقة × 0.5) × النسبة البنائية × عدد الأدوار السكنية × 0.9", "den": "متوسط مساحة الشقة (150 م²)"}, "eqEn": {"type": "frac", "lhs": "Apartment Units", "num": "(Zone Area × 0.5) × BCP × Res. Floors × 0.9", "den": "Avg. Apartment Area (150 m²)"}, "unit": "وحدة سكنية (شقة)", "bench": "BCP المبدئي = 60% | يُستبعد الدور الأرضي التجاري | متوسط الشقة = 150 م²", "ex": "نطاق شقق مساحته 100,000 م² بارتفاع 4 أدوار سكنية وتغطية 60% ← مساحة القسائم = 50,000 م² ← عدد الشقق = (50,000 × 0.60 × 4 × 0.9) ÷ 150 = <b>720 شقة</b>.", "pitfall": "في مرحلة المخطط التفصيلي (Detail) تُستخدم مساحة القسائم الفعلية مباشرة دون الضرب في 0.5."}, {"id": "lu-efficiency", "cat": "ميزانية أراضٍ", "sym": "Saleable %", "ar": "نسبة كفاءة الأراضي القابلة للتطوير والبيع", "en": "Land Use Efficiency / Saleable Area Ratio", "ref": "Masterplan Land Economics / APA", "def": "نسبة الأراضي المدرة للعائد (السكني الصافي + التجاري والاستثماري) من إجمالي مساحة المشروع. تقيس التوازن بين الجدوى المالية وجودة الفراغ العام.", "eqAr": {"type": "frac", "lhs": "كفاءة الأرض (%)", "num": "مساحة الأراضي السكنية الصافية + التجارية والمختلطة", "den": "المساحة الكلية للمشروع", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "Saleable Ratio (%)", "num": "Net Residential + Commercial Area", "den": "Total Masterplan Area", "mul": "× 100"}, "unit": "نسبة مئوية (%)", "bench": "المتوازن: 52%–62% | أقل من 48%: ضعف جدوى | أعلى من 68%: عجز خدمات وطرق", "ex": "مخطط 100 هكتار يضم 50 هكتاراً سكنياً صافياً + 6 هكتارات تجارية ← كفاءة الأراضي القابلة للبيع = (56 ÷ 100) × 100 = <b>56%</b>.", "pitfall": "رفع الكفاءة فوق 68% غالباً يأتي على حساب تضييق الشوارع أو تقليص الحدائق مما يرفضه المراجع البلدي."}, {"id": "villa-yield", "cat": "ميزانية أراضٍ", "sym": "Code D Yield", "ar": "تقدير عدد قسائم الفيلات والسكان (معادلة Code D)", "en": "Residential Villa Parcel & Population Yield", "ref": "RAK Code D p.58 & الدليل المرجعي p.46", "def": "المعادلة السريعة المعتمدة لتقدير عدد القسائم السكنية وعدد السكان المتوقعين داخل حدود مجاورة إماراتية مقترحة قبل رسم التقسيم التفصيلي.", "eqAr": {"type": "frac", "lhs": "عدد القسائم", "num": "مساحة المجاورة × 0.5 (خصم 50% طرق وخدمات)", "den": "مساحة القسيمة القياسية (900 م²)"}, "eqEn": {"type": "frac", "lhs": "Villa Parcels", "num": "Neighborhood Area × 0.5", "den": "Standard Parcel Size (900 m²)"}, "unit": "قسيمة · ثم (عدد القسائم × متوسط الأسرة = السكان)", "bench": "ضواحي: × 7.9 (أو 6.92 المحدث) | ريفي: × 8.7 | حضري: × 6.57", "ex": "مثال Code D (المنطقة A، مساحة 820,000 م²): صافي القسائم = 410,000 م² ÷ 900 = <b>455 قسيمة</b> ← السكان = 455 × 7.9 = <b>3,595 نسمة</b> (ضمن نطاق 3,000–6,000).", "pitfall": "استبعد أولاً الأودية وخطوط الضغط العالي والطرق الشريانية الخارجية قبل تطبيق معامل 0.5."}, {"id": "row-ratio", "cat": "ميزانية أراضٍ", "sym": "ROW %", "ar": "نسبة شبكة الطرق وحرم الشوارع", "en": "Road & Right-of-Way Allocation Ratio", "ref": "APA / UN-Habitat / Alain Bertaud", "def": "نسبة المساحة المخصصة لحرم الشوارع والأرصفة والسكك ومواقف الطريق إلى المساحة الكلية للمخطط.", "eqAr": {"type": "frac", "lhs": "نسبة الطرق (%)", "num": "إجمالي مساحة حرم الطرق والسكك", "den": "المساحة الكلية للموقع", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "ROW Ratio (%)", "num": "Total Street & Sikka ROW Area", "den": "Total Site Area", "mul": "× 100"}, "unit": "نسبة مئوية (%)", "bench": "الأمثل للمجاورات: 18%–25% | هدر أسفلت: > 28% | أحياء وسط مدينة: 25%–30%", "ex": "مخطط 100 هكتار تبلغ مساحة شبكة الشوارع والسكك فيه 22 هكتاراً ← نسبة الطرق = <b>22%</b> (مثالية اقتصادياً وبيئياً).", "pitfall": "التصميم المتعامد (Orthogonal Grid) يعطي عادةً نسبة طرق أقل وأكفأ من الشوارع المنحنية العشوائية."}, {"id": "green-per-capita", "cat": "ميزانية أراضٍ", "sym": "Green m²/Cap", "ar": "نصيب الفرد من المناطق الخضراء والمفتوحة", "en": "Public Open Space per Capita", "ref": "WHO / RAK Code A (7–11 m²/person)", "def": "المساحة الفعلية المخصصة للحدائق والمتنزهات والساحات العامة المفتوحة مقسومة على إجمالي عدد السكان المخدومين.", "eqAr": {"type": "frac", "lhs": "نصيب الفرد من الأخضر", "num": "إجمالي مساحة الحدائق والفراغات المفتوحة (م²)", "den": "إجمالي عدد السكان (نسمة)"}, "eqEn": {"type": "frac", "lhs": "Open Space / Capita", "num": "Total Public Park Area (m²)", "den": "Total Residents"}, "unit": "م² / فرد", "bench": "الحد الأدنى WHO: 9 م²/فرد | ضواحي رأس الخيمة الدليل المرجعي: 11 م²/فرد (3+4+4) | ريفي: 7 م²/فرد", "ex": "حي به 120,000 م² حدائق عامة ويقطنه 8,000 نسمة ← نصيب الفرد = 120,000 ÷ 8,000 = <b>15.0 م² / فرد</b> (يتجاوز المعيار).", "pitfall": "لا تُحسب الجزر الوسطى الضيقة للطرق السريعة أو الأراضي الصحراوية غير المطوّرة ضمن الحدائق الفعالة."}, {"id": "merge-sub", "cat": "ميزانية أراضٍ", "sym": "Code D Merge/Split", "ar": "ضوابط دمج وتقسيم القسائم (دليل Code D)", "en": "Parcel Merging & Subdivision Formulas (Code D)", "ref": "RAK Code D — pp.98–113", "def": "القواعد الحسابية الحاكمة لدمج عدة قسائم متجاورة أو تقسيم قسيمة كبيرة مع الحفاظ على تجانس النسيج السكني وخط الواجهة.", "eqAr": {"type": "linear", "expr": "أقصى دمج = 6 قسائم (3 واجهة × 2 عمق) | ارتداد الشارع = 1.5 × العادي | أدنى تقسيم ≥ 1.5 × القياسية"}, "eqEn": {"type": "linear", "expr": "Max Merge = 6 Plots (3×2) | S_street = 1.5 × SS | Min Subdivide ≥ 1.5 × A_std (fit 15×15m)"}, "unit": "قسائم · وم² · ونسبة BCP", "bench": "BCP = 65% إذا المساحة < 3A | و BCP = 50% إذا المساحة > 3A", "ex": "دمج 4 قسائم (4 × 900 = 3,600 م² > 3 × 900) ← تنخفض نسبة البناء BCP تلقائياً إلى <b>50%</b> (= 1,800 م² بصمة قصوى)، مع فاصل واجهة = 2 × ارتداد الجار.", "pitfall": "يُحظر تماماً دمج القسائم عبر طريق أو سكة مشاة قائمة، كما لا يجوز تقسيم مبنى قائم على قطعتين."}, {"id": "ca-mosque", "cat": "خدمات ومرافق", "sym": "MPU & Mosque Area", "ar": "حساب عدد ومساحة قسيمة المسجد (Ref. Manual)", "en": "Mosque Count & Parcel Sizing (Ref. Manual MPU)", "ref": "RAK Code A Code A Appendix A.1 & Code B", "def": "يُحسب عدد المساجد من مساحة التخطيط بقسمتها على «وحدة تخطيط المسجد MPU» (مساحة دائرة نطاق المشي)، وتُحسب مساحة القسيمة من عدد المصلين (35% من السكان) مضافاً إليها مساحة المواقف.", "eqAr": {"type": "linear", "expr": "المساجد اليومية المعدّلة = (المساحة ÷ 38.5) − (المساحة ÷ 154) | مساحة القسيمة = (المصلون × 4.4) + (المصلون ÷ 20 × 35)"}, "eqEn": {"type": "linear", "expr": "Daily_adj = (Ha / 38.5) − (Ha / 154) | Plot Area = (W × 4.4) + (W / 20 × 35)"}, "unit": "عدد مساجد · وم² أرض", "bench": "جامع ضواحي: 3.5 م²/مصلي | جامع ريفي: 5.6 م² | جامع حضري: 1.8 م² (G+2+قبو)", "ex": "مشروع 1,200 هكتار و 47,500 نسمة (16,625 مصلياً): يومي أولي = 31، جامع = 8 ← يومي معدّل = <b>23 مسجداً</b>. نصيب المسجد اليومي = 536 مصلياً ← القسيمة = (536×4.4) + (27×35) = <b>3,303 م²</b>.", "pitfall": "في الريف يُضاف +2 موقف للمسجد اليومي و+3 للجامع (الإمام/المؤذن/الخادم)، وتُخصم المزارع المحفوظة قبل القسمة على MPU."}, {"id": "ca-musalla", "cat": "خدمات ومرافق", "sym": "Musalla Area", "ar": "حساب مساحة المصليات في المباني غير السكنية (ملحق C)", "en": "Non-Residential Prayer Rooms (Ref. Manual Appendix C)", "ref": "RAK Code A Code A — Appendix C (p.93)", "def": "تُفرض مصليات داخلية مكمّلة (لا تغني عن المساجد المستقلة) في المولات والمكاتب والفنادق والمباني الرياضية استناداً إلى عدد مواقف المركبات غير السكنية المطلوبة.", "eqAr": {"type": "linear", "expr": "المصلون = 0.35 × المواقف غير السكنية | مصلى الرجال = 0.5 × المصلون × 1 م² | مصلى النساء = 0.5 × المصلون × 1 م²"}, "eqEn": {"type": "linear", "expr": "WP = 0.35 × Non-Res Parking | Male Area = 0.5 × WP × 1 m² | Female Area = 0.5 × WP × 1 m²"}, "unit": "متر مربع (م²)", "bench": "التوزيع المتساوي 50% رجال / 50% نساء بمعدل 1 م²/مصلي", "ex": "مجمع تجاري وإداري يتطلب 200 موقف مركبات ← المصلون WP = 0.35 × 200 = <b>70 مصلياً</b> ← يلزم مصلى رجال <b>35 م²</b> + مصلى نساء <b>35 م²</b>.", "pitfall": "المصلى مرفق مكمّل داخل المبنى ولا يُخصم من عدد المساجد اليومية أو الجامعة المطلوبة للمخطط."}, {"id": "ca-threshold", "cat": "خدمات ومرافق", "sym": "50% Threshold Rule", "ar": "عتبة الاحتياج للخدمات المعتمدة على السكان (قاعدة 50%)", "en": "Population Threshold Facility Count (50% Rule)", "ref": "RAK Code A Code A — Appendix A.2 (p.92)", "def": "تُطبق على المرافق التي لها مدى سكاني أدنى وأقصى (المكتبة، البريد، المكتب الحكومي، المركز الرياضي، المجلس، المركز الصحي، المستشفى) بحساب متوسط النطاق وتقريبه عند عتبة 0.5.", "eqAr": {"type": "frac", "lhs": "متوسط العدد المطلوب", "num": "(السكان ÷ أقصى سكان للمرفق) + (السكان ÷ أدنى سكان للمرفق)", "den": "2"}, "eqEn": {"type": "frac", "lhs": "Avg. Facilities", "num": "(Pop / Max Pop) + (Pop / Min Pop)", "den": "2"}, "unit": "عدد مرافق (يقرب للأقرب عند عتبة 0.5)", "bench": "إذا كان المتوسط < 0.5 ← المطلوب 0 | إذا كان 0.5 ≤ المتوسط < 1.5 ← المطلوب 1", "ex": "مكتبة عامة (نطاق 30,000–40,000 نسمة): عند 45,000 نسمة ← المتوسط = (1.125 + 1.50) ÷ 2 = <b>1.3125 ← مكتبة واحدة</b>. عند 55,000 نسمة ← المتوسط = (1.375 + 1.833) ÷ 2 = <b>1.604 ← مكتبتان</b>.", "pitfall": "المجلس (Majlis) يُحسب على سكان المواطنين فقط، بينما المركز المجتمعي (Community Center) يُحسب على السكان مختلطي الجنسيات فقط."}, {"id": "ca-schools", "cat": "خدمات ومرافق", "sym": "School Demand", "ar": "حساب عدد الطلاب والمدارس الحكومية والخاصة (Ref. Manual)", "en": "Public & Private School Demand (Ref. Manual)", "ref": "RAK Code A Code A (p.60) & Code B (p.52)", "def": "يُقدر عدد الطلاب في كل مرحلة عمرية بنسبة ديموغرافية منفصلة للمواطنين ومختلطي الجنسيات، ثم يُوزعون بين المدارس الحكومية والخاصة وتُخصص أحجام المدارس بأقل عدد قسائم ممكن.", "eqAr": {"type": "linear", "expr": "طلاب حكومي = سكان المواطنون × نسبة المرحلة × نسبة الحكومي | طلاب خاص = (مواطنون × إجمالي الطلاب × نسبة الخاص) + (مختلط × نسبة طلابهم)"}, "eqEn": {"type": "linear", "expr": "Public = Pop_Em × Age% × Pub% | Private = (Pop_Em × Tot% × Priv%) + (Pop_Mix × Tot_Mix% × 100%)"}, "unit": "طالب · ثم عدد مدارس", "bench": "ضواحي: 71% حكومي / 29% خاص | ريفي: 80% / 20% | حضري: 64.6% / 35.4% | حد أدنى حكومي 600 وخاص 550", "ex": "ضواحي بها 10,000 مواطن: طلاب حلقة 1 (14.3%) في الحكومي (71%) = 10,000 × 0.143 × 0.71 = <b>1,015 طالباً</b> (أكبر من الحد الأدنى 600) ← تلزم <b>مدرسة حلقة 1 واحدة</b> (سعة 1,200، أرض 36,400 م²).", "pitfall": "100% من طلاب السكان مختلطي الجنسيات في معادلات بلدية رأس الخيمة يُوجّهون إلى المدارس الخاصة K12."}, {"id": "ca-retail", "cat": "خدمات ومرافق", "sym": "Retail Plot Sizing", "ar": "حساب إجمالي المسطحات البنائية والأرض للتجاري (Ref. Manual)", "en": "Community & District Retail GFA & Plot Area", "ref": "RAK Code A Code A (p.64) & Code B (p.56)", "def": "يحسب إجمالي المسطحات البنائية التجارية بضرب عدد السكان في نصيب الفرد (0.8 م² للحي و1.2 م² للقطاع)، ثم تقسم على عدد المراكز وتُستنتج مساحة القسيمة من عدد الأدوار والنسبة البنائية.", "eqAr": {"type": "frac", "lhs": "مساحة أرض المركز الواحد", "num": "(السكان × نصيب الفرد التجاري) ÷ عدد المراكز", "den": "عدد الأدوار × النسبة البنائية"}, "eqEn": {"type": "frac", "lhs": "Plot Area / Unit", "num": "(Pop × GFA_per_Cap) / Units", "den": "Floors × BCP"}, "unit": "م² أرض و م² GFA", "bench": "تجاري حي: 0.8 م²/فرد · دوران · 65% | مول قطاع: 1.2 م²/فرد · 3 أدوار · 50%", "ex": "سكان 10,000 نسمة ← عدد مراكز الحي = 10,000 ÷ 5,000 = <b>2 مركز</b>، GFA إجمالي = 8,000 م² (4,000 م²/مركز) ← مساحة القسيمة = 4,000 ÷ (2 × 0.65) = <b>3,077 م²</b> (تُقرّب إلى 3,100 م²).", "pitfall": "لا تدخل المحال في الدور الأرضي لعمارات السكني-تجاري ضمن حساب قسائم التجاري المجتمعي المستقلة."}, {"id": "settlement-score", "cat": "خدمات ومرافق", "sym": "Context Score", "ar": "معادلة تصنيف سياق التجمع العمراني (رأس الخيمة)", "en": "Weighted Settlement Context Appraisal Score", "ref": "RAK Code D Table 1 (p.42) & الدليل المرجعي (p.28)", "def": "معادلة موزونة لتصنيف أي منطقة تطويرية (قائمة أو مقترحة) إلى ريفي أو ضواحي أو حضري لتحديد أي نسخة من معايير الخدمات الدليل المرجعي تُطبق عليها.", "eqAr": {"type": "linear", "expr": "النتيجة = (كثافة قائمة × 0.125) + (كثافة مقترحة × 0.125) + (توفر الخدمات × 0.35) + (الجغرافيا × 0.40)"}, "eqEn": {"type": "linear", "expr": "Score = (D_exist × 0.125) + (D_prop × 0.125) + (Fac × 0.35) + (Geo × 0.40)"}, "unit": "درجة من 1.0 إلى 5.0", "bench": "1.0–2.4: ريفي | 2.5–3.6: ضواحي | 3.6–5.0: حضري", "ex": "مثال الدليل (المنطقة Z): كثافة قائمة 1، مقترحة 3، خدمات 3، جغرافيا 3 ← النتيجة = 0.125 + 0.375 + 1.05 + 1.20 = <b>2.75 ← ضواحي (Suburban)</b>.", "pitfall": "يُحدد سياق التجمع العمراني دائماً على مستوى المشروع الكلي وليس على مستوى كل بلدة أو بلوك منفصل."}, {"id": "utility-sizing", "cat": "خدمات ومرافق", "sym": "kVA & DSS Count", "ar": "حساب حمل الكهرباء وعدد المحولات (بمعامل التباين)", "en": "Electrical Demand & Transformer Count (Diversity)", "ref": "Utility Planning / RAK Code D (DSS 5×9m)", "def": "تقدير الحمل التصميمي المتزامن بالكيلو فولت أمبير (kVA) وعدد محطات محولات التوزيع (DSS) اللازمة لخدمة القسائم السكنية والتجارية دون تضخيم مبالغ فيه.", "eqAr": {"type": "frac", "lhs": "الحمل التصميمي (ك.ف.أ)", "num": "(مجموع الأحمال المتصلة ك.و) × معامل التباين", "den": "معامل القدرة (0.9)"}, "eqEn": {"type": "frac", "lhs": "Design Load (kVA)", "num": "Total Connected Load (kW) × Diversity Factor", "den": "Power Factor (0.9)"}, "unit": "ك.ف.أ (kVA) · وعدد محولات", "bench": "تباين سكني أولي: 0.60–0.70 | محول قياسي: 1,000 kVA | قطعة DSS (Code D): 5×9م = 45 م²", "ex": "500 فيلا بحمل أدنى 15 ك.و/فيلا ومعامل تباين 0.65 ← الحمل = (500 × 15 × 0.65) ÷ 0.9 = <b>5,417 ك.ف.أ</b> ← عدد المحولات (سعة 1,000) = <b>6 محولات</b> (أرض 270 م²).", "pitfall": "الطلب اليومي للمياه = السكان × الاستهلاك (م³/يوم)، والذروة اليومية = × 1.5، والصرف الصحي ≈ 80% من استهلاك المياه."}, {"id": "link-node", "cat": "نقل ومشاة", "sym": "Link-Node Ratio", "ar": "مؤشر اتصالية شبكة الشوارع (نسبة الوصلات للعقد)", "en": "Street Network Link-Node Ratio", "ref": "CNU / LEED-ND / Mobility Standards", "def": "يقيس مدى ترابط شبكة الشوارع وتعدد المسارات البديلة للوصول إلى نفس الوجهة بقسمة عدد الوصلات (مقاطع الشوارع بين التقاطعات) على عدد العقد (التقاطعات + نهايات الشوارع المسدودة).", "eqAr": {"type": "frac", "lhs": "مؤشر الاتصالية", "num": "عدد وصلات الشوارع بين التقاطعات", "den": "عدد التقاطعات + نهايات الشوارع المسدودة"}, "eqEn": {"type": "frac", "lhs": "Link-Node Ratio", "num": "Number of Street Links", "den": "Number of Nodes (Intersections + Cul-de-sacs)"}, "unit": "نسبة لا بُعدية", "bench": "ضعيف (شجري): < 1.2 | مقبول للمشي: ≥ 1.4 | ممتاز (شبكي): 1.6–2.0", "ex": "مجاورة تضم 64 وصلة طريق و 40 عقدة (تقاطعات ونهايات) ← مؤشر الاتصالية = 64 ÷ 40 = <b>1.60</b> (اتصالية ممتازة).", "pitfall": "كلما كثرت الشوارع المسدودة (Cul-de-sacs) زاد المقام (العقد) وانخفض المؤشر؛ واختراقها بسكك مشاة يعوّض ذلك لحركة المشاة."}, {"id": "ped-shed", "cat": "نقل ومشاة", "sym": "Ped-Shed %", "ar": "كفاءة نطاق المشي الفعلي (Ped-Shed)", "en": "Pedestrian Shed Efficiency Ratio", "ref": "CNU / Abu Dhabi USDM / TOD", "def": "نسبة المساحة التي يمكن للمشاة الوصول إليها فعلياً عبر شبكة الشوارع والسكك خلال مسافة مشي محددة (400م أو 800م) مقارنةً بمساحة الدائرة الهوائية النظرية حول نفس المركز.", "eqAr": {"type": "frac", "lhs": "كفاءة المشي (%)", "num": "المساحة الفعلية المخدومة عبر شبكة الشوارع", "den": "مساحة الدائرة الهوائية (ط × نق²)", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "Ped-Shed (%)", "num": "Actual Walkable Network Area", "den": "Theoretical Circle Area (π × r²)", "mul": "× 100"}, "unit": "نسبة مئوية (%)", "bench": "ضعيف: < 50% | جيد (مستهدف): ≥ 60% | ممتاز: > 70%", "ex": "مركز حي بنطاق 400م (مساحة الدائرة النظرية = π × 400² = 50.27 هكتار) يغطي مشياً عبر الشبكة 32 هكتاراً ← Ped-Shed = (32 ÷ 50.27) × 100 = <b>63.7%</b> (جيد).", "pitfall": "لا تعتمد الدوائر الهوائية الصماء في تقارير العرض النهائي؛ استخدم Network Analyst في ArcGIS Pro لقياس النطاق الفعلي."}, {"id": "int-density", "cat": "نقل ومشاة", "sym": "Int / km²", "ar": "كثافة التقاطعات الحضرية", "en": "Street Intersection Density", "ref": "LEED-ND / UN-Habitat", "def": "عدد التقاطعات الحقيقية (ثلاثية T أو رباعية، مع استبعاد النهايات المسدودة) في الكيلومتر المربع الواحد. يعكس قصر أطوال البلوكات وسهولة نفاذية المشاة.", "eqAr": {"type": "frac", "lhs": "كثافة التقاطعات", "num": "عدد التقاطعات الحقيقية (دون المسدودة)", "den": "مساحة المنطقة (كم²)"}, "eqEn": {"type": "frac", "lhs": "Intersection Density", "num": "True Intersections Count", "den": "Land Area (km²)"}, "unit": "تقاطع / كم²", "bench": "ضواحي متناثرة: < 40 | حي قابل للمشي (LEED-ND): ≥ 55–80 | قلب مدينة: > 100", "ex": "منطقة مساحتها 1.2 كم² (120 هكتاراً) بها 95 تقاطعاً حقيقياً ← الكثافة = 95 ÷ 1.2 = <b>79.2 تقاطع / كم²</b> (قابلية مشي عالية).", "pitfall": "ارتفاع كثافة التقاطعات ممتاز على الشوارع المحلية للمشاة، لكن يجب إبعاد التقاطعات عن الطرق الشريانية السريعة (أدنى مسافة 400–500م في Code D)."}, {"id": "trip-gen", "cat": "نقل ومشاة", "sym": "Trip Gen (TIS)", "ar": "توليد الرحلات المرورية في ساعة الذروة", "en": "Peak Hour Vehicle Trip Generation", "ref": "ITE Trip Generation Manual / RAK 2026 Art.59", "def": "تقدير عدد الرحلات المرورية (دخول + خروج) المتولدة عن استعمال أرض معين خلال ساعة الذروة الصباحية أو المسائية كأساس لدراسات الأثر المروري (TIS).", "eqAr": {"type": "linear", "expr": "رحلات الذروة  =  (عدد الوحدات أو إجمالي المسطحات البنائية)  ×  معدل توليد الرحلات للاستعمال"}, "eqEn": {"type": "linear", "expr": "Peak Trips  =  (Units or 100m² GFA)  ×  ITE Trip Generation Rate"}, "unit": "رحلة مركبة / ساعة ذروة", "bench": "فيلا منفصلة (ذروة مسائية): ~0.95 رحلة/وحدة | شقة: ~0.45–0.60 | مكاتب: ~1.15/100م²", "ex": "مجاورة تضم 400 فيلا بمعدل ذروة مسائية 0.95 رحلة/فيلا ← الرحلات المتولدة = 400 × 0.95 = <b>380 رحلة / ساعة ذروة</b>.", "pitfall": "في المشاريع متعددة الاستعمالات أو القريبة من النقل العام (TOD) يُطبق معامل خفض للرحلات الداخلية (Internal Capture Reduction)."}, {"id": "parking-rak2026", "cat": "نقل ومشاة", "sym": "Parking (RAK 2026)", "ar": "حساب مواقف المركبات ومساحتها الإجمالية", "en": "Parking Demand & Gross Area Sizing (RAK 2026)", "ref": "RAK Building Regs 2026 (Art. 6, 7, 11, 14, 31)", "def": "حساب عدد المواقف الإلزامية لكل استعمال، ثم تقدير المساحة الأرضية الإجمالية اللازمة للمواقف شاملةً ممرات المناورة والحركة (30–35 م²/موقف) وليس صافي أبعاد الموقف (12.5 م²) فقط.", "eqAr": {"type": "linear", "expr": "عدد المواقف = المساحة الصافية ÷ معدل الكود | المساحة الإجمالية للمواقف = العدد × (30 إلى 35 م²)"}, "eqEn": {"type": "linear", "expr": "Spaces = Net Area / Code Rate | Gross Parking Area = Spaces × (30 to 35 m²)"}, "unit": "موقف · وم²", "bench": "لائحة 2026: فيلا ≥2 | مكاتب ومحال 1/70م² | مطاعم 1/50م² | فنادق 1/4 غرف | مساجد 1/20 مصلي", "ex": "مبنى مكاتب 3,500 م² صافي ← المواقف = 3,500 ÷ 70 = <b>50 موقفاً</b> ← مساحة ساحة المواقف بالممرات = 50 × 35 = <b>1,750 م²</b>.", "pitfall": "ضرب عدد المواقف في 12.5 م² (2.5×5م) يعطي مساحة الباكية فقط ويهمل ممرات الدوران (التي تضاعف المساحة إلى 30–35 م²/سيارة)."}, {"id": "modal-split", "cat": "نقل ومشاة", "sym": "Modal Split %", "ar": "نسبة توزيع الرحلات على وسائط النقل", "en": "Transport Modal Split (Mode Share %)", "ref": "Urban Mobility / Dubai 2040 / TOD", "def": "النسبة المئوية للرحلات اليومية التي تتم عبر كل وسيلة نقل (السيارة الخاصة، النقل الجماعي، المشي، الدراجات) من إجمالي رحلات السكان.", "eqAr": {"type": "frac", "lhs": "حصة الوسيلة (%)", "num": "عدد الرحلات بالوسيلة المحددة", "den": "إجمالي عدد الرحلات بجميع الوسائط", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "Mode Share (%)", "num": "Trips by Specific Mode", "den": "Total Trips (All Modes)", "mul": "× 100"}, "unit": "نسبة مئوية (%)", "bench": "الهدف في المخططات المستدامة: رفع حصة النقل العام والمشي فوق 30%–50%", "ex": "من إجمالي 6,000 رحلة يومية في قطاع حضري، نُفذت 1,200 رحلة بالحافلات والمترو ← حصة النقل الجماعي = (1,200 ÷ 6,000) × 100 = <b>20%</b>.", "pitfall": "تتحسن حصة النقل العام والمشي فقط عند الجمع بين التظليل المناخي، وتقليل مسافات المشي، ورفع انتظام الحافلات."}, {"id": "slope-pct", "cat": "مناخ وموقع", "sym": "Slope %", "ar": "حساب الميل الطبوغرافي للأرض والطرق", "en": "Topographic & Road Grade Percentage", "ref": "Site Planning (Russ) / RAK Code D p.56", "def": "نسبة التغير الرأسي في المنسوب (فرق خطوط الكنتور) إلى المسافة الأفقية بين نقطتين، وتحدد صلاحية الأرض للبناء وتكلفة القطع والردم وتصريف الأمطار.", "eqAr": {"type": "frac", "lhs": "الميل المئوي (%)", "num": "فرق المنسوب الرأسي (م)", "den": "المسافة الأفقية (م)", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "Slope (%)", "num": "Vertical Rise (ΔZ)", "den": "Horizontal Run (ΔX)", "mul": "× 100"}, "unit": "نسبة مئوية (%)", "bench": "Code D: تصميم أراضي ≤ 2.5% | غير مطوّر > 8–10% | طرق: مفضل 0.3–2.5% (أقصى تجميعي 6%، محلي 8%)", "ex": "طريق بطول أفقي 180 متراً يرتفع من منسوب 12.0م إلى 16.5م (فرق 4.5م) ← الميل = (4.5 ÷ 180) × 100 = <b>2.5%</b> (مثالي).", "pitfall": "الميول الأقل من 0.3% تسبب تجمعات مياه راكدة على الأسفلت وتتطلب مصارف أمطار متقاربة ومكلفة."}, {"id": "urban-canyon", "cat": "مناخ وموقع", "sym": "H/W & D/H", "ar": "نسبة الاحتواء في الفراغ الشارعي (الفراغ الشارعي المحصور)", "en": "Urban Canyon Ratio (H/W & Enclosure D/H)", "ref": "Oke / د. أحمد خالد علام (شكل 29) / د. يحيى وزيري", "def": "العلاقة الهندسية بين ارتفاع المباني المطلة على الشارع (H) وعرض الفراغ أو الشارع (W أو D). تتحكم في الإحساس البصري بالاحتواء والتظليل النهاري وتخفيف الحرارة.", "eqAr": {"type": "frac", "lhs": "نسبة الفراغ الشارعي المحصور", "num": "متوسط ارتفاع المباني على الجانبين", "den": "عرض الشارع أو الممر"}, "eqEn": {"type": "frac", "lhs": "Canyon Ratio", "num": "Building Height (H)", "den": "Street Width (W)"}, "unit": "نسبة (مثال 2:1 أو 1:2)", "bench": "تظليل حار جاف: H/W = 1.5–2.5 | راحة بصرية (علام): D = 1H إلى 3H | ضياع احتواء: D ≥ 4H", "ex": "ممر مشاة (سكة) بعرض 6 أمتار بين مبانٍ بارتفاع 12 متراً ← نسبة H/W = 12 ÷ 6 = <b>2.0</b> (تظليل ممتاز)، ونسبة D/H = 6 ÷ 12 = <b>0.5</b> (احتواء قوي).", "pitfall": "انتبه لاختلاف الترتيب بين مراجع المناخ (H/W) ومراجع التصميم الحضري البصري (D/H) — كل منهما مقلوب الآخر."}, {"id": "shadow-length", "cat": "مناخ وموقع", "sym": "Shadow Length", "ar": "حساب طول الظل الساقط من المباني", "en": "Building Shadow Length (Solar Altitude)", "ref": "Solar Architecture / التصميم المناخي", "def": "يحسب طول الظل الذي يلقيه مبنى ارتفاعه H عند زاوية ارتفاع شمس محددة (α) لتقييم التظليل الصيفي في ممرات المشاة وضمان وصول الشمس الشتوية للمباني المجاورة.", "eqAr": {"type": "frac", "lhs": "طول الظل (م)", "num": "ارتفاع المبنى (م)", "den": "ظل زاوية ارتفاع الشمس"}, "eqEn": {"type": "frac", "lhs": "Shadow Length (L)", "num": "Building Height (H)", "den": "tan(α)"}, "unit": "متر (م)", "bench": "كلما انخفضت زاوية الشمس (شتاءً أو صباحاً/عصراً) زاد طول الظل", "ex": "مبنى ارتفاعه 15 متراً عندما تكون زاوية ارتفاع الشمس α = 30° (tan 30° = 0.577) ← طول الظل = 15 ÷ 0.577 = <b>25.98 متراً</b>.", "pitfall": "اتجاه الظل يكون دائماً معاكساً لزاوية السمت الشمسي (Azimuth)، لذا يجب التحقق من الاتجاه مع الطول."}, {"id": "rational-runoff", "cat": "مناخ وموقع", "sym": "Q = CIA / 360", "ar": "تصريف مياه الأمطار والسيول (الطريقة المنطقية)", "en": "Stormwater Peak Runoff (Rational Method)", "ref": "Urban Hydrology / Drainage Design", "def": "المعادلة الهندسية القياسية لتقدير ذروة تدفق مياه الأمطار السطحية من حوض تجميع حضري صغير إلى متوسط (< 80 هكتار) لتصميم قنوات السيول وبرك الاحتجاز.", "eqAr": {"type": "frac", "lhs": "ذروة التصريف (م³/ث)", "num": "معامل الجريان × شدة المطر (مم/س) × مساحة الحوض (هكتار)", "den": "360"}, "eqEn": {"type": "frac", "lhs": "Q (m³/s)", "num": "C × I (mm/hr) × A (Ha)", "den": "360"}, "unit": "متر مكعب / ثانية (m³/s)", "bench": "C: حدائق 0.15–0.25 | سكني فيلات 0.50–0.65 | تجاري وأسفلت 0.85–0.95", "ex": "حوض سكني مساحته 25 هكتاراً بمعامل جريان 0.65 وعاصفة مطرية شدتها 40 مم/ساعة ← ذروة التصريف = (0.65 × 40 × 25) ÷ 360 = <b>1.81 م³/ثانية</b>.", "pitfall": "استخدام الرصف النفاذ (Permeable Paving) والحدائق الغاطسة (Bioswales) يخفض معامل C ويقلل تكلفة شبكات الأمطار."}, {"id": "pop-projection", "cat": "سكان وديموغرافيا", "sym": "Compound Growth", "ar": "التنبؤ السكاني بالنمو المركب (الهندسي)", "en": "Geometric / Compound Population Projection", "ref": "Demographic Planning / Strategic Plans", "def": "المعادلة القياسية لتوقع حجم السكان المستقبلي عند سنة الهدف (مثل 2030 أو 2040) لتحديد الحيز العمراني واحتياج الأراضي والخدمات والبنية التحتية.", "eqAr": {"type": "linear", "expr": "السكان المستقبليون  =  السكان الحاليون  ×  ( 1 + معدل النمو السنوي ) ^ عدد السنوات"}, "eqEn": {"type": "linear", "expr": "P_t  =  P_0  ×  (1 + r)^n"}, "unit": "نسمة", "bench": "معدل نمو طبيعي: 1.5%–2.5% | مدن نامية سريعة وهجرة: 3%–6%", "ex": "مدينة عدد سكانها 50,000 نسمة تنمو بنسبة 3% سنوياً (r = 0.03) لمدة 15 سنة ← السكان = 50,000 × (1.03)^15 = <b>77,898 نسمة</b>.", "pitfall": "في المدن الجديدة سريعة الاستقطاب يُفضل دراسة 3 سيناريوهات نمو (منخفض، متوسط، مرتفع) واختبار مرونة البنية التحتية."}, {"id": "rule-of-70", "cat": "سكان وديموغرافيا", "sym": "Rule of 70", "ar": "زمن تضاعف السكان (قاعدة 70)", "en": "Population Doubling Time (Rule of 70)", "ref": "Demographic Quick Estimation", "def": "صيغة ذهنية دقيقة وسريعة لمعرفة عدد السنوات اللازمة لتضاعف سكان مدينة أو إقليم عند معدل نمو سنوي ثابت.", "eqAr": {"type": "frac", "lhs": "زمن التضاعف (سنة)", "num": "70", "den": "نسبة النمو السنوي (%)"}, "eqEn": {"type": "frac", "lhs": "Doubling Time (yrs)", "num": "70", "den": "Annual Growth Rate (%)"}, "unit": "سنة (Years)", "bench": "نمو 2% ← 35 سنة | نمو 3.5% ← 20 سنة | نمو 5% ← 14 سنة", "ex": "منطقة حضرية تنمو بمعدل 3.5% سنوياً ← يتضاعف سكانها خلال 70 ÷ 3.5 = <b>20 سنة</b> فقط.", "pitfall": "يُعوض بالمعدل كنسبة مئوية مباشرة (3.5) وليس ككسر عشري (0.035)."}, {"id": "housing-demand", "cat": "اقتصاد وإسكان", "sym": "Housing Units Need", "ar": "تقدير الاحتياج الإسكاني المستقبلي (فجوة الإسكان)", "en": "Future Housing Units Demand", "ref": "Housing Strategy / Strategic Planning", "def": "يحسب عدد الوحدات السكنية الجديدة المطلوب توفيرها لاستيعاب الزيادة السكانية المتوقعة مع إضافة هامش شغور طبيعي (Vacancy Rate) لضمان سيولة السوق العقاري.", "eqAr": {"type": "frac", "lhs": "الوحدات المطلوبة", "num": "الزيادة السكانية المتوقعة × (1 + نسبة الشغور)", "den": "متوسط حجم الأسرة المتوقع"}, "eqEn": {"type": "frac", "lhs": "Units Needed", "num": "ΔPopulation × (1 + Vacancy Rate)", "den": "Avg. Household Size"}, "unit": "وحدة سكنية", "bench": "نسبة الشغور الصحية للسوق العقاري: 4%–6% (0.04–0.06)", "ex": "زيادة سكانية متوقعة 24,000 نسمة، متوسط أسرة 4.8 فرد، ونسبة شغور 5% ← الوحدات المطلوبة = (24,000 ÷ 4.8) × 1.05 = <b>5,250 وحدة سكنية</b>.", "pitfall": "في المدن القائمة يجب إضافة «إحلال الوحدات المتهالكة» وفك التزاحم القائم إلى معادلة الزيادة السكانية."}, {"id": "housing-afford", "cat": "اقتصاد وإسكان", "sym": "Affordability & PIR", "ar": "مؤشر القدرة على تحمل تكلفة السكن (الإسكان الميسّر)", "en": "Housing Affordability (30% Rule & PIR)", "ref": "UN-Habitat / World Bank / Alain Bertaud", "def": "يقيس مدى ملاءمة تكلفة السكن (إيجار أو قسط) لدخل الأسرة السنوي، بالإضافة لمؤشر نسبة سعر المسكن إلى الدخل السنوي (Price-to-Income Ratio - PIR).", "eqAr": {"type": "frac", "lhs": "عبء السكن (%)", "num": "تكلفة السكن السنوية (إيجار أو قسط)", "den": "الدخل السنوي الإجمالي للأسرة", "mul": "× 100"}, "eqEn": {"type": "frac", "lhs": "Housing Burden (%)", "num": "Annual Housing Cost", "den": "Annual Household Income", "mul": "× 100"}, "unit": "نسبة مئوية (%) · ومضاعف دخل (PIR)", "bench": "ميسّر: ≤ 30% من الدخل | PIR متوازن: 3–4 أضعاف الدخل السنوي | مرتفع: > 5", "ex": "أسرة دخلها السنوي 150,000 وتدفع إيجاراً سنوياً 42,000 ← عبء السكن = (42,000 ÷ 150,000) × 100 = <b>28%</b> (ميسّر). ولو كان سعر المسكن 900,000 يكون PIR = <b>6.0 أضعاف</b> (مرتفع).", "pitfall": "يرتبط عبء السكن في التخطيط بـ «تكلفة النقل» (H+T Index)؛ السكن الرخيص البعيد جداً قد يصبح مكلفاً بسبب مصاريف المواصلات."}];
+
+function renderExpr(eq, isAr){
+    var cls = isAr ? 'fm-eq-ar' : 'fm-eq-en';
+    var dir = isAr ? 'rtl' : 'ltr';
+    var inner = '';
+    if(eq.type === 'frac'){
+        inner = '<span class="fm-math">' +
+            '<span>' + eq.lhs + '</span>' +
+            '<span class="fm-op">=</span>' +
+            '<span class="fm-frac"><span class="fm-num">' + eq.num + '</span><span class="fm-den">' + eq.den + '</span></span>' +
+            (eq.mul ? '<span class="fm-op">' + eq.mul + '</span>' : '') +
+        '</span>';
+    } else {
+        inner = '<span class="fm-math">' + eq.expr + '</span>';
+    }
+    return '<div class="' + cls + '" dir="' + dir + '">' + inner + '</div>';
+}
+
+function plainTextExpr(eq){
+    if(eq.type === 'frac'){
+        return eq.lhs + ' = (' + eq.num + ') / (' + eq.den + ')' + (eq.mul ? ' ' + eq.mul : '');
+    }
+    return eq.expr;
+}
+
+// Mount into static #tab-formulas (Tab 2)
+var sec = document.getElementById('tab-formulas');
+if(!sec) return;
+var cats = ['الكل'].concat(FORMULAS.map(function(x){ return x.cat; }).filter(function(v,i,a){ return a.indexOf(v) === i; }));
+sec.innerHTML =
+    '<div class="um-wrap space-y-4">' +
+        '<div class="flex flex-wrap items-center justify-between gap-3">' +
+            '<div>' +
+                '<h2 class="um-h"><i class="fa-solid fa-square-root-variable ml-2"></i>مرجع القوانين والمعادلات التخطيطية (عربي / English)</h2>' +
+                '<div class="um-sub">38 قانوناً ومعادلة أساسية في التخطيط العمراني — كل معادلة مفصولة بصرياً بصيغة عربية خالصة وأخرى إنجليزية خالصة لمنع تداخل الاتجاهات، مع النطاقات القياسية وأمثلة عددية محلولة ومراجعة.</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+                '<button onclick="fmToggleCards(true)" class="um-chip">فتح كل القوانين</button>' +
+                '<button onclick="fmToggleCards(false)" class="um-chip">طي كل القوانين</button>' +
+                '<button onclick="umPrintCheatsheet()" class="um-chip"><i class="fa-solid fa-print ml-1"></i>طباعة ورقة المعادلات</button>' +
+            '</div>' +
+        '</div>' +
+        '<!-- Quick Interactive Area Unit Converter -->' +
+        '<details id="acc-fm-conv" class="um-det">' +
+            '<summary><i class="fa-solid fa-ruler-combined"></i> محوّل الوحدات المساحية السريع للمخطط (أدخل في أي خانة)</summary>' +
+            '<div class="um-in space-y-2">' +
+                '<div class="fm-conv">' +
+                    '<div><label>متر مربع (m²)</label><input type="number" step="any" id="uc-m2" value="10000" oninput="fmConvertArea(\'m2\')"></div>' +
+                    '<div><label>هكتار (Hectare)</label><input type="number" step="any" id="uc-ha" value="1" oninput="fmConvertArea(\'ha\')"></div>' +
+                    '<div><label>فدان مصري (4,200 م²)</label><input type="number" step="any" id="uc-fed" value="2.381" oninput="fmConvertArea(\'fed\')"></div>' +
+                    '<div><label>أكر (فدان إنجليزي) (Acre)</label><input type="number" step="any" id="uc-ac" value="2.4711" oninput="fmConvertArea(\'ac\')"></div>' +
+                    '<div><label>كيلومتر مربع (km²)</label><input type="number" step="any" id="uc-km2" value="0.01" oninput="fmConvertArea(\'km2\')"></div>' +
+                    '<div><label>قدم مربع (ft²)</label><input type="number" step="any" id="uc-ft2" value="107639.1" oninput="fmConvertArea(\'ft2\')"></div>' +
+                '</div>' +
+                '<div class="text-xs opacity-75">ثوابت مرجعية: 1 هكتار = 10,000 م² = 2.38095 فدان مصري = 2.47105 أكر = 107,639.1 قدم² | 1 كم² = 100 هكتار = 238.1 فدان.</div>' +
+            '</div>' +
+        '</details>' +
+        '<!-- Search & Category Filter -->' +
+        '<div class="um-bar">' +
+            '<input id="fm-q" placeholder="ابحث باسم القانون أو الرمز (مثال: FAR, GSI, OSR, Ped-Shed, كثافة، مساجد، سيول، ميول، محولات)..." oninput="fmRender()">' +
+            '<span id="fm-count" class="um-tag"></span>' +
+        '</div>' +
+        '<div class="um-bar">' +
+            cats.map(function(c){
+                return '<button class="um-chip fm-c' + (c === 'الكل' ? ' on' : '') + '" data-c="' + c + '" onclick="fmSetCat(this.dataset.c)">' + c + '</button>';
+            }).join('') +
+        '</div>' +
+        '<div id="fm-list" class="fm-grid"></div>' +
+    '</div>';
+
+
+
+
+// Unit Converter Logic
+var CONV = { m2: 1, ha: 10000, fed: 4200, ac: 4046.8564224, km2: 1000000, ft2: 0.09290304 };
+window.fmConvertArea = function(srcKey){
+    var val = parseFloat(document.getElementById('uc-' + srcKey).value);
+    if(isNaN(val)) return;
+    var m2 = val * CONV[srcKey];
+    Object.keys(CONV).forEach(function(k){
+        if(k === srcKey) return;
+        var out = m2 / CONV[k];
+        document.getElementById('uc-' + k).value = +out.toFixed(k === 'km2' ? 5 : (k === 'm2' || k === 'ft2' ? 1 : 4));
+    });
+};
+
+window._fmCat = 'الكل';
+window.fmSetCat = function(c){
+    window._fmCat = c;
+    document.querySelectorAll('.fm-c').forEach(function(btn){ btn.classList.toggle('on', btn.dataset.c === c); });
+    fmRender();
+};
+
+window.fmCopy = function(idx, lang){
+    var f = FORMULAS[idx]; if(!f) return;
+    var txt = lang === 'ar'
+        ? (f.ar + ': ' + plainTextExpr(f.eqAr))
+        : (f.en + ': ' + plainTextExpr(f.eqEn));
+    var ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+    if(window.showToast) showToast('تم نسخ القانون (' + (lang === 'ar' ? 'العربي' : 'الإنجليزي') + ')!');
+};
+
+window.fmToggleCards = function(open){
+    document.querySelectorAll('#fm-list details.fm-card-det').forEach(function(d){ d.open = open; });
+};
+window.fmToggleExamples = window.fmToggleCards;
+
+window.fmRender = function(){
+    var q = (document.getElementById('fm-q').value || '').trim().toLowerCase();
+    var c = window._fmCat || 'الكل';
+    var items = FORMULAS.map(function(item, origIdx){ return { item: item, idx: origIdx }; }).filter(function(x){
+        var f = x.item;
+        if(c !== 'الكل' && f.cat !== c) return false;
+        if(!q) return true;
+        var hay = (f.ar + ' ' + f.en + ' ' + f.sym + ' ' + f.cat + ' ' + f.ref + ' ' + f.def + ' ' + f.bench).toLowerCase();
+        return hay.indexOf(q) !== -1;
+    });
+
+    document.getElementById('fm-count').textContent = items.length + ' قانون ومعادلة';
+    var listEl = document.getElementById('fm-list');
+    if(!items.length){
+        listEl.innerHTML = '<div class="um-card">لا توجد معادلات مدورة لبحثك. جرّب كلمة أخرى أو اختر تصنيف «الكل».</div>';
+        return;
+    }
+
+    listEl.innerHTML = items.map(function(x, pos){
+        var f = x.item;
+        var previewAr = plainTextExpr(f.eqAr);
+        return '<details class="fm-card-det"' + (pos === 0 && !q ? ' open' : '') + '>' +
+            '<summary>' +
+                '<div>' +
+                    '<div class="fm-title-ar">' + f.ar + '</div>' +
+                    '<div class="fm-title-en">' + f.en + '</div>' +
+                    '<div class="fm-preview">' + previewAr + '</div>' +
+                '</div>' +
+                '<div class="flex flex-wrap items-center gap-1.5">' +
+                    '<span class="fm-sym">' + f.sym + '</span>' +
+                    '<span class="um-tag">' + f.cat + '</span>' +
+                '</div>' +
+            '</summary>' +
+            '<div class="fm-card-body">' +
+                '<p class="fm-def">' + f.def + '</p>' +
+                '<div class="fm-eq-pair">' +
+                    '<div class="fm-eq-box">' +
+                        '<div class="fm-eq-lbl"><span>الصيغة بالعربية</span><button onclick="fmCopy(' + x.idx + ',\'ar\')"><i class="fa-solid fa-copy"></i> نسخ</button></div>' +
+                        renderExpr(f.eqAr, true) +
+                    '</div>' +
+                    '<div class="fm-eq-box">' +
+                        '<div class="fm-eq-lbl"><span>English Formula</span><button onclick="fmCopy(' + x.idx + ',\'en\')"><i class="fa-solid fa-copy"></i> Copy</button></div>' +
+                        renderExpr(f.eqEn, false) +
+                    '</div>' +
+                '</div>' +
+                '<div class="fm-meta">' +
+                    '<span class="fm-pill"><b>الوحدة:</b> ' + f.unit + '</span>' +
+                    '<span class="fm-pill-am"><b>المعيار المرجعي:</b> ' + f.bench + '</span>' +
+                    '<span class="um-tag">' + f.ref + '</span>' +
+                '</div>' +
+                '<details class="fm-ex" open>' +
+                    '<summary><i class="fa-solid fa-calculator ml-1"></i> مثال عددي محلول</summary>' +
+                    '<div class="fm-ex-body">' + f.ex + '</div>' +
+                '</details>' +
+                (f.pitfall ? '<div class="fm-pitfall"><i class="fa-solid fa-triangle-exclamation ml-1"></i> <b>تنبيه هندسي:</b> ' + f.pitfall + '</div>' : '') +
+            '</div>' +
+        '</details>';
+    }).join('');
+};
+
+fmRender();
+
+// Universal Collapse & Zoom Toolbar for ALL 8 Tabs (V17)
+document.querySelectorAll('section.tab-panel').forEach(function(p){
+    if(p.querySelector('.um-tab-tools')) return;
+    var k = 'um_z_' + p.id;
+    var bar = document.createElement('div');
+    bar.className = 'um-tab-tools um-scope';
+    bar.innerHTML =
+        '<div class="um-tgrp">' +
+            '<button type="button" data-act="open"><i class="fa-solid fa-angles-down ml-1"></i>فتح كل الأقسام</button>' +
+            '<button type="button" data-act="close"><i class="fa-solid fa-angles-up ml-1"></i>طي الكل</button>' +
+        '</div>' +
+        '<div class="um-tgrp">' +
+            '<span class="text-[11px] opacity-75 ml-1">حجم العرض:</span>' +
+            '<button type="button" data-act="zp">أ+</button>' +
+            '<button type="button" data-act="zm">أ−</button>' +
+            '<button type="button" data-act="zr">100%</button>' +
+        '</div>';
+    var PIN_SEL = 'details.um-sec-acc>summary,details.um-det>summary,details.bk>summary,details.bk-part>summary,details.fm-card-det>summary,details.um-pin-det>summary,.um-phase-head';
+    function updPin(){
+        var z = parseFloat(p.style.getPropertyValue('--um-z')) || 1;
+        var h = bar.offsetHeight || 0;
+        if (!(h > 0)) { return; }
+        var base = h / z;
+        p.style.setProperty('--um-pin', base.toFixed(2) + 'px');
+        // nested headers pin below their ancestor headers: top = toolbar + sum of ancestor header heights
+        p.querySelectorAll(PIN_SEL).forEach(function(sm){
+            var extra = 0, el = sm.parentElement;
+            while (el && el !== p) {
+                if (el.tagName === 'DETAILS') {
+                    var as = null;
+                    for (var i = 0; i < el.children.length; i++) { if (el.children[i].tagName === 'SUMMARY') { as = el.children[i]; break; } }
+                    if (as && as !== sm && as.matches(PIN_SEL)) { extra += as.offsetHeight || 0; }
+                }
+                el = el.parentElement;
+            }
+            sm.style.top = (base + extra).toFixed(2) + 'px';
+        });
+    }
+    p.umPinHeaders = updPin;
+    function setZ(v){
+        v = Math.max(.8, Math.min(1.5, +v.toFixed(2)));
+        p.style.setProperty('--um-z', v);
+        updPin();
+        try { localStorage.setItem(k, v); } catch(e){}
+        return v;
+    }
+    var cur = 1;
+    try { cur = parseFloat(localStorage.getItem(k)) || 1; } catch(e){}
+    p.style.setProperty('--um-z', cur);
+    bar.querySelector('[data-act="open"]').onclick = function(){ toggleTabAccordions(p.id, true); };
+    bar.querySelector('[data-act="close"]').onclick = function(){ toggleTabAccordions(p.id, false); };
+    bar.querySelector('[data-act="zp"]').onclick = function(){ cur = setZ(cur + .1); };
+    bar.querySelector('[data-act="zm"]').onclick = function(){ cur = setZ(cur - .1); };
+    bar.querySelector('[data-act="zr"]').onclick = function(){ cur = setZ(1); };
+    p.insertBefore(bar, p.firstChild);
+    updPin();
+    if (window.ResizeObserver) { new ResizeObserver(updPin).observe(bar); }
+    window.addEventListener('resize', updPin);
+    var h = bar.nextElementSibling;
+    if(h && /rounded-2xl|rounded-3xl/.test(h.className) && !h.querySelector('details')) h.classList.add('um-hero');
+});
+
+// V22: keep pinned-header offsets right when sections open/close (heights can reflow)
+document.addEventListener('toggle', function(e){
+    var t = e.target;
+    if (!t || t.tagName !== 'DETAILS') { return; }
+    var panel = t.closest ? t.closest('.tab-panel') : null;
+    if (panel && panel.umPinHeaders) { panel.umPinHeaders(); }
+}, true);
+
+// V22: collapsing a section from its pinned header scrolls back to that section's top
+document.addEventListener('click', function(e){
+    var s = e.target && e.target.closest ? e.target.closest('summary') : null;
+    if (!s) { return; }
+    var d = s.parentElement;
+    if (!d || d.tagName !== 'DETAILS' || !d.open) { return; }
+    if (getComputedStyle(s).position !== 'sticky') { return; }
+    var panel = d.closest('.tab-panel');
+    if (!panel) { return; }
+    var z = parseFloat(panel.style.getPropertyValue('--um-z')) || 1;
+    var pinnedAt = (parseFloat(s.style.top) || 48) * z;
+    if (s.getBoundingClientRect().top <= pinnedAt + 4) {
+        var target = d.getBoundingClientRect().top + window.scrollY - pinnedAt - 8;
+        setTimeout(function(){ window.scrollTo({ top: Math.max(0, target), behavior: 'instant' }); }, 0);
+    }
+});
+
+})();
+</script>
+
+<script>
+/* ===== UrbanMind V17 — Unified project persistence (auto-save, full export/import) ===== */
+(function(){
+'use strict';
+var APP_VERSION='V25.3',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
+var $=function(i){return document.getElementById(i)};
+var saved=null,savedQuiz=null;
+try{saved=JSON.parse(localStorage.getItem(KF)||'null')}catch(e){}
+try{savedQuiz=JSON.parse(localStorage.getItem(KQ)||'null')}catch(e){}
+var ready=false,timer=null,suppressSave=false;
+function toast(m){try{if(typeof showToast==='function')showToast(m)}catch(e){}}
+function skip(e){if(!e.id)return true;var t=(e.type||'').toLowerCase();if(t==='file'||t==='button'||t==='submit'||t==='hidden')return true;if(e.closest('[id^=modal]'))return true;return /^(enc-search-input|fm-q|uc-|import-json-input|hchk-)/.test(e.id)}
+function snapshot(){var f={},d={};
+ document.querySelectorAll('input,select,textarea').forEach(function(e){if(skip(e))return;f[e.id]=(e.type==='checkbox'||e.type==='radio')?!!e.checked:e.value});
+ document.querySelectorAll('details[id]').forEach(function(x){d[x.id]=!!x.open});f.__details=d;return f}
+function setv(id,v){var e=$(id);if(!e)return;if(e.type==='checkbox'||e.type==='radio')e.checked=!!v;else e.value=v}
+function call(n){try{if(typeof window[n]==='function')window[n]();else (0,eval)('typeof '+n+"==='function'&&"+n+'()')}catch(e){console.warn('restore call failed',n,e)}}
+function status(t){var s=$('um-save-status');if(s)s.textContent=t}
+function hhmm(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+function saveNow(){if(!ready||suppressSave)return;try{localStorage.setItem(KF,JSON.stringify(snapshot()));if(typeof quizStats==='object')localStorage.setItem(KQ,JSON.stringify(quizStats));status('تم الحفظ تلقائياً '+hhmm())}catch(e){status('تعذّر الحفظ: مساحة التخزين ممتلئة أو ممنوعة')}}
+function schedule(){if(!ready)return;clearTimeout(timer);timer=setTimeout(saveNow,350)}
+['input','change','click'].forEach(function(ev){document.addEventListener(ev,schedule,true)});
+window.addEventListener('pagehide',function(){clearTimeout(timer);saveNow()});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){clearTimeout(timer);saveNow()}});
+// hook calculator so programmatic recalculations also schedule a save
+var _run=window.runMasterplanCalculator;
+if(typeof _run==='function')window.runMasterplanCalculator=function(){var r=_run.apply(this,arguments);schedule();return r};
+/* ----- restore (ordered so profile defaults never overwrite saved values) ----- */
+var PRE={'sc-den-ex':1,'sc-den-pr':1,'sc-fac':1,'sc-geo':1,'calc-code':1,'rak-parcel-type':1,'ca-sub-demo':1,'ca-mix-on':1,'bs-context-select':1,'__details':1};
+function restore(f){if(!f)return;
+ ['sc-den-ex','sc-den-pr','sc-fac','sc-geo'].forEach(function(i){if(i in f)setv(i,f[i])});
+ call('runSettlementScorer');
+ if('calc-code' in f){setv('calc-code',f['calc-code']);call('calcCodeChange')}
+ if('rak-parcel-type' in f){setv('rak-parcel-type',f['rak-parcel-type']);call('applyRakParcelPreset')}
+ if('ca-sub-demo' in f){setv('ca-sub-demo',f['ca-sub-demo']);call('syncSubDemo')}
+ if('ca-mix-on' in f){setv('ca-mix-on',f['ca-mix-on']);call('toggleRefMix')}
+ if('bs-context-select' in f){setv('bs-context-select',f['bs-context-select']);call('updateBrainstormPrompts')}
+ Object.keys(f).forEach(function(id){if(!PRE[id])setv(id,f[id])});
+ call('calcModeChange');call('runMasterplanCalculator');
+ var d=f.__details||{};Object.keys(d).forEach(function(id){var x=$(id);if(x&&x.tagName==='DETAILS')x.open=!!d[id]})}
+window.addEventListener('load',function(){setTimeout(function(){
+ try{restore(saved)}catch(e){console.warn('restore failed',e)}
+ try{if(savedQuiz&&typeof quizStats==='object'&&savedQuiz.answered){quizStats.answered=savedQuiz.answered;quizStats.correct=savedQuiz.correct||{};if(typeof updateQuizScorePill==='function')updateQuizScorePill()}}catch(e){}
+ ready=true;status(saved?'تم استرجاع آخر حالة محفوظة':'جاهز — الحفظ تلقائي')},80)});
+/* ----- full project export / import ----- */
+function collectStorage(){var o={};for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k===KB)continue;if(k===STORAGE_KEY||/^um_/.test(k))o[k]=localStorage.getItem(k)}return o}
+function bundle(){var wasReady=ready;ready=true;clearTimeout(timer);saveNow();ready=wasReady;
+ var cc=$('calc-code');return {format:FORMAT,version:APP_VERSION,schema:SCHEMA,exportedAt:new Date().toISOString(),
+  summary:{calcCode:cc?cc.value:null,keys:0},storage:collectStorage()}}
+window.exportUserData=function(){var b=bundle();b.summary.keys=Object.keys(b.storage).length;
+ var blob=new Blob([JSON.stringify(b,null,1)],{type:'application/json'}),a=document.createElement('a'),d=new Date();
+ var stamp=d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'_'+('0'+d.getHours()).slice(-2)+('0'+d.getMinutes()).slice(-2);
+ a.href=URL.createObjectURL(blob);a.download='UrbanMind_Project_'+APP_VERSION+'_'+stamp+'.json';document.body.appendChild(a);a.click();
+ setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast('تم حفظ المشروع كاملاً في ملف JSON');status('آخر تصدير '+hhmm())};
+var _legacyImport=window.importUserData;
+window.importUserData=function(ev){var file=ev&&ev.target&&ev.target.files&&ev.target.files[0];if(!file)return;
+ var rd=new FileReader();rd.onload=function(){var data;try{data=JSON.parse(rd.result)}catch(e){toast('الملف غير صالح: ليس JSON');return}
+  if(!data||data.format!==FORMAT){ // legacy backup (progress only) → old behaviour
+   if(typeof _legacyImport==='function'){_legacyImport({target:{files:[file],value:''}});toast('ملف قديم: تم استرجاع التقدم والملاحظات فقط (بدون مدخلات الحاسبة)')}return}
+  if(!data.storage||typeof data.storage!=='object'||Array.isArray(data.storage)){toast('ملف المشروع تالف: لا يحتوي بيانات');return}
+  var ok=Object.keys(data.storage).every(function(k){return typeof data.storage[k]==='string'&&(k===STORAGE_KEY||/^um_/.test(k))});
+  if(!ok){toast('ملف المشروع يحتوي مفاتيح غير معروفة — تم الإلغاء');return}
+  try{
+   var prev=JSON.stringify({format:FORMAT,version:APP_VERSION,schema:SCHEMA,exportedAt:new Date().toISOString(),storage:collectStorage()});
+   var rm=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k===STORAGE_KEY||/^um_/.test(k))rm.push(k)}
+   rm.forEach(function(k){if(k!==KB)localStorage.removeItem(k)});
+   Object.keys(data.storage).forEach(function(k){localStorage.setItem(k,data.storage[k])});
+   localStorage.setItem(KB,prev);
+  }catch(e){toast('تعذّر الاستيراد: '+e.message);return}
+  suppressSave=true;clearTimeout(timer);toast('تم فتح المشروع — جارٍ إعادة التحميل…');setTimeout(function(){location.reload()},600)};
+ rd.readAsText(file);try{ev.target.value=''}catch(e){}};
+window.restorePreviousProject=function(){var p=localStorage.getItem(KB);if(!p){toast('لا توجد نسخة سابقة');return}
+ try{var d=JSON.parse(p);Object.keys(d.storage).forEach(function(k){localStorage.setItem(k,d.storage[k])});suppressSave=true;location.reload()}catch(e){toast('تعذّر الاسترجاع')}};
+/* ----- single source of truth for the version label ----- */
+window.UM_VERSION=APP_VERSION;
+document.querySelectorAll('[data-app-version]').forEach(function(e){e.textContent=APP_VERSION});
+var ex=document.querySelector('button[onclick="exportUserData()"] span');if(ex)ex.textContent='حفظ المشروع كاملاً';
+var im=document.querySelector('label[title^="استيراد"] span');if(im)im.textContent='فتح مشروع محفوظ';
+var wrap=document.querySelector('button[onclick="exportUserData()"]');
+if(wrap&&wrap.parentNode&&!$('um-save-status')){var s=document.createElement('div');s.id='um-save-status';s.className='um-save-status';s.textContent='الحفظ تلقائي';wrap.parentNode.parentNode.appendChild(s)}
+})();
+
+</script>
+<script>
+/* ===== UrbanMind V18 — Smart Tools: scenarios, report, spaced repetition, mock test,
+   sanity checks, service catalog, notes, cheat sheet ===== */
+(function(){
+'use strict';
+var $ = function(i){ return document.getElementById(i); };
+var DAY = 86400000;
+function toast(m,t){ try{ if(typeof showToast==='function') showToast(m,t); }catch(e){} }
+function lsGet(k, d){ try{ var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ toast('تعذّر الحفظ: مساحة التخزين ممتلئة أو ممنوعة','amber'); return false; } }
+function n2(x){ return Math.round(x).toLocaleString('en'); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function umNum(s){ var v = parseFloat(String(s==null?'':s).replace(/[^\d.\-]/g,'')); return isNaN(v) ? 0 : v; }
+
+/* ---------- embedded reference data (copied byte-exact from this file's own datasets) ---------- */
+var UM_FORMULAS = [{"ar": "الكثافة السكانية الإجمالية", "en": "Gross Population Density", "sym": "Gross Density (PPH)", "cat": "كثافات", "unit": "نسمة / هكتار (pph)", "bench": "ريفي: ≤ 8 | ضواحي: 9–50 | حضري متوسط: 50–120 | كثيف: > 120", "eqAr": {"type": "frac", "lhs": "الكثافة الإجمالية", "num": "إجمالي عدد السكان (نسمة)", "den": "المساحة الكلية للموقع (هكتار)"}}, {"ar": "الكثافة السكانية الصافية", "en": "Net Residential Population Density", "sym": "Net Density", "cat": "كثافات", "unit": "نسمة / هكتار سكني صافٍ", "bench": "فيلات إماراتية 30×30م: ~88 ن/هـ صافٍ | عمارات متوسطة: 150–300 | عالية: > 350", "eqAr": {"type": "frac", "lhs": "الكثافة الصافية", "num": "إجمالي عدد السكان (نسمة)", "den": "المساحة السكنية الصافية فقط (هكتار)"}}, {"ar": "كثافة الوحدات السكنية (إجمالية وصافية)", "en": "Dwelling Unit Density (Gross & Net)", "sym": "DU/Ha", "cat": "كثافات", "unit": "وحدة سكنية / هكتار (du/ha)", "bench": "مواطنون ضواحي: 4–6 وحدة/هـ إجمالي | تاون هاوس: 15–30 | شقق: 40–100+", "eqAr": {"type": "frac", "lhs": "كثافة الوحدات", "num": "إجمالي عدد الوحدات السكنية", "den": "المساحة الكلية أو السكنية الصافية (هكتار)"}}, {"ar": "معدل التزاحم (إشغال الغرفة)", "en": "Room Occupancy Rate (Persons per Room)", "sym": "PPR", "cat": "كثافات", "unit": "فرد / غرفة", "bench": "مريح: ≤ 1.0 | مقبول: 1.0–1.5 | مزدحم: > 2.0 | مزدحم بشدة: > 3.0", "eqAr": {"type": "frac", "lhs": "معدل التزاحم", "num": "عدد أفراد الأسرة بالوحدة", "den": "عدد غرف السكن (نوم + معيشة)"}}, {"ar": "العلاقة الرياضية بين الكثافة الإجمالية والصافية", "en": "Gross-to-Net Density Conversion", "sym": "Gross / Net Ratio", "cat": "كثافات", "unit": "نسمة / هكتار أو وحدة / هكتار", "bench": "نسبة السكني الصافي عادةً 0.45 إلى 0.55", "eqAr": {"type": "linear", "expr": "الكثافة الإجمالية  =  الكثافة الصافية  ×  نسبة المساحة السكنية الصافية"}}, {"ar": "معامل الاستغلال البنائي (معامل المسطحات البنائية)", "en": "Floor Area Ratio / Floor Space Index", "sym": "FAR / FSI", "cat": "كتل ومساحات", "unit": "نسبة لا بُعدية (مثال: 1.5 أو 2.0)", "bench": "فيلات T3: 0.6–1.3 | عمارات T4: 1.5–3.0 | مراكز T5–T6: 3.5–10+", "eqAr": {"type": "frac", "lhs": "معامل الاستغلال", "num": "إجمالي المسطحات البنائية لجميع الأدوار", "den": "مساحة قطعة الأرض"}}, {"ar": "النسبة البنائية (النسبة البنائية الأرضية)", "en": "Building Coverage Percentage / Ground Space Index", "sym": "BCP / GSI", "cat": "كتل ومساحات", "unit": "نسبة مئوية (%) أو كسر عشري (GSI)", "bench": "فيلة تقليدية Code D: 65% | ثلثان: 70% | مدمج > 3 قطع: 50% | صناعي 2026: 50%", "eqAr": {"type": "frac", "lhs": "النسبة البنائية (%)", "num": "مسطح الدور الأرضي (بصمة المبنى)", "den": "مساحة قطعة الأرض", "mul": "× 100"}}, {"ar": "متوسط عدد الأدوار المكافئ", "en": "Average Number of Floors (Spacemate L)", "sym": "L = FAR / GSI", "cat": "كتل ومساحات", "unit": "عدد أدوار (Floors)", "bench": "G+1 = 2 | G+3 = 4 | G+5 = 6", "eqAr": {"type": "frac", "lhs": "متوسط عدد الأدوار", "num": "معامل الاستغلال البنائي", "den": "النسبة البنائية الأرضية (كسر عشري)"}}, {"ar": "معامل الفراغ المفتوح (مصفوفة Spacemate)", "en": "Open Space Ratio (Spacemate OSR)", "sym": "OSR", "cat": "كتل ومساحات", "unit": "م² فراغ مفتوح / م² مبني (GFA)", "bench": "كثيف جداً: < 0.2 | متوازن: 0.25–0.50 | منخفض الكثافة/حدائقي: > 0.75", "eqAr": {"type": "frac", "lhs": "معامل الفراغ المفتوح", "num": "1 − النسبة البنائية (كسر عشري)", "den": "معامل الاستغلال البنائي"}}, {"ar": "العلاقة بين إجمالي المسطحات البنائية والمبنية وصافي التأجير", "en": "GFA, BUA & Net-to-Gross Efficiency Ratio", "sym": "GFA / BUA / NLA", "cat": "كتل ومساحات", "unit": "م² · والكفاءة بالنسبة المئوية (%)", "bench": "كفاءة سكنية: 78%–85% | مكاتب: 75%–82% | مولات: 60%–70%", "eqAr": {"type": "frac", "lhs": "كفاءة التصميم (%)", "num": "صافي المساحة القابلة للتأجير أو البيع", "den": "إجمالي المسطحات البنائية", "mul": "× 100"}}, {"ar": "مساحة حدود البناء الصافية بعد الارتدادات", "en": "Buildable Plot Envelope Area", "sym": "Buildable Envelope", "cat": "كتل ومساحات", "unit": "متر مربع (م²)", "bench": "البصمة المسموحة = الأصغر بين (مساحة المغلف) و(مساحة القسيمة × BCP)", "eqAr": {"type": "linear", "expr": "مساحة الحدود بناء  =  (العرض − 2 × الارتداد الجانبي)  ×  (العمق − الأمامي − الخلفي)"}}, {"ar": "تقدير عدد الشقق من منطقة التخطيط (معادلة الدليل المرجعي)", "en": "Residential Apartment Units Yield (Ref. Manual)", "sym": "Ref. Manual Apt Yield", "cat": "كتل ومساحات", "unit": "وحدة سكنية (شقة)", "bench": "BCP المبدئي = 60% | يُستبعد الدور الأرضي التجاري | متوسط الشقة = 150 م²", "eqAr": {"type": "frac", "lhs": "عدد الشقق", "num": "(مساحة المنطقة × 0.5) × النسبة البنائية × عدد الأدوار السكنية × 0.9", "den": "متوسط مساحة الشقة (150 م²)"}}, {"ar": "نسبة كفاءة الأراضي القابلة للتطوير والبيع", "en": "Land Use Efficiency / Saleable Area Ratio", "sym": "Saleable %", "cat": "ميزانية أراضٍ", "unit": "نسبة مئوية (%)", "bench": "المتوازن: 52%–62% | أقل من 48%: ضعف جدوى | أعلى من 68%: عجز خدمات وطرق", "eqAr": {"type": "frac", "lhs": "كفاءة الأرض (%)", "num": "مساحة الأراضي السكنية الصافية + التجارية والمختلطة", "den": "المساحة الكلية للمشروع", "mul": "× 100"}}, {"ar": "تقدير عدد قسائم الفيلات والسكان (معادلة Code D)", "en": "Residential Villa Parcel & Population Yield", "sym": "Code D Yield", "cat": "ميزانية أراضٍ", "unit": "قسيمة · ثم (عدد القسائم × متوسط الأسرة = السكان)", "bench": "ضواحي: × 7.9 (أو 6.92 المحدث) | ريفي: × 8.7 | حضري: × 6.57", "eqAr": {"type": "frac", "lhs": "عدد القسائم", "num": "مساحة المجاورة × 0.5 (خصم 50% طرق وخدمات)", "den": "مساحة القسيمة القياسية (900 م²)"}}, {"ar": "نسبة شبكة الطرق وحرم الشوارع", "en": "Road & Right-of-Way Allocation Ratio", "sym": "ROW %", "cat": "ميزانية أراضٍ", "unit": "نسبة مئوية (%)", "bench": "الأمثل للمجاورات: 18%–25% | هدر أسفلت: > 28% | أحياء وسط مدينة: 25%–30%", "eqAr": {"type": "frac", "lhs": "نسبة الطرق (%)", "num": "إجمالي مساحة حرم الطرق والسكك", "den": "المساحة الكلية للموقع", "mul": "× 100"}}, {"ar": "نصيب الفرد من المناطق الخضراء والمفتوحة", "en": "Public Open Space per Capita", "sym": "Green m²/Cap", "cat": "ميزانية أراضٍ", "unit": "م² / فرد", "bench": "الحد الأدنى WHO: 9 م²/فرد | ضواحي رأس الخيمة الدليل المرجعي: 11 م²/فرد (3+4+4) | ريفي: 7 م²/فرد", "eqAr": {"type": "frac", "lhs": "نصيب الفرد من الأخضر", "num": "إجمالي مساحة الحدائق والفراغات المفتوحة (م²)", "den": "إجمالي عدد السكان (نسمة)"}}, {"ar": "ضوابط دمج وتقسيم القسائم (دليل Code D)", "en": "Parcel Merging & Subdivision Formulas (Code D)", "sym": "Code D Merge/Split", "cat": "ميزانية أراضٍ", "unit": "قسائم · وم² · ونسبة BCP", "bench": "BCP = 65% إذا المساحة < 3A | و BCP = 50% إذا المساحة > 3A", "eqAr": {"type": "linear", "expr": "أقصى دمج = 6 قسائم (3 واجهة × 2 عمق) | ارتداد الشارع = 1.5 × العادي | أدنى تقسيم ≥ 1.5 × القياسية"}}, {"ar": "حساب عدد ومساحة قسيمة المسجد (Ref. Manual)", "en": "Mosque Count & Parcel Sizing (Ref. Manual MPU)", "sym": "MPU & Mosque Area", "cat": "خدمات ومرافق", "unit": "عدد مساجد · وم² أرض", "bench": "جامع ضواحي: 3.5 م²/مصلي | جامع ريفي: 5.6 م² | جامع حضري: 1.8 م² (G+2+قبو)", "eqAr": {"type": "linear", "expr": "المساجد اليومية المعدّلة = (المساحة ÷ 38.5) − (المساحة ÷ 154) | مساحة القسيمة = (المصلون × 4.4) + (المصلون ÷ 20 × 35)"}}, {"ar": "حساب مساحة المصليات في المباني غير السكنية (ملحق C)", "en": "Non-Residential Prayer Rooms (Ref. Manual Appendix C)", "sym": "Musalla Area", "cat": "خدمات ومرافق", "unit": "متر مربع (م²)", "bench": "التوزيع المتساوي 50% رجال / 50% نساء بمعدل 1 م²/مصلي", "eqAr": {"type": "linear", "expr": "المصلون = 0.35 × المواقف غير السكنية | مصلى الرجال = 0.5 × المصلون × 1 م² | مصلى النساء = 0.5 × المصلون × 1 م²"}}, {"ar": "عتبة الاحتياج للخدمات المعتمدة على السكان (قاعدة 50%)", "en": "Population Threshold Facility Count (50% Rule)", "sym": "50% Threshold Rule", "cat": "خدمات ومرافق", "unit": "عدد مرافق (يقرب للأقرب عند عتبة 0.5)", "bench": "إذا كان المتوسط < 0.5 ← المطلوب 0 | إذا كان 0.5 ≤ المتوسط < 1.5 ← المطلوب 1", "eqAr": {"type": "frac", "lhs": "متوسط العدد المطلوب", "num": "(السكان ÷ أقصى سكان للمرفق) + (السكان ÷ أدنى سكان للمرفق)", "den": "2"}}, {"ar": "حساب عدد الطلاب والمدارس الحكومية والخاصة (Ref. Manual)", "en": "Public & Private School Demand (Ref. Manual)", "sym": "School Demand", "cat": "خدمات ومرافق", "unit": "طالب · ثم عدد مدارس", "bench": "ضواحي: 71% حكومي / 29% خاص | ريفي: 80% / 20% | حضري: 64.6% / 35.4% | حد أدنى حكومي 600 وخاص 550", "eqAr": {"type": "linear", "expr": "طلاب حكومي = سكان المواطنون × نسبة المرحلة × نسبة الحكومي | طلاب خاص = (مواطنون × إجمالي الطلاب × نسبة الخاص) + (مختلط × نسبة طلابهم)"}}, {"ar": "حساب إجمالي المسطحات البنائية والأرض للتجاري (Ref. Manual)", "en": "Community & District Retail GFA & Plot Area", "sym": "Retail Plot Sizing", "cat": "خدمات ومرافق", "unit": "م² أرض و م² GFA", "bench": "تجاري حي: 0.8 م²/فرد · دوران · 65% | مول قطاع: 1.2 م²/فرد · 3 أدوار · 50%", "eqAr": {"type": "frac", "lhs": "مساحة أرض المركز الواحد", "num": "(السكان × نصيب الفرد التجاري) ÷ عدد المراكز", "den": "عدد الأدوار × النسبة البنائية"}}, {"ar": "معادلة تصنيف سياق التجمع العمراني (رأس الخيمة)", "en": "Weighted Settlement Context Appraisal Score", "sym": "Context Score", "cat": "خدمات ومرافق", "unit": "درجة من 1.0 إلى 5.0", "bench": "1.0–2.4: ريفي | 2.5–3.6: ضواحي | 3.6–5.0: حضري", "eqAr": {"type": "linear", "expr": "النتيجة = (كثافة قائمة × 0.125) + (كثافة مقترحة × 0.125) + (توفر الخدمات × 0.35) + (الجغرافيا × 0.40)"}}, {"ar": "حساب حمل الكهرباء وعدد المحولات (بمعامل التباين)", "en": "Electrical Demand & Transformer Count (Diversity)", "sym": "kVA & DSS Count", "cat": "خدمات ومرافق", "unit": "ك.ف.أ (kVA) · وعدد محولات", "bench": "تباين سكني أولي: 0.60–0.70 | محول قياسي: 1,000 kVA | قطعة DSS (Code D): 5×9م = 45 م²", "eqAr": {"type": "frac", "lhs": "الحمل التصميمي (ك.ف.أ)", "num": "(مجموع الأحمال المتصلة ك.و) × معامل التباين", "den": "معامل القدرة (0.9)"}}, {"ar": "مؤشر اتصالية شبكة الشوارع (نسبة الوصلات للعقد)", "en": "Street Network Link-Node Ratio", "sym": "Link-Node Ratio", "cat": "نقل ومشاة", "unit": "نسبة لا بُعدية", "bench": "ضعيف (شجري): < 1.2 | مقبول للمشي: ≥ 1.4 | ممتاز (شبكي): 1.6–2.0", "eqAr": {"type": "frac", "lhs": "مؤشر الاتصالية", "num": "عدد وصلات الشوارع بين التقاطعات", "den": "عدد التقاطعات + نهايات الشوارع المسدودة"}}, {"ar": "كفاءة نطاق المشي الفعلي (Ped-Shed)", "en": "Pedestrian Shed Efficiency Ratio", "sym": "Ped-Shed %", "cat": "نقل ومشاة", "unit": "نسبة مئوية (%)", "bench": "ضعيف: < 50% | جيد (مستهدف): ≥ 60% | ممتاز: > 70%", "eqAr": {"type": "frac", "lhs": "كفاءة المشي (%)", "num": "المساحة الفعلية المخدومة عبر شبكة الشوارع", "den": "مساحة الدائرة الهوائية (ط × نق²)", "mul": "× 100"}}, {"ar": "كثافة التقاطعات الحضرية", "en": "Street Intersection Density", "sym": "Int / km²", "cat": "نقل ومشاة", "unit": "تقاطع / كم²", "bench": "ضواحي متناثرة: < 40 | حي قابل للمشي (LEED-ND): ≥ 55–80 | قلب مدينة: > 100", "eqAr": {"type": "frac", "lhs": "كثافة التقاطعات", "num": "عدد التقاطعات الحقيقية (دون المسدودة)", "den": "مساحة المنطقة (كم²)"}}, {"ar": "توليد الرحلات المرورية في ساعة الذروة", "en": "Peak Hour Vehicle Trip Generation", "sym": "Trip Gen (TIS)", "cat": "نقل ومشاة", "unit": "رحلة مركبة / ساعة ذروة", "bench": "فيلا منفصلة (ذروة مسائية): ~0.95 رحلة/وحدة | شقة: ~0.45–0.60 | مكاتب: ~1.15/100م²", "eqAr": {"type": "linear", "expr": "رحلات الذروة  =  (عدد الوحدات أو إجمالي المسطحات البنائية)  ×  معدل توليد الرحلات للاستعمال"}}, {"ar": "حساب مواقف المركبات ومساحتها الإجمالية", "en": "Parking Demand & Gross Area Sizing (RAK 2026)", "sym": "Parking (RAK 2026)", "cat": "نقل ومشاة", "unit": "موقف · وم²", "bench": "لائحة 2026: فيلا ≥2 | مكاتب ومحال 1/70م² | مطاعم 1/50م² | فنادق 1/4 غرف | مساجد 1/20 مصلي", "eqAr": {"type": "linear", "expr": "عدد المواقف = المساحة الصافية ÷ معدل الكود | المساحة الإجمالية للمواقف = العدد × (30 إلى 35 م²)"}}, {"ar": "نسبة توزيع الرحلات على وسائط النقل", "en": "Transport Modal Split (Mode Share %)", "sym": "Modal Split %", "cat": "نقل ومشاة", "unit": "نسبة مئوية (%)", "bench": "الهدف في المخططات المستدامة: رفع حصة النقل العام والمشي فوق 30%–50%", "eqAr": {"type": "frac", "lhs": "حصة الوسيلة (%)", "num": "عدد الرحلات بالوسيلة المحددة", "den": "إجمالي عدد الرحلات بجميع الوسائط", "mul": "× 100"}}, {"ar": "حساب الميل الطبوغرافي للأرض والطرق", "en": "Topographic & Road Grade Percentage", "sym": "Slope %", "cat": "مناخ وموقع", "unit": "نسبة مئوية (%)", "bench": "Code D: تصميم أراضي ≤ 2.5% | غير مطوّر > 8–10% | طرق: مفضل 0.3–2.5% (أقصى تجميعي 6%، محلي 8%)", "eqAr": {"type": "frac", "lhs": "الميل المئوي (%)", "num": "فرق المنسوب الرأسي (م)", "den": "المسافة الأفقية (م)", "mul": "× 100"}}, {"ar": "نسبة الاحتواء في الفراغ الشارعي (الفراغ الشارعي المحصور)", "en": "Urban Canyon Ratio (H/W & Enclosure D/H)", "sym": "H/W & D/H", "cat": "مناخ وموقع", "unit": "نسبة (مثال 2:1 أو 1:2)", "bench": "تظليل حار جاف: H/W = 1.5–2.5 | راحة بصرية (علام): D = 1H إلى 3H | ضياع احتواء: D ≥ 4H", "eqAr": {"type": "frac", "lhs": "نسبة الفراغ الشارعي المحصور", "num": "متوسط ارتفاع المباني على الجانبين", "den": "عرض الشارع أو الممر"}}, {"ar": "حساب طول الظل الساقط من المباني", "en": "Building Shadow Length (Solar Altitude)", "sym": "Shadow Length", "cat": "مناخ وموقع", "unit": "متر (م)", "bench": "كلما انخفضت زاوية الشمس (شتاءً أو صباحاً/عصراً) زاد طول الظل", "eqAr": {"type": "frac", "lhs": "طول الظل (م)", "num": "ارتفاع المبنى (م)", "den": "ظل زاوية ارتفاع الشمس"}}, {"ar": "تصريف مياه الأمطار والسيول (الطريقة المنطقية)", "en": "Stormwater Peak Runoff (Rational Method)", "sym": "Q = CIA / 360", "cat": "مناخ وموقع", "unit": "متر مكعب / ثانية (m³/s)", "bench": "C: حدائق 0.15–0.25 | سكني فيلات 0.50–0.65 | تجاري وأسفلت 0.85–0.95", "eqAr": {"type": "frac", "lhs": "ذروة التصريف (م³/ث)", "num": "معامل الجريان × شدة المطر (مم/س) × مساحة الحوض (هكتار)", "den": "360"}}, {"ar": "التنبؤ السكاني بالنمو المركب (الهندسي)", "en": "Geometric / Compound Population Projection", "sym": "Compound Growth", "cat": "سكان وديموغرافيا", "unit": "نسمة", "bench": "معدل نمو طبيعي: 1.5%–2.5% | مدن نامية سريعة وهجرة: 3%–6%", "eqAr": {"type": "linear", "expr": "السكان المستقبليون  =  السكان الحاليون  ×  ( 1 + معدل النمو السنوي ) ^ عدد السنوات"}}, {"ar": "زمن تضاعف السكان (قاعدة 70)", "en": "Population Doubling Time (Rule of 70)", "sym": "Rule of 70", "cat": "سكان وديموغرافيا", "unit": "سنة (Years)", "bench": "نمو 2% ← 35 سنة | نمو 3.5% ← 20 سنة | نمو 5% ← 14 سنة", "eqAr": {"type": "frac", "lhs": "زمن التضاعف (سنة)", "num": "70", "den": "نسبة النمو السنوي (%)"}}, {"ar": "تقدير الاحتياج الإسكاني المستقبلي (فجوة الإسكان)", "en": "Future Housing Units Demand", "sym": "Housing Units Need", "cat": "اقتصاد وإسكان", "unit": "وحدة سكنية", "bench": "نسبة الشغور الصحية للسوق العقاري: 4%–6% (0.04–0.06)", "eqAr": {"type": "frac", "lhs": "الوحدات المطلوبة", "num": "الزيادة السكانية المتوقعة × (1 + نسبة الشغور)", "den": "متوسط حجم الأسرة المتوقع"}}, {"ar": "مؤشر القدرة على تحمل تكلفة السكن (الإسكان الميسّر)", "en": "Housing Affordability (30% Rule & PIR)", "sym": "Affordability & PIR", "cat": "اقتصاد وإسكان", "unit": "نسبة مئوية (%) · ومضاعف دخل (PIR)", "bench": "ميسّر: ≤ 30% من الدخل | PIR متوازن: 3–4 أضعاف الدخل السنوي | مرتفع: > 5", "eqAr": {"type": "frac", "lhs": "عبء السكن (%)", "num": "تكلفة السكن السنوية (إيجار أو قسط)", "den": "الدخل السنوي الإجمالي للأسرة", "mul": "× 100"}}];
+var UM_SV_EG = [
+    [1,'center','ديني','مسجد محلي',1500,800,'نطاق مشي 300–400م'],
+    [1,'center','تعليم','روضة أطفال',2500,1200,'مجموعة سكنية'],
+    [0,'util','مرافق','محطة محولات كهرباء',0,25,'5×5 م (حسب الحمل)'],
+    [0,'util','مرافق','نقطة تجميع مخلفات',2000,100,'مجموعة سكنية'],
+    [2,'noncenter','تعليم','مدرسة ابتدائية',4500,6000,'قلب المجاورة · نطاق 500م'],
+    [2,'noncenter','صحة','وحدة رعاية أولية',6000,1500,'مجاورة سكنية'],
+    [2,'center','ترفيه ورياضة','ملعب / ساحة لعب مجاورة',5000,2000,'مجاورة سكنية'],
+    [3,'center','ديني','مسجد جامع',15000,3000,'مركز الحي'],
+    [3,'noncenter','تعليم','مدرسة إعدادية',9000,8000,'مستوى الحي'],
+    [3,'noncenter','تعليم','مدرسة ثانوية',18000,10000,'مستوى الحي'],
+    [3,'noncenter','صحة','مركز صحي / مستوصف',20000,3000,'مستوى الحي'],
+    [3,'center','إداري واجتماعي','مركز مجتمعي / ثقافي',10000,2500,'مركز الحي'],
+    [3,'center','إداري واجتماعي','بريد وخدمات حكومية',20000,800,'مركز الحي'],
+    [3,'center','ترفيه ورياضة','نادي رياضي',25000,10000,'مستوى الحي'],
+    [0,'util','مرافق','خزان / محطة مياه',10000,1000,'مستوى الحي'],
+    [0,'util','مرافق','محطة رفع صرف صحي',10000,500,'مستوى الحي'],
+    [4,'noncenter','صحة','مستشفى عام',60000,20000,'مستوى القطاع / المدينة'],
+    [4,'noncenter','إداري واجتماعي','مركز شرطة',50000,2500,'مستوى القطاع / المدينة'],
+    [4,'noncenter','إداري واجتماعي','دفاع مدني / إطفاء',50000,3000,'مستوى القطاع / المدينة']
+];
+var UM_SV_RAK = [
+    [1,'center','جوار','مسجد محلي (يشمل المحال ≈375 م²)',2000,2230,'2,000–3,000 نسمة · ج 3-2'],
+    [1,'center','جوار','ساحة محلية (Local Plaza)',2000,2790,'2,000–3,000 نسمة · ج 3-2'],
+    [1,'center','جوار','ملعب أطفال (Tot Lot)',2000,2790,'2,000–3,000 نسمة · ج 3-2'],
+    [2,'center','مجتمع','مسجد جامع (Juma)',7000,4650,'7,000–10,000 نسمة · ج 3-3'],
+    [2,'center','مجتمع','مركز تسوق مجتمعي',7000,8830,'7,000–10,000 نسمة · ج 3-3'],
+    [2,'center','مجتمع','حضانة أطفال',5000,1860,'5,000–7,000 نسمة · ج 3-3'],
+    [2,'center','مجتمع','روضة أطفال',5000,7250,'5,000–7,000 نسمة · ج 3-3'],
+    [2,'noncenter','مجتمع','مدرسة ابتدائية',5000,11710,'5,000–7,000 نسمة · لجنس واحد'],
+    [2,'noncenter','مجتمع','عيادة عامة خاصة',5000,1115,'5,000–7,000 نسمة'],
+    [2,'noncenter','مجتمع','عيادة تخصصية خاصة',7000,1115,'7,000–10,000 نسمة'],
+    [2,'noncenter','مجتمع','مركز عيادات (Poly Clinic)',7000,1490,'7,000–10,000 نسمة'],
+    [2,'center','مجتمع','ملعب (Playground)',5000,7435,'5,000–7,000 نسمة'],
+    [2,'center','مجتمع','حديقة المجتمع',7000,17655,'7,000–10,000 نسمة'],
+    [3,'noncenter','حي','مدرسة إعدادية',10000,13010,'10,000–15,000 نسمة · ج 3-4'],
+    [3,'noncenter','حي','مدرسة ثانوية',15000,20440,'15,000–20,000 نسمة · ج 3-4'],
+    [3,'center','حي','حضانة خاصة (Daycare)',15000,2230,'15,000–20,000 نسمة · ج 3-4'],
+    [3,'center','حي','مكتب بريد',20000,2510,'20,000–30,000 نسمة · ج 3-4'],
+    [3,'noncenter','حي','مركز صحي',30000,6505,'30,000 نسمة · ج 3-4'],
+    [3,'center','حي','دار رعاية مسنين',30000,4650,'30,000–50,000 نسمة · ج 3-4'],
+    [3,'center','حي','حديقة الحي (District Park)',30000,37165,'30,000–50,000 نسمة · ج 3-4'],
+    [0,'util','مرافق','محطة محولات كهرباء (DSS)',0,45,'5×9 م (Code D صـ 82)'],
+    [0,'util','مرافق','خزان / محطة مياه',10000,1000,'تقديري'],
+    [0,'util','مرافق','محطة رفع صرف صحي',10000,500,'تقديري'],
+    [0,'util','مرافق','نقطة تجميع مخلفات',2000,100,'تقديري']
+];
+function umPlainExpr(eq){
+    if(!eq) return '';
+    if(eq.type === 'frac') return eq.lhs + ' = (' + eq.num + ') / (' + eq.den + ')' + (eq.mul ? ' ' + eq.mul : '');
+    return eq.expr || '';
+}
+
+/* ---------- live calculator capture (reads exactly what the engine renders; no math duplication) ---------- */
+function umSyncCalc(){ try{ if(typeof runMasterplanCalculator === 'function') runMasterplanCalculator(); }catch(e){} }
+function umTxt(id){ var e = $(id); return e ? e.textContent.trim() : ''; }
+function umSub(id){ var e = $(id); return (e && e.nextElementSibling) ? e.nextElementSibling.textContent.trim() : ''; }
+function umVal(id){ var e = $(id); return e ? e.value : ''; }
+var LU_ROWS = [
+    { key:'pctRes',  name:'الإسكان الصافي (Net Residential)',          std:'48% – 55% (50% صافي قسائم)',        min:48, max:55 },
+    { key:'pctRoads',name:'شبكة الطرق والمواقف (Roads & ROW)',          std:'18% – 25% (الأمثل اقتصادياً)',              min:18, max:25 },
+    { key:'pctOpen', name:'المناطق المفتوحة والحدائق (Open Space)',     std:'10% – 15% (3–5% حدائق / 10% حضري)', min:10, max:15 },
+    { key:'pctFac',  name:'المرافق والخدمات العامة (Public Facilities)', std:'8% – 12% (~7–12% حسب الحجم)', min:8,  max:12 },
+    { key:'pctCom',  name:'التجاري والاستعمال المختلط (Commercial)',    std:'4% – 7% (مراكز المجموعة السكنية وحيّية)',    min:4,  max:7  }
+];
+function umCapture(){
+    umSyncCalc();
+    var codeSel = $('calc-code');
+    var codeLabel = (codeSel && codeSel.selectedOptions && codeSel.selectedOptions[0]) ? codeSel.selectedOptions[0].textContent.trim() : '';
+    var modeV = umVal('calc-mode') || 'area';
+    var unitV = umVal('calc-unit') || 'ha';
+    return {
+        inputs: {
+            areaInput: umVal('calc-area-input'),
+            unit: unitV,
+            unitLabel: unitV === 'm2' ? 'م²' : 'هكتار',
+            areaHa: parseFloat(umVal('calc-area-ha')) || 0,
+            mode: modeV,
+            modeLabel: modeV === 'pop' ? 'بالسكان المستهدفين' : 'بالمساحة',
+            popInput: umVal('calc-pop-input'),
+            codeLabel: codeLabel,
+            plotSize: +umVal('calc-plot-size') || 0,
+            hhSize: +umVal('calc-hh-size') || 0,
+            far: +umVal('calc-far') || 0,
+            pctRes: +umVal('calc-pct-res') || 0,
+            pctRoads: +umVal('calc-pct-roads') || 0,
+            pctOpen: +umVal('calc-pct-open') || 0,
+            pctFac: +umVal('calc-pct-fac') || 0,
+            pctCom: +umVal('calc-pct-com') || 0
+        },
+        outputs: {
+            areaLabel: umTxt('calc-area-m2-label'),
+            badge: umTxt('calc-total-pct-badge'),
+            plots: umTxt('out-plots'), plotsSub: umSub('out-plots'),
+            pop: umTxt('out-pop'), popSub: umSub('out-pop'),
+            gross: umTxt('out-gross-density'), grossSub: umSub('out-gross-density'),
+            net: umTxt('out-net-density'), netSub: umSub('out-net-density'),
+            gfa: umTxt('out-gfa'), gfaSub: umSub('out-gfa'),
+            green: umTxt('out-green-per-capita'),
+            foot: umTxt('out-foot'), park: umTxt('out-park'), landpc: umTxt('out-landpc'),
+            diag: ($('calc-diagnostics') ? $('calc-diagnostics').innerText.trim() : '')
+        }
+    };
+}
+
+/* ---------- 1. Scenario comparison ---------- */
+var SCEN_KEY = 'um_scenarios_v18';
+function umScenarios(){ var a = lsGet(SCEN_KEY, []); return Array.isArray(a) ? a : []; }
+window.umSaveScenario = function(){
+    var cap = umCapture();
+    var list = umScenarios();
+    var d = new Date();
+    var stamp = d.toLocaleDateString('ar-EG') + ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
+    list.push({ id:'sc' + Date.now(), name:'سيناريو ' + (list.length + 1), stamp:stamp, inputs:cap.inputs, outputs:cap.outputs });
+    if(!lsSet(SCEN_KEY, list)) return;
+    toast('تم حفظ السيناريو (' + cap.outputs.pop + ' نسمة · ' + cap.outputs.plots + ' وحدة)');
+    umRenderScenarios();
+};
+window.umDelScenario = function(id){
+    lsSet(SCEN_KEY, umScenarios().filter(function(s){ return s.id !== id; }));
+    umRenderScenarios();
+};
+window.umClearScenarios = function(){
+    if(!umScenarios().length){ toast('لا توجد سيناريوهات محفوظة','amber'); return; }
+    if(!confirm('مسح كل السيناريوهات المحفوظة؟')) return;
+    lsSet(SCEN_KEY, []); umRenderScenarios(); toast('تم مسح السيناريوهات');
+};
+function umScenInputsLine(inp){
+    var areaTxt = inp.mode === 'pop'
+        ? ('سكان مستهدفون ' + (inp.popInput || '0') + ' نسمة')
+        : ('مساحة ' + inp.areaInput + ' ' + inp.unitLabel + ' (' + (+inp.areaHa.toFixed(2)) + ' هـ)');
+    return areaTxt + ' · قسيمة ' + inp.plotSize + 'م² · أسرة ' + inp.hhSize + ' · FAR ' + inp.far +
+        ' · نسب: سكني ' + inp.pctRes + '/طرق ' + inp.pctRoads + '/مفتوح ' + inp.pctOpen + '/خدمات ' + inp.pctFac + '/تجاري ' + inp.pctCom +
+        (inp.codeLabel ? ' · ' + inp.codeLabel : '');
+}
+function umRenderScenarios(){
+    var listEl = $('um-scen-list'), cmpEl = $('um-scen-compare');
+    if(!listEl) return;
+    var list = umScenarios();
+    if(!list.length){
+        listEl.innerHTML = '<div class="um-card text-xs text-slate-400">لا توجد سيناريوهات محفوظة بعد. اضبط مدخلات الحاسبة ثم اضغط زر «حفظ السيناريو للمقارنة» في أعلى الحاسبة، وكرر ذلك لكل بديل تريد مقارنته (مثلاً سكني 50% مقابل 40%).</div>';
+        cmpEl.innerHTML = '';
+        return;
+    }
+    listEl.innerHTML = list.map(function(s){
+        var o = s.outputs;
+        return '<div class="um-card !p-3 flex flex-wrap items-center justify-between gap-2 text-xs">' +
+            '<div class="space-y-0.5">' +
+                '<div class="font-bold text-white text-sm">' + esc(s.name) + ' <span class="text-[10px] font-normal text-slate-500">' + esc(s.stamp) + '</span></div>' +
+                '<div class="text-[11px] text-slate-400">' + esc(umScenInputsLine(s.inputs)) + '</div>' +
+                '<div class="text-[11px] text-teal-300 font-mono">السكان ' + esc(o.pop) + ' · الوحدات ' + esc(o.plots) + ' · كثافة إجمالية ' + esc(o.gross) + ' · صافية ' + esc(o.net) + ' · مسطحات ' + esc(o.gfa) + ' ' + esc(o.gfaSub) + ' · أخضر/فرد ' + esc(o.green) + 'م²</div>' +
+            '</div>' +
+            '<button onclick="umDelScenario(\'' + s.id + '\')" class="px-2.5 py-1 rounded-lg bg-rose-600/15 hover:bg-rose-600/25 text-rose-300 border border-rose-500/30 text-[11px] font-bold transition"><i class="fa-solid fa-trash-can"></i></button>' +
+        '</div>';
+    }).join('');
+    if(list.length < 2){ cmpEl.innerHTML = '<div class="text-[11px] text-slate-500">احفظ سيناريو ثانياً على الأقل لتظهر جداول المقارنة والفروق هنا.</div>'; return; }
+    var base = list[0].outputs;
+    var metrics = [
+        { k:'pop',   t:'السكان (نسمة)' },
+        { k:'plots', t:'الوحدات/القسائم' },
+        { k:'gross', t:'الكثافة الإجمالية' },
+        { k:'net',   t:'الكثافة الصافية' },
+        { k:'gfa',   t:'إجمالي المسطحات' },
+        { k:'green', t:'نصيب الفرد من المفتوح (م²)' }
+    ];
+    var head = '<tr><th class="p-2">المؤشر</th>' + list.map(function(s,i){ return '<th class="p-2">' + esc(s.name) + (i===0?' (الأساس)':'') + '</th>'; }).join('') + '</tr>';
+    var rows = metrics.map(function(m){
+        var tds = list.map(function(s, i){
+            var disp = s.outputs[m.k];
+            if(i === 0) return '<td class="p-2 font-mono font-bold text-white">' + esc(disp) + '</td>';
+            var diff = umNum(s.outputs[m.k]) - umNum(base[m.k]);
+            var cls = diff > 0 ? 'text-emerald-300' : (diff < 0 ? 'text-rose-300' : 'text-slate-400');
+            var sign = diff > 0 ? '+' : '';
+            var dDisp = (Math.abs(diff) >= 100) ? sign + n2(diff) : sign + (Math.round(diff * 10) / 10);
+            return '<td class="p-2 font-mono">' + esc(disp) + ' <span class="' + cls + ' text-[10px]">(' + (diff === 0 ? '±0' : dDisp) + ')</span></td>';
+        }).join('');
+        return '<tr><td class="p-2 font-bold text-slate-300">' + m.t + '</td>' + tds + '</tr>';
+    }).join('');
+    cmpEl.innerHTML = '<div class="overflow-x-auto rounded-xl border border-slate-700">' +
+        '<table class="w-full text-[11px] sm:text-xs text-right">' +
+        '<thead class="bg-slate-800/80 text-slate-300">' + head + '</thead>' +
+        '<tbody class="divide-y divide-slate-800 bg-slate-900/60">' + rows + '</tbody></table></div>' +
+        '<p class="text-[11px] text-slate-500">الفروق محسوبة مقابل السيناريو الأول (الأساس)، والقيم معروضة كما في الحاسبة تماماً (بوحدتها الحالية).</p>';
+}
+
+/* ---------- 2. Report export ---------- */
+function umReportHTML(){
+    var cap = umCapture();
+    var inp = cap.inputs, o = cap.outputs;
+    var d = new Date();
+    var dateStr = d.toLocaleDateString('ar-EG') + ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
+    var ver = window.UM_VERSION || 'V25.3';
+    var h = '<div class="umr-h1">تقرير المشروع التخطيطي · UrbanMind ' + ver + '</div>';
+    h += '<div class="umr-sub">أُنشئ في ' + dateStr + ' · حاسبة ميزانية استعمالات الأراضي والكثافات</div>';
+    h += '<h3>أولاً: المدخلات</h3><table>';
+    if(inp.mode === 'pop') h += '<tr><th style="width:55%">أسلوب الحساب</th><td>بالسكان المستهدفين: ' + esc(inp.popInput) + ' نسمة</td></tr>';
+    else h += '<tr><th style="width:55%">مساحة الموقع</th><td>' + esc(inp.areaInput) + ' ' + inp.unitLabel + ' (' + (+inp.areaHa.toFixed(3)) + ' هكتار)</td></tr>';
+    if(inp.codeLabel) h += '<tr><th>الكود / الدليل المختار</th><td>' + esc(inp.codeLabel) + '</td></tr>';
+    h += '<tr><th>مساحة القسيمة</th><td>' + inp.plotSize + ' م²</td></tr>';
+    h += '<tr><th>حجم الأسرة</th><td>' + inp.hhSize + ' فرد/وحدة</td></tr>';
+    h += '<tr><th>معامل الاستغلال FAR</th><td>' + inp.far + '</td></tr>';
+    h += '<tr><th>النسب: سكني / طرق / مفتوح / خدمات / تجاري</th><td>' + inp.pctRes + '% / ' + inp.pctRoads + '% / ' + inp.pctOpen + '% / ' + inp.pctFac + '% / ' + inp.pctCom + '%</td></tr>';
+    h += '<tr><th>حالة المجموع</th><td>' + esc(o.badge) + '</td></tr></table>';
+    h += '<h3>ثانياً: النتائج الرئيسية (كما تظهر في الحاسبة)</h3><table>';
+    h += '<tr><th style="width:55%">' + esc(o.areaLabel) + '</th><td></td></tr>';
+    h += '<tr><th>الوحدات/القسائم</th><td>' + esc(o.plots) + ' (' + esc(o.plotsSub) + ')</td></tr>';
+    h += '<tr><th>السكان المتوقعون</th><td>' + esc(o.pop) + ' ' + esc(o.popSub) + '</td></tr>';
+    h += '<tr><th>الكثافة الإجمالية</th><td>' + esc(o.gross) + ' ' + esc(o.grossSub) + '</td></tr>';
+    h += '<tr><th>الكثافة الصافية</th><td>' + esc(o.net) + ' ' + esc(o.netSub) + '</td></tr>';
+    h += '<tr><th>إجمالي المسطحات البنائية</th><td>' + esc(o.gfa) + ' ' + esc(o.gfaSub) + '</td></tr>';
+    h += '<tr><th>نصيب الفرد من المناطق المفتوحة</th><td>' + esc(o.green) + ' م²/فرد</td></tr>';
+    h += '<tr><th>مواقف المركبات المطلوبة</th><td>' + esc(o.park) + '</td></tr>';
+    h += '<tr><th>نصيب الفرد من الأرض (إجمالي)</th><td>' + esc(o.landpc) + ' م²/فرد</td></tr></table>';
+    h += '<h3>ثالثاً: ميزانية استعمالات الأراضي</h3><table><tr><th>الاستعمال</th><th>النسبة</th><th>هكتار</th><th>م²</th><th>المعيار المرجعي</th></tr>';
+    LU_ROWS.forEach(function(r){
+        var ha = inp.areaHa * inp[r.key] / 100;
+        h += '<tr><td>' + r.name + '</td><td>' + inp[r.key] + '%</td><td>' + ha.toFixed(2) + '</td><td>' + n2(ha * 10000) + '</td><td>' + r.std + '</td></tr>';
+    });
+    h += '</table>';
+    if(o.diag){
+        h += '<h3>رابعاً: التشخيص الهندسي (كما في الحاسبة)</h3>';
+        o.diag.split('\n').forEach(function(line){ if(line.trim()) h += '<div class="umr-note">' + esc(line.trim()) + '</div>'; });
+    }
+    var scens = umScenarios();
+    if(scens.length){
+        h += '<h3>خامساً: السيناريوهات المحفوظة (' + scens.length + ')</h3><table><tr><th>السيناريو</th><th>السكان</th><th>الوحدات</th><th>الكثافة الإجمالية</th><th>المسطحات</th><th>أخضر/فرد (م²)</th></tr>';
+        scens.forEach(function(s){
+            h += '<tr><td>' + esc(s.name) + '</td><td>' + esc(s.outputs.pop) + '</td><td>' + esc(s.outputs.plots) + '</td><td>' + esc(s.outputs.gross) + '</td><td>' + esc(s.outputs.gfa) + '</td><td>' + esc(s.outputs.green) + '</td></tr>';
+        });
+        h += '</table>';
+    }
+    h += '<div class="umr-foot">أُنشئ هذا التقرير من منصة UrbanMind ' + ver + ' · كل الأرقام منقولة من شاشة الحاسبة لحظة التصدير دون إعادة حساب.</div>';
+    return h;
+}
+function umPrintArea(){ var p = $('um-print-area'); if(!p){ p = document.createElement('div'); p.id = 'um-print-area'; p.dir = 'rtl'; document.body.appendChild(p); } return p; }
+window.umPrintReport = function(){
+    umPrintArea().innerHTML = umReportHTML();
+    toast('التقرير جاهز: اختر حفظ PDF من نافذة الطباعة');
+    setTimeout(function(){ window.print(); }, 150);
+};
+
+/* ---------- Print fixes (V19): no blank pages; print any tab cleanly ---------- */
+function umGenericPrintHTML(sec){
+    if(!sec) return '';
+    var c = sec.cloneNode(true);
+    c.querySelectorAll('button,input,select,textarea,script,style,canvas,noscript').forEach(function(el){ el.remove(); });
+    c.querySelectorAll('details').forEach(function(d){ d.setAttribute('open',''); });
+    c.querySelectorAll('summary').forEach(function(sm){
+        var h = document.createElement('h3');
+        h.textContent = sm.textContent.trim();
+        sm.replaceWith(h);
+    });
+    var ver = window.UM_VERSION || 'V25.3';
+    var h2 = sec.querySelector('h2');
+    var title = h2 ? h2.textContent.trim() : document.title;
+    return '<div class="umr-generic"><div class="umr-h1">' + esc(title) + '</div>' +
+        '<div class="umr-sub">UrbanMind ' + ver + ' · نسخة طباعة مبسطة لمحتوى التبويب المعروض</div>' +
+        c.innerHTML +
+        '<div class="umr-foot">أُنشئت هذه الصفحة من منصة التخطيط العمراني UrbanMind ' + ver + '</div></div>';
+}
+window.umEnsurePrintView = function(){
+    var p = umPrintArea();
+    if(p.innerHTML.trim()) return;
+    var active = document.querySelector('.tab-panel:not(.hidden)');
+    var aid = active ? active.id : '';
+    if(aid === 'tab-calculator'){ p.innerHTML = umReportHTML(); return; }
+    if(aid === 'tab-formulas'){ p.innerHTML = umCheatHTML(); return; }
+    p.innerHTML = umGenericPrintHTML(active);
+};
+window.addEventListener('beforeprint', umEnsurePrintView);
+window.addEventListener('afterprint', function(){
+    var p = document.getElementById('um-print-area');
+    if(p) p.innerHTML = '';
+});
+document.addEventListener('keydown', function(e){
+    if((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) umEnsurePrintView();
+});
+window.umCsvReport = function(){
+    var cap = umCapture();
+    var inp = cap.inputs, o = cap.outputs;
+    var ver = window.UM_VERSION || 'V25.3';
+    function q(x){ x = (x === undefined || x === null) ? '' : String(x); return '"' + x.replace(/"/g, "'") + '"'; }
+    function row(){ var a = Array.prototype.slice.call(arguments); while(a.length < 6) a.push(''); return a.join(','); }
+    var lines = [];
+    lines.push(row(q('تقرير UrbanMind ' + ver), q('تاريخ الإنشاء: ' + new Date().toISOString().slice(0,16).replace('T',' '))));
+    lines.push(row(''));
+    lines.push(row(q('١) المدخلات')));
+    lines.push(row(q('البند'), q('القيمة'), q('الوحدة'), q('ملاحظات')));
+    if(inp.mode === 'pop'){
+        lines.push(row(q('أسلوب الحساب'), q('بالسكان المستهدفين'), q('نسمة'), q('السكان: ' + inp.popInput)));
+    } else {
+        lines.push(row(q('أسلوب الحساب'), q('بالمساحة')));
+        lines.push(row(q('مساحة الموقع'), q(inp.areaInput), q(inp.unitLabel), q('تعادل ' + (+inp.areaHa.toFixed(3)) + ' هكتار')));
+    }
+    if(inp.codeLabel) lines.push(row(q('الكود / الدليل المختار'), q(inp.codeLabel)));
+    lines.push(row(q('مساحة القسيمة'), inp.plotSize, q('م²')));
+    lines.push(row(q('حجم الأسرة'), inp.hhSize, q('فرد/وحدة')));
+    lines.push(row(q('معامل الاستغلال FAR'), inp.far));
+    lines.push(row(q('نسبة السكني'), inp.pctRes, q('%')));
+    lines.push(row(q('نسبة الطرق'), inp.pctRoads, q('%')));
+    lines.push(row(q('نسبة المفتوح'), inp.pctOpen, q('%')));
+    lines.push(row(q('نسبة الخدمات'), inp.pctFac, q('%')));
+    lines.push(row(q('نسبة التجاري'), inp.pctCom, q('%')));
+    lines.push(row(q('حالة المجموع'), q(o.badge)));
+    lines.push(row(''));
+    lines.push(row(q('٢) النتائج الرئيسية (كما تظهر في الحاسبة)')));
+    lines.push(row(q('البند'), q('القيمة'), q('الوحدة/التفصيل'), q('ملاحظات')));
+    lines.push(row(q('الوحدات/القسائم'), q(o.plots), q(o.plotsSub)));
+    lines.push(row(q('السكان المتوقعون'), q(o.pop), q(o.popSub)));
+    lines.push(row(q('الكثافة الإجمالية'), q(o.gross), q(o.grossSub)));
+    lines.push(row(q('الكثافة الصافية'), q(o.net), q(o.netSub)));
+    lines.push(row(q('إجمالي المسطحات البنائية'), q(o.gfa), q(o.gfaSub)));
+    lines.push(row(q('نصيب الفرد من المناطق المفتوحة'), q(o.green), q('م²/فرد')));
+    lines.push(row(q('مواقف المركبات المطلوبة'), q(o.park)));
+    lines.push(row(q('نصيب الفرد من الأرض (إجمالي)'), q(o.landpc), q('م²/فرد')));
+    lines.push(row(''));
+    lines.push(row(q('٣) ميزانية استعمالات الأراضي')));
+    lines.push(row(q('الاستعمال'), q('النسبة %'), q('هكتار'), q('م²'), q('المعيار المرجعي')));
+    var totPct = 0, totHa = 0, totM2 = 0;
+    LU_ROWS.forEach(function(r){
+        var ha = inp.areaHa * inp[r.key] / 100;
+        totPct += +inp[r.key]; totHa += ha; totM2 += ha * 10000;
+        lines.push(row(q(r.name), +inp[r.key], +ha.toFixed(2), Math.round(ha * 10000), q(r.std)));
+    });
+    lines.push(row(q('المجموع'), +totPct.toFixed(1), +totHa.toFixed(2), Math.round(totM2), q('يجب أن يساوي 100%')));
+    if(o.diag){
+        lines.push(row(''));
+        lines.push(row(q('٤) التشخيص الهندسي (كما في الحاسبة)')));
+        o.diag.split('\n').forEach(function(line){ if(line.trim()) lines.push(row(q(line.trim()))); });
+    }
+    var scens = umScenarios();
+    if(scens.length){
+        lines.push(row(''));
+        lines.push(row(q('٥) السيناريوهات المحفوظة (' + scens.length + ')')));
+        lines.push(row(q('السيناريو'), q('السكان'), q('الوحدات'), q('الكثافة الإجمالية'), q('المسطحات'), q('أخضر/فرد (م²)')));
+        scens.forEach(function(s){
+            lines.push(row(q(s.name), q(s.outputs.pop), q(s.outputs.plots), q(s.outputs.gross), q(s.outputs.gfa), q(s.outputs.green)));
+        });
+    }
+    var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type:'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'UrbanMind_report_' + ver + '_' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    toast('تم تحميل ملف CSV');
+};
+
+/* ---------- 3. Spaced repetition ---------- */
+var SR_KEY = 'um_sr_v18';
+var srSession = null;
+function umSrState(){ var s = lsGet(SR_KEY, {}); return (s && typeof s === 'object' && !Array.isArray(s)) ? s : {}; }
+function umSrDeck(src){
+    var deck = [];
+    if(src !== 'enc' && typeof getAllFlashcards === 'function'){
+        try{
+            getAllFlashcards().forEach(function(c){
+                deck.push({ key:'fc:' + c.id, cat:c.category || 'بطاقات', front:c.question, back:c.answer + (c.reference ? '\n\nالمرجع: ' + c.reference : '') });
+            });
+        }catch(e){}
+    }
+    if(src !== 'fc' && typeof DEFAULT_ENCYCLOPEDIA !== 'undefined' && Array.isArray(DEFAULT_ENCYCLOPEDIA)){
+        DEFAULT_ENCYCLOPEDIA.forEach(function(t){
+            deck.push({ key:'enc:' + t.id, cat:'مصطلحات: ' + (t.category || ''), front:'اشرح المصطلح: «' + t.arTerm + '»', back:t.definition + (t.application ? '\n\nالتطبيق: ' + t.application : '') + (t.enTerm ? '\n\nEN: ' + t.enTerm : '') });
+        });
+    }
+    return deck;
+}
+function umSrDueCount(src){
+    var st = umSrState(), now = Date.now(), n = 0;
+    umSrDeck(src).forEach(function(c){ var r = st[c.key]; if(!r || !r.due || r.due <= now) n++; });
+    return n;
+}
+function umSrRenderStats(){
+    var el = $('um-sr-stats'), badge = $('um-sr-due-badge');
+    if(!el) return;
+    var src = $('um-sr-src') ? $('um-sr-src').value : 'all';
+    var deck = umSrDeck(src), st = umSrState();
+    var learned = 0;
+    deck.forEach(function(c){ if(st[c.key] && st[c.key].reps > 0) learned++; });
+    var due = umSrDueCount(src);
+    el.textContent = 'البطاقات في النطاق: ' + deck.length + ' · متقنة أو قيد الإتقان: ' + learned + ' · مستحقة اليوم: ' + due;
+    if(badge) badge.textContent = due ? ('مستحق اليوم: ' + due) : 'لا شيء مستحق اليوم';
+}
+window.umSrStart = function(){
+    var src = $('um-sr-src') ? $('um-sr-src').value : 'all';
+    var st = umSrState(), now = Date.now();
+    var due = umSrDeck(src).filter(function(c){ var r = st[c.key]; return !r || !r.due || r.due <= now; });
+    if(!due.length){ toast('لا توجد بطاقات مستحقة اليوم في هذا النطاق','amber'); return; }
+    for(var i = due.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = due[i]; due[i] = due[j]; due[j] = t; }
+    srSession = { cards:due, idx:0, done:0, flipped:false };
+    $('um-sr-session').classList.remove('hidden');
+    umSrShowCard();
+};
+function umSrShowCard(){
+    var c = srSession.cards[srSession.idx];
+    $('um-sr-prog').textContent = 'بطاقة ' + (srSession.idx + 1) + ' من ' + srSession.cards.length;
+    $('um-sr-cat').textContent = c.cat;
+    $('um-sr-front').textContent = c.front;
+    $('um-sr-back').classList.add('hidden');
+    $('um-sr-back').textContent = c.back;
+    $('um-sr-grades').classList.add('hidden');
+    $('um-sr-flipbtn').classList.remove('hidden');
+    srSession.flipped = false;
+}
+window.umSrFlip = function(){
+    if(!srSession) return;
+    $('um-sr-back').classList.remove('hidden');
+    $('um-sr-grades').classList.remove('hidden');
+    $('um-sr-flipbtn').classList.add('hidden');
+    srSession.flipped = true;
+};
+window.umSrGrade = function(g){
+    if(!srSession || !srSession.flipped) return;
+    var c = srSession.cards[srSession.idx];
+    var st = umSrState();
+    var r = st[c.key] || { ivl:0, reps:0 };
+    if(g === 0) r.ivl = 1;
+    else if(g === 1) r.ivl = r.ivl >= 1 ? r.ivl * 2 : 3;
+    else r.ivl = r.ivl >= 1 ? r.ivl * 3 : 7;
+    r.reps = (r.reps || 0) + 1;
+    r.due = Date.now() + r.ivl * DAY;
+    st[c.key] = r;
+    lsSet(SR_KEY, st);
+    srSession.idx++; srSession.done++;
+    if(srSession.idx >= srSession.cards.length){ umSrEnd(); return; }
+    umSrShowCard();
+};
+window.umSrEnd = function(){
+    if(srSession && srSession.done > 0) toast('أنهيت الجلسة بعد مراجعة ' + srSession.done + ' بطاقة');
+    srSession = null;
+    $('um-sr-session').classList.add('hidden');
+    umSrRenderStats();
+};
+window.umSrReset = function(){
+    if(!confirm('إعادة ضبط كل مواعيد المراجعة المتباعدة؟ ستعود كل البطاقات كأنها جديدة.')) return;
+    lsSet(SR_KEY, {}); umSrRenderStats(); toast('تمت إعادة ضبط مواعيد المراجعة');
+};
+
+/* ---------- 4. Timed mock test ---------- */
+var MOCK_BEST_KEY = 'um_mock_best_v18';
+var mock = null, mockTimer = null;
+function umMockRenderBest(){
+    var el = $('um-mock-best'); if(!el) return;
+    var b = lsGet(MOCK_BEST_KEY, null);
+    el.textContent = b ? ('أفضل نتيجة: ' + b.pct + '% (' + b.score + '/' + b.total + ') في ' + b.date) : '';
+}
+window.umMockStart = function(){
+    if(typeof QUIZ_SCENARIOS === 'undefined' || !Array.isArray(QUIZ_SCENARIOS) || !QUIZ_SCENARIOS.length){ toast('بنك الأسئلة غير متاح','amber'); return; }
+    var count = parseInt(($('um-mock-count') || {}).value, 10) || 10;
+    var mins = parseInt(($('um-mock-mins') || {}).value, 10) || 10;
+    var idxs = QUIZ_SCENARIOS.map(function(_, i){ return i; });
+    for(var i = idxs.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = idxs[i]; idxs[i] = idxs[j]; idxs[j] = t; }
+    idxs = idxs.slice(0, Math.min(count, idxs.length));
+    mock = { idxs:idxs, pos:0, answers:[], endsAt:Date.now() + mins * 60000 };
+    $('um-mock-setup').classList.add('hidden');
+    $('um-mock-results').classList.add('hidden');
+    $('um-mock-results').innerHTML = '';
+    $('um-mock-session').classList.remove('hidden');
+    umMockShowQ();
+    clearInterval(mockTimer);
+    mockTimer = setInterval(umMockTick, 1000);
+    umMockTick();
+};
+function umMockTick(){
+    if(!mock){ clearInterval(mockTimer); return; }
+    var rem = Math.max(0, mock.endsAt - Date.now());
+    var mm = Math.floor(rem / 60000), ss = Math.floor((rem % 60000) / 1000);
+    var el = $('um-mock-timer');
+    if(el) el.textContent = 'الوقت المتبقي ' + ('0' + mm).slice(-2) + ':' + ('0' + ss).slice(-2);
+    if(rem <= 0){ umMockFinish(false); toast('انتهى الوقت: تم تصحيح ما أجبت عنه','amber'); }
+}
+function umMockShowQ(){
+    var q = QUIZ_SCENARIOS[mock.idxs[mock.pos]];
+    $('um-mock-prog').textContent = 'سؤال ' + (mock.pos + 1) + ' من ' + mock.idxs.length;
+    $('um-mock-cat').textContent = q.category || '';
+    $('um-mock-q').textContent = q.question;
+    $('um-mock-opts').innerHTML = q.options.map(function(opt, idx){
+        return '<button onclick="umMockAnswer(' + idx + ')" class="w-full text-right p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 transition flex items-start gap-2.5">' +
+            '<span class="font-mono font-bold text-amber-400">' + (idx + 1) + '.</span><span>' + esc(opt) + '</span></button>';
+    }).join('');
+}
+window.umMockAnswer = function(idx){
+    if(!mock) return;
+    mock.answers[mock.pos] = idx;
+    mock.pos++;
+    if(mock.pos >= mock.idxs.length){ umMockFinish(false); return; }
+    umMockShowQ();
+};
+window.umMockFinish = function(manual){
+    if(!mock) return;
+    clearInterval(mockTimer);
+    var total = mock.idxs.length, answered = 0, score = 0;
+    var cats = {};
+    var wrong = [];
+    mock.idxs.forEach(function(qi, pos){
+        var q = QUIZ_SCENARIOS[qi];
+        var a = mock.answers[pos];
+        var cat = q.category || 'عام';
+        if(!cats[cat]) cats[cat] = { ok:0, n:0 };
+   

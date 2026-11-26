@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" class="dark">
 <head>
-    <script>(function(){try{var t=localStorage.getItem('um_active_tab');var ok={terms:1,theories:1,formulas:1,code:1,calculator:1,brainstorm:1,learning:1,flashcards:1,tools:1,library:1,sources:1};if(!localStorage.getItem('um_terms_default'))t='terms';if(!t||!ok[t])t='terms';var d=document.documentElement;d.setAttribute('data-um-tab',t);var st=document.createElement('style');st.id='um-pretab';st.textContent='html[data-um-tab] .tab-panel{display:none!important}html[data-um-tab="'+t+'"] #tab-'+t+'{display:block!important}';document.head.appendChild(st)}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem('um_active_tab');var ok={terms:1,theories:1,formulas:1,code:1,calculator:1,brainstorm:1,learning:1,flashcards:1,tools:1,library:1,sources:1};if(!localStorage.getItem('um_terms_default'))t='terms';if(!t||!ok[t])t='terms';var d=document.documentElement;d.setAttribute('data-um-tab',t);d.setAttribute('data-um-veil','1');setTimeout(function(){d.removeAttribute('data-um-veil')},9000);var st=document.createElement('style');st.id='um-pretab';st.textContent='html[data-um-tab] .tab-panel{display:none!important}html[data-um-tab="'+t+'"] #tab-'+t+'{display:block!important}';document.head.appendChild(st);var sv=document.createElement('style');sv.id='um-veil-css';sv.textContent='main,header .max-w-7xl{transition:opacity .3s ease}html[data-um-veil] main,html[data-um-veil] header .max-w-7xl{opacity:0!important}';document.head.appendChild(sv)}catch(e){}})();</script>
 <script>(function(){try{var t='light';var r=localStorage.getItem('URBAN_PLANNING_MASTERY_HUB_V2');if(r&&localStorage.getItem('um_day_default')){var p=JSON.parse(r);if(p&&p.theme==='dark')t='dark'}var d=document.documentElement;d.classList.remove('dark','light');d.classList.add(t)}catch(e){}})();</script>
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAACG0lEQVR4nO3bwQ3CMBAAQYL4hwJDBaEcOqBBSqADkFiElTBTgOXH6j5nT/O6HOBTx9EXYNsERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEhOoy/wHY/bvR9yvl76If/GBCIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhkJ++BtmJ/75ZMIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+ek2fn+7aEwgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIxM/UN+zvXjOBSAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERDLN6zL6DmyYCUQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEienUAPM/A1YegAAAAASUVORK5CYII=">
     <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAACG0lEQVR4nO3bwQ3CMBAAQYL4hwJDBaEcOqBBSqADkFiElTBTgOXH6j5nT/O6HOBTx9EXYNsERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEhOoy/wHY/bvR9yvl76If/GBCIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhkJ++BtmJ/75ZMIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+ek2fn+7aEwgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIxM/UN+zvXjOBSAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERDLN6zL6DmyYCUQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEienUAPM/A1YegAAAAASUVORK5CYII=">
     
-    <title>منصة التخطيط العمراني | UrbanMind V26.2</title>
+    <title>منصة التخطيط العمراني | UrbanMind V26.3</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Cairo, Tajawal, JetBrains Mono -->
@@ -572,7 +572,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                                 منصة التخطيط العمراني
                             </h1>
                             <span class="text-xs font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
-                                UrbanMind <b data-app-version style="font-weight:inherit">V26.2</b>
+                                UrbanMind <b data-app-version style="font-weight:inherit">V26.3</b>
                             </span>
                         </div>
                         <p class="text-xs sm:text-sm text-slate-400 font-mono">
@@ -598,12 +598,12 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                     <div class="flex flex-wrap items-center gap-2">
                         <button onclick="exportUserData()" title="تصدير نسخة احتياطية من تقدمك وملاحظاتك (JSON)" class="px-3 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/30 text-xs font-bold flex items-center gap-1.5 transition">
                             <i class="fa-solid fa-download"></i>
-                            <span>حفظ ملف التقدم</span>
+                            <span>حفظ المشروع كاملاً</span>
                         </button>
 
                         <label title="استيراد ملف تقدم سابق (JSON)" class="cursor-pointer px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition">
                             <i class="fa-solid fa-upload"></i>
-                            <span>استرجاع بيانات</span>
+                            <span>فتح مشروع محفوظ</span>
                             <input type="file" id="import-json-input" accept=".json" class="hidden" onchange="importUserData(event)">
                         </label>
 
@@ -671,7 +671,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                 <div>
                     <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-amber-400"></i>
-                        <span>الحاسبة التخطيطية ومعايير الخدمات حسب المستوى التخطيطي (V26.2)</span>
+                        <span>الحاسبة التخطيطية ومعايير الخدمات حسب المستوى التخطيطي (V26.3)</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400">
                         ميزانية استعمالات الأراضي، الكثافات، الارتدادات، أحمال المرافق بالحد الأدنى + معامل التباين، ومحرك خدمات بمعايير عامة (ضواحي / ريفي / حضري) إلى جانب المعايير المصرية.
@@ -748,7 +748,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
             <div id="calculator-section" class="rounded-2xl bg-slate-900/95 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-6">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                     <div>
-                        <span class="text-xs font-mono uppercase text-amber-400 font-semibold">UrbanMind <span data-app-version>V26.2</span> Hierarchical Quantitative Engine · General Standards & Egypt 119</span>
+                        <span class="text-xs font-mono uppercase text-amber-400 font-semibold">UrbanMind <span data-app-version>V26.3</span> Hierarchical Quantitative Engine · General Standards & Egypt 119</span>
                         <h3 class="text-lg sm:text-xl font-bold text-white mt-0.5">
                             حاسبة ميزانية استعمالات الأراضي والكثافات الفورية (Land Use Budget & Density Engine)
                         </h3>
@@ -1474,7 +1474,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                 <div>
                     <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-wand-magic-sparkles text-teal-400"></i>
-                        <span>الأدوات الذكية (V26.2)</span>
+                        <span>الأدوات الذكية (V26.3)</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400">
                         مقارنة السيناريوهات، تصدير التقارير، المراجعة المتباعدة، الاختبار التجريبي بوقت، فحص المدخلات، مكتبة الحالات الدراسية، كتالوج معايير الخدمات، ملاحظات الأقسام، وورقة المعادلات السريعة. كل بياناتك هنا تُحفظ تلقائياً وتدخل في ملف المشروع.
@@ -6019,7 +6019,7 @@ document.addEventListener('click', function(e){
 /* ===== UrbanMind V17 — Unified project persistence (auto-save, full export/import) ===== */
 (function(){
 'use strict';
-var APP_VERSION='V26.2',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
+var APP_VERSION='V26.3',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
 var $=function(i){return document.getElementById(i)};
 var saved=null,savedQuiz=null;
 try{saved=JSON.parse(localStorage.getItem(KF)||'null')}catch(e){}
@@ -6305,7 +6305,7 @@ function umReportHTML(){
     var inp = cap.inputs, o = cap.outputs;
     var d = new Date();
     var dateStr = d.toLocaleDateString('ar-EG') + ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
-    var ver = window.UM_VERSION || 'V26.2';
+    var ver = window.UM_VERSION || 'V26.3';
     var h = '<div class="umr-h1">تقرير المشروع التخطيطي · UrbanMind ' + ver + '</div>';
     h += '<div class="umr-sub">أُنشئ في ' + dateStr + ' · حاسبة ميزانية استعمالات الأراضي والكثافات</div>';
     h += '<h3>أولاً: المدخلات</h3><table>';
@@ -6366,7 +6366,7 @@ function umGenericPrintHTML(sec){
         h.textContent = sm.textContent.trim();
         sm.replaceWith(h);
     });
-    var ver = window.UM_VERSION || 'V26.2';
+    var ver = window.UM_VERSION || 'V26.3';
     var h2 = sec.querySelector('h2');
     var title = h2 ? h2.textContent.trim() : document.title;
     return '<div class="umr-generic"><div class="umr-h1">' + esc(title) + '</div>' +
@@ -6394,7 +6394,7 @@ document.addEventListener('keydown', function(e){
 window.umCsvReport = function(){
     var cap = umCapture();
     var inp = cap.inputs, o = cap.outputs;
-    var ver = window.UM_VERSION || 'V26.2';
+    var ver = window.UM_VERSION || 'V26.3';
     function q(x){ x = (x === undefined || x === null) ? '' : String(x); return '"' + x.replace(/"/g, "'") + '"'; }
     function row(){ var a = Array.prototype.slice.call(arguments); while(a.length < 6) a.push(''); return a.join(','); }
     var lines = [];
@@ -6791,7 +6791,7 @@ function umCheatRender(){
     }).join('');
 }
 function umCheatHTML(){
-    var ver = window.UM_VERSION || 'V26.2';
+    var ver = window.UM_VERSION || 'V26.3';
     var h = '<div class="umr-h1">ورقة المعادلات السريعة · UrbanMind ' + ver + '</div>';
     h += '<div class="umr-sub">' + UM_FORMULAS.length + ' قانوناً ومعادلة من قسم القوانين والمعادلات، مختصرة للمراجعة السريعة.</div>';
     var cats = [];
@@ -8102,7 +8102,7 @@ else{ window.addEventListener('load',function(){ setTimeout(go,900); }); }
 function done(){document.documentElement.removeAttribute('data-um-tab');var st=document.getElementById('um-pretab');if(st)st.remove()}
 function restore(){var t='terms';try{t=localStorage.getItem('um_active_tab')||'terms';if(!localStorage.getItem('um_terms_default'))t='terms'}catch(e){}if(t==='studio')t='calculator';if(!document.getElementById('tab-'+t))t='terms';try{switchTab(t)}catch(e){}done()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore);else restore();
-window.addEventListener('load',function(){setTimeout(done,50)});
+window.addEventListener('load',function(){setTimeout(done,50);setTimeout(function(){document.documentElement.removeAttribute('data-um-veil')},1500)});
 var css='[id^="modal-"]{z-index:2147481000!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;align-items:flex-start!important;overscroll-behavior:contain}[id^="modal-"]>div{margin:auto!important;max-height:none!important}html.um-modal-open #um-top,html.um-modal-open #um-sfab{display:none!important}[id^="modal-"] input,[id^="modal-"] textarea,[id^="modal-"] select{scroll-margin:90px;font-size:16px}';
 var st=document.createElement('style');st.id='um-modal-css';st.textContent=css;document.head.appendChild(st);
 function lock(){var open=[].some.call(document.querySelectorAll('[id^="modal-"]'),function(m){return !m.classList.contains('hidden')});document.documentElement.style.overflow=open?'hidden':'';document.documentElement.classList.toggle('um-modal-open',open)}

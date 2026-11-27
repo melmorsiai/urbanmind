@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAACG0lEQVR4nO3bwQ3CMBAAQYL4hwJDBaEcOqBBSqADkFiElTBTgOXH6j5nT/O6HOBTx9EXYNsERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEhOoy/wHY/bvR9yvl76If/GBCIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhkJ++BtmJ/75ZMIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+ek2fn+7aEwgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIxM/UN+zvXjOBSAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERDLN6zL6DmyYCUQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEienUAPM/A1YegAAAAASUVORK5CYII=">
     <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAACG0lEQVR4nO3bwQ3CMBAAQYL4hwJDBaEcOqBBSqADkFiElTBTgOXH6j5nT/O6HOBTx9EXYNsERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEhOoy/wHY/bvR9yvl76If/GBCIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhkJ++BtmJ/75ZMIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+ek2fn+7aEwgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIxM/UN+zvXjOBSAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERDLN6zL6DmyYCUQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEienUAPM/A1YegAAAAASUVORK5CYII=">
     
-    <title>منصة التخطيط العمراني | UrbanMind V26.3</title>
+    <title>منصة التخطيط العمراني | UrbanMind V26.5</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Cairo, Tajawal, JetBrains Mono -->
@@ -339,6 +339,12 @@ html.light .um-save-status{color:#5d6b69}
   #um-print-area h2,#um-print-area h3,#um-print-area h4{break-after:avoid}
   #um-print-area tr,#um-print-area .umr-note,#um-print-area .umr-fm{break-inside:avoid}
 }
+#um-cons .um-cons-scr{overflow-x:auto}
+#um-cons table{width:100%;border-collapse:collapse;font-size:11px;min-width:640px}
+#um-cons th,#um-cons td{border:1px solid #cbd5e1;padding:4px 6px;text-align:right;vertical-align:top}
+#um-cons th{background:#e6fffa;color:#0f3d36}
+#um-cons .um-cons-g td{background:#f0fdfa}
+#um-cons h3{font-weight:800;margin:8px 0 4px}
 #um-print-area .umr-h1{font-size:20px;font-weight:800;border-bottom:2px solid #0d9488;padding-bottom:6px;margin-bottom:4px}
 #um-print-area .umr-sub{font-size:11px;color:#555;margin-bottom:12px}
 #um-print-area h3{font-size:14px;font-weight:800;color:#0f766e;margin:12px 0 4px}
@@ -351,6 +357,10 @@ html.light .um-save-status{color:#5d6b69}
 #um-print-area .umr-cols{column-count:2;column-gap:18px}
 #um-print-area .umr-fm{break-inside:avoid;font-size:10px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px dashed #bbb}
 #um-print-area .umr-fm b{color:#0f766e}
+#um-print-area .um-cons-t{font-size:9px}
+#um-print-area .um-cons-t th,#um-print-area .um-cons-t td{padding:2px 4px}
+#um-print-area .um-cons-t thead{display:table-header-group}
+#um-print-area .um-cons-g td{background:#f0fdfa;font-size:10px}
 #um-print-area .umr-foot{margin-top:14px;font-size:9px;color:#777;border-top:1px solid #ccc;padding-top:6px}
 /* V19: light overrides for generic any-tab print */
 #um-print-area .umr-generic *{background:transparent !important;background-color:transparent !important;color:#111 !important;border-color:#bbb !important;box-shadow:none !important;text-shadow:none !important}
@@ -572,7 +582,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                                 منصة التخطيط العمراني
                             </h1>
                             <span class="text-xs font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
-                                UrbanMind <b data-app-version style="font-weight:inherit">V26.3</b>
+                                UrbanMind <b data-app-version style="font-weight:inherit">V26.5</b>
                             </span>
                         </div>
                         <p class="text-xs sm:text-sm text-slate-400 font-mono">
@@ -671,7 +681,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                 <div>
                     <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-amber-400"></i>
-                        <span>الحاسبة التخطيطية ومعايير الخدمات حسب المستوى التخطيطي (V26.3)</span>
+                        <span>الحاسبة التخطيطية ومعايير الخدمات حسب المستوى التخطيطي (V26.5)</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400">
                         ميزانية استعمالات الأراضي، الكثافات، الارتدادات، أحمال المرافق بالحد الأدنى + معامل التباين، ومحرك خدمات بمعايير عامة (ضواحي / ريفي / حضري) إلى جانب المعايير المصرية.
@@ -748,7 +758,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
             <div id="calculator-section" class="rounded-2xl bg-slate-900/95 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-6">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                     <div>
-                        <span class="text-xs font-mono uppercase text-amber-400 font-semibold">UrbanMind <span data-app-version>V26.3</span> Hierarchical Quantitative Engine · General Standards & Egypt 119</span>
+                        <span class="text-xs font-mono uppercase text-amber-400 font-semibold">UrbanMind <span data-app-version>V26.5</span> Hierarchical Quantitative Engine · General Standards & Egypt 119</span>
                         <h3 class="text-lg sm:text-xl font-bold text-white mt-0.5">
                             حاسبة ميزانية استعمالات الأراضي والكثافات الفورية (Land Use Budget & Density Engine)
                         </h3>
@@ -1474,7 +1484,7 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
                 <div>
                     <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-wand-magic-sparkles text-teal-400"></i>
-                        <span>الأدوات الذكية (V26.3)</span>
+                        <span>الأدوات الذكية (V26.5)</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400">
                         مقارنة السيناريوهات، تصدير التقارير، المراجعة المتباعدة، الاختبار التجريبي بوقت، فحص المدخلات، مكتبة الحالات الدراسية، كتالوج معايير الخدمات، ملاحظات الأقسام، وورقة المعادلات السريعة. كل بياناتك هنا تُحفظ تلقائياً وتدخل في ملف المشروع.
@@ -1703,11 +1713,13 @@ html.light header .tab-btn.active-tab *{color:#0b4f43!important}
     </main>
 
     <!-- Footer -->
+    <script>window.UM_LEGAL="© 2026 Mohamed El Morsi. جميع الحقوق محفوظة. للاستخدام التعليمي والتخطيط المبدئي فقط. القيم المعلّمة «تقديري» يجب مراجعتها مع الكود الرسمي قبل أي اعتماد، ولا تغني عن مراجعة الجهة المختصة.";</script>
     <footer class="mt-12 border-t border-slate-800/80 bg-slate-900/60 py-5 text-center text-xs text-slate-400">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
                 <strong>منصة التخطيط العمراني (UrbanMind Hub)</strong> — مصممة خصيصاً للمذاكرة التفاعلية والعصف الذهني وتطبيق المعايير التخطيطية.
             </div>
+            <div id="um-legal" class="basis-full text-[11px] leading-relaxed">© 2026 Mohamed El Morsi. جميع الحقوق محفوظة. للاستخدام التعليمي والتخطيط المبدئي فقط. القيم المعلّمة «تقديري» يجب مراجعتها مع الكود الرسمي قبل أي اعتماد، ولا تغني عن مراجعة الجهة المختصة.</div>
             <div class="font-mono text-[11px] text-teal-400">
                 يتم حفظ جميع ملاحظاتك وتقدمك تلقائياً في المتصفح (LocalStorage Ready)
             </div>
@@ -4422,6 +4434,7 @@ codeSec.innerHTML = '<div class="um-wrap">' +
 '</div>';
 })();
 </script>
+<script>try{window.umFresh=!localStorage.getItem('um_fields_v17')&&!localStorage.getItem('um_code_v13')&&!localStorage.getItem('um_code_v12')}catch(e){window.umFresh=false}window.umUF=function(u){return ({ha:1e4,m2:1,km2:1e6,fed:4200})[u]||1e4};</script>
 <script>
 /* ============================================================================
    URBANMIND V13 — HIERARCHICAL SCALE-AWARE MASTERPLAN & RAK Code A / Code D ENGINE
@@ -4854,15 +4867,22 @@ var PROFILES = {
     },
     eg: {
         n: 'مصر — قانون البناء 119 لسنة 2008', isRefMan: false, isRak: false,
-        sb: [3, 3, 3], park: 1, hh: 4.0, plot: 400, w: 20, cov: 60, fl: 3,
+        sb: [3, 3, 3], park: 1, hh: 3.9, plot: 400, w: 20, cov: 60, fl: 3,
         wat: [200, 250], kw: [3, 12], div: 0.70, cw: [80, 150], dssArea: 25,
-        ok: ['التدرج التخطيطي المصري (مجموعة سكنية ← مجاورة سكنية ← حي سكني ← قطاع/مدينة) مع قابلية تعديل الأرقام وفق أدلة GOPP.'],
-        est: ['الارتدادات والمواقف ومعايير الخدمات قيم افتراضية قابلة للتعديل حسب المخطط التفصيلي.']
+        ok: ['التدرج التخطيطي المصري (مجموعة سكنية ← مجاورة سكنية ← حي سكني ← قطاع/مدينة) من أدلة GOPP.'],
+        est: ['القسيمة والارتدادات والمواقف والأدوار ونسب البناء وحجم الأسرة افتراضات تقديرية من المنصة، وليست من قانون 119 ولا من GOPP. عدّلها حسب المخطط التفصيلي.']
+    },
+    sa: {
+        n: 'السعودية — معايير وزارة البلديات', isRefMan: false, isRak: false,
+        sb: [2, 1.5, 1.5], park: 2, hh: 5.5, plot: 600, w: 20, cov: 60, fl: 2,
+        wat: [200, 250], kw: [3, 12], div: 0.70, cw: [80, 150], dssArea: 25,
+        ok: ['بيانات الخدمات من معايير وزارة البلديات (قرار 19378، 21/04/1437هـ).'],
+        est: ['حجم الأسرة (5.5) والقسيمة (600 م²) والارتدادات والمواقف قيم تقديرية غير موجودة في ملف المرجع، وقابلة للتعديل.']
     }
 };
 
 function A(m2){
-    return $('calc-unit').value === 'ha'
+    return $('calc-unit').value !== 'm2'
         ? (m2 / 10000).toLocaleString('en', {maximumFractionDigits: 2}) + ' هكتار'
         : Math.round(m2).toLocaleString('en') + ' م²';
 }
@@ -4877,7 +4897,7 @@ window.calcModeChange = function(){
 window.calcUnitChange = function(){
     var ha = parseFloat($('calc-area-ha').value) || 0;
     var u = $('calc-unit').value;
-    $('calc-area-input').value = u === 'ha' ? +ha.toFixed(4) : Math.round(ha * 10000);
+    $('calc-area-input').value = u === 'ha' ? +ha.toFixed(4) : (u === 'm2' ? Math.round(ha * 10000) : +(ha * 10000 / umUF(u)).toFixed(4));
     runMasterplanCalculator();
 };
 window.syncSubDemo = function(){
@@ -5207,7 +5227,7 @@ function computeRefFacilities(codeKey, ha, popEm, popMix, totalUnits, aptUnits, 
 window.runMasterplanCalculator = function(){
     var codeKey = $('calc-code').value || 'rak_sub';
     var P = PROFILES[codeKey] || PROFILES.rak_sub;
-    var u = $('calc-unit').value;
+    var u = $('calc-unit').value; var uOrig = u; if(u === 'km2' || u === 'fed') u = 'ha';
     var mode = $('calc-mode').value;
     var plot = Math.max(50, parseFloat($('calc-plot-size').value) || 900);
     var hh = Math.max(1, parseFloat($('calc-hh-size').value) || P.hh);
@@ -5246,7 +5266,7 @@ window.runMasterplanCalculator = function(){
         derived = true;
     } else {
         var v = parseFloat($('calc-area-input').value) || 0;
-        m2 = Math.max(100, u === 'ha' ? v * 10000 : v);
+        m2 = Math.max(100, v * umUF(uOrig));
     }
     var ha = m2 / 10000;
     $('calc-area-ha').value = ha;
@@ -6019,7 +6039,7 @@ document.addEventListener('click', function(e){
 /* ===== UrbanMind V17 — Unified project persistence (auto-save, full export/import) ===== */
 (function(){
 'use strict';
-var APP_VERSION='V26.3',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
+var APP_VERSION='V26.5',FORMAT='UrbanMind-Project',SCHEMA=2,KF='um_fields_v17',KQ='um_quiz_v17',KB='um_backup_prev_v17';
 var $=function(i){return document.getElementById(i)};
 var saved=null,savedQuiz=null;
 try{saved=JSON.parse(localStorage.getItem(KF)||'null')}catch(e){}
@@ -6043,16 +6063,20 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
 var _run=window.runMasterplanCalculator;
 if(typeof _run==='function')window.runMasterplanCalculator=function(){var r=_run.apply(this,arguments);schedule();return r};
 /* ----- restore (ordered so profile defaults never overwrite saved values) ----- */
-var PRE={'sc-den-ex':1,'sc-den-pr':1,'sc-fac':1,'sc-geo':1,'calc-code':1,'rak-parcel-type':1,'ca-sub-demo':1,'ca-mix-on':1,'bs-context-select':1,'__details':1};
+var PRE={'um-ref':1,'um-eg-type':1,'um-eg-den':1,'um-sa-area':1,'sc-den-ex':1,'sc-den-pr':1,'sc-fac':1,'sc-geo':1,'calc-code':1,'rak-parcel-type':1,'ca-sub-demo':1,'ca-mix-on':1,'bs-context-select':1,'__details':1};
 function restore(f){if(!f)return;
  ['sc-den-ex','sc-den-pr','sc-fac','sc-geo'].forEach(function(i){if(i in f)setv(i,f[i])});
  call('runSettlementScorer');
+ if('um-ref' in f){setv('um-ref',f['um-ref'])}else if(f['calc-code']==='eg'||f['calc-code']==='sa'){setv('um-ref',f['calc-code'])}else if('calc-code' in f){setv('um-ref','rak')}
+ call('umRefApply');
  if('calc-code' in f){setv('calc-code',f['calc-code']);call('calcCodeChange')}
  if('rak-parcel-type' in f){setv('rak-parcel-type',f['rak-parcel-type']);call('applyRakParcelPreset')}
  if('ca-sub-demo' in f){setv('ca-sub-demo',f['ca-sub-demo']);call('syncSubDemo')}
  if('ca-mix-on' in f){setv('ca-mix-on',f['ca-mix-on']);call('toggleRefMix')}
  if('bs-context-select' in f){setv('bs-context-select',f['bs-context-select']);call('updateBrainstormPrompts')}
  Object.keys(f).forEach(function(id){if(!PRE[id])setv(id,f[id])});
+ ['um-eg-type','um-eg-den','um-sa-area'].forEach(function(i){if(i in f)setv(i,f[i])});
+ call('umRefApply');
  call('calcModeChange');call('runMasterplanCalculator');
  var d=f.__details||{};Object.keys(d).forEach(function(id){var x=$(id);if(x&&x.tagName==='DETAILS')x.open=!!d[id]})}
 window.addEventListener('load',function(){setTimeout(function(){
@@ -6189,7 +6213,7 @@ function umCapture(){
         inputs: {
             areaInput: umVal('calc-area-input'),
             unit: unitV,
-            unitLabel: unitV === 'm2' ? 'م²' : 'هكتار',
+            unitLabel: ({m2:'م²',km2:'كم²',fed:'فدان'})[unitV] || 'هكتار',
             areaHa: parseFloat(umVal('calc-area-ha')) || 0,
             mode: modeV,
             modeLabel: modeV === 'pop' ? 'بالسكان المستهدفين' : 'بالمساحة',
@@ -6305,7 +6329,7 @@ function umReportHTML(){
     var inp = cap.inputs, o = cap.outputs;
     var d = new Date();
     var dateStr = d.toLocaleDateString('ar-EG') + ' ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
-    var ver = window.UM_VERSION || 'V26.3';
+    var ver = window.UM_VERSION || 'V26.5';
     var h = '<div class="umr-h1">تقرير المشروع التخطيطي · UrbanMind ' + ver + '</div>';
     h += '<div class="umr-sub">أُنشئ في ' + dateStr + ' · حاسبة ميزانية استعمالات الأراضي والكثافات</div>';
     h += '<h3>أولاً: المدخلات</h3><table>';
@@ -6345,6 +6369,8 @@ function umReportHTML(){
         });
         h += '</table>';
     }
+    h += (window.umSvPrintHTML ? umSvPrintHTML() : '');
+    h += '<div class="umr-note">' + (window.UM_LEGAL || '') + '</div>';
     h += '<div class="umr-foot">أُنشئ هذا التقرير من منصة UrbanMind ' + ver + ' · كل الأرقام منقولة من شاشة الحاسبة لحظة التصدير دون إعادة حساب.</div>';
     return h;
 }
@@ -6366,7 +6392,7 @@ function umGenericPrintHTML(sec){
         h.textContent = sm.textContent.trim();
         sm.replaceWith(h);
     });
-    var ver = window.UM_VERSION || 'V26.3';
+    var ver = window.UM_VERSION || 'V26.5';
     var h2 = sec.querySelector('h2');
     var title = h2 ? h2.textContent.trim() : document.title;
     return '<div class="umr-generic"><div class="umr-h1">' + esc(title) + '</div>' +
@@ -6394,7 +6420,7 @@ document.addEventListener('keydown', function(e){
 window.umCsvReport = function(){
     var cap = umCapture();
     var inp = cap.inputs, o = cap.outputs;
-    var ver = window.UM_VERSION || 'V26.3';
+    var ver = window.UM_VERSION || 'V26.5';
     function q(x){ x = (x === undefined || x === null) ? '' : String(x); return '"' + x.replace(/"/g, "'") + '"'; }
     function row(){ var a = Array.prototype.slice.call(arguments); while(a.length < 6) a.push(''); return a.join(','); }
     var lines = [];
@@ -6453,6 +6479,8 @@ window.umCsvReport = function(){
             lines.push(row(q(s.name), q(s.outputs.pop), q(s.outputs.plots), q(s.outputs.gross), q(s.outputs.gfa), q(s.outputs.green)));
         });
     }
+    if(window.umSvCsvLines) umSvCsvLines().forEach(function(l){ lines.push(l); });
+    if(window.UM_LEGAL) lines.push(q(window.UM_LEGAL));
     var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type:'text/csv;charset=utf-8' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -6702,7 +6730,7 @@ var SV_TIER_EG = { 0:'مرافق وبنية تحتية', 1:'المستوى 1 · 
 var SV_TIER_RAK = { 0:'مرافق وبنية تحتية', 1:'المستوى 1 · جوار', 2:'المستوى 2 · مجتمع', 3:'المستوى 3 · حي', 4:'المستوى 4 · قطاع' };
 function umSvRows(){
     var rows = [];
-    UM_SV_EG.forEach(function(r){ rows.push({ tier:r[0], cat:r[2], name:r[3], pop:r[4], m2:r[5], note:r[6], src:'eg', srcT:'المعايير العامة (EG)' }); });
+    UM_SV_EG.forEach(function(r){ rows.push({ tier:r[0], cat:r[2], name:r[3], pop:r[4], m2:r[5], note:r[6], src:'eg', srcT:'تقدير المنصة (غير موثّق من GOPP)' }); });
     UM_SV_RAK.forEach(function(r){ rows.push({ tier:r[0], cat:r[2], name:r[3], pop:r[4], m2:r[5], note:r[6], src:'rak', srcT:'جداول رأس الخيمة' }); });
     return rows;
 }
@@ -6791,7 +6819,7 @@ function umCheatRender(){
     }).join('');
 }
 function umCheatHTML(){
-    var ver = window.UM_VERSION || 'V26.3';
+    var ver = window.UM_VERSION || 'V26.5';
     var h = '<div class="umr-h1">ورقة المعادلات السريعة · UrbanMind ' + ver + '</div>';
     h += '<div class="umr-sub">' + UM_FORMULAS.length + ' قانوناً ومعادلة من قسم القوانين والمعادلات، مختصرة للمراجعة السريعة.</div>';
     var cats = [];
@@ -8335,5 +8363,325 @@ document.documentElement.appendChild(b);
 function chk(){b.classList.toggle('on',(window.pageYOffset||document.documentElement.scrollTop)>400)}
 window.addEventListener('scroll',chk,{passive:true});chk();
 })();
-</script></body>
+</script>
+<script>window.UM_REFDATA={"EG":[{"c":"تعليمي","s":"رياض أطفال","n":"رياض الأطفال","lt":"مجاورة سكنية / قرية (5-20 ألف)","lv":2,"p":"غير محدد في الجدول","a":"أقصى كثافة فصل: 36 طفل/فصل (مدن قائمة)، 30 (مدن جديدة)","r":"غير محدد","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (الكثافة فقط)","u":0,"pg":"ص PDF 63-65"},{"c":"تعليمي","s":"ابتدائي","n":"مدرسة ابتدائية","lt":"مجاورة سكنية / قرية (5-20 ألف) (محلية)","lv":2,"p":"2,000 حد أدنى (مدن قائمة)","a":"موقع التلميذ 4 حد أدنى / 6 مفضل م²؛ نسبة البناء 40% أقصى / 30% مفضل؛ 8-40 فصل (مفضل 24)؛ 20-40 تلميذ/فصل (مفضل 30)؛ 320-1,600 تلميذ؛ أفنية 2.5 م²/تلميذ","r":"طريق فرعي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 63"},{"c":"تعليمي","s":"ابتدائي (مدن جديدة)","n":"مدرسة تعليم أساسي","lt":"مجاورة سكنية / قرية (5-20 ألف) (محلية)","lv":2,"p":"4,000 حد أدنى (مدن جديدة)","a":"موقع التلميذ 8 حد أدنى / 10 مفضل م²؛ بناء 30%؛ 22-55 فصل (مفضل 33)؛ 550-1,650 تلميذ؛ أفنية 5 م²/تلميذ","r":"طريق فرعي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 65"},{"c":"تعليمي","s":"إعدادي","n":"مدرسة إعدادية","lt":"مجاورة سكنية / قرية (5-20 ألف) (محلية)","lv":2,"p":"3,200 حد أدنى (مدن قائمة)","a":"موقع التلميذ 4 / 6 م²؛ بناء 40% / 30%؛ 9-30 فصل (مفضل 24)؛ 360-1,200 تلميذ؛ أفنية 2.5 م²/تلميذ","r":"طريق فرعي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 63"},{"c":"تعليمي","s":"تعليم أساسي (مدن قائمة)","n":"مدرسة تعليم أساسي (ابتدائي + إعدادي)","lt":"مجاورة سكنية / قرية (5-20 ألف) (محلية)","lv":2,"p":"3,200 حد أدنى (مدن قائمة)","a":"موقع التلميذ 4 / 6 م²؛ بناء 40% / 30%؛ 11-55 فصل (مفضل 33)؛ 440-2,200 تلميذ؛ أفنية 2.5 م²/تلميذ","r":"طريق فرعي","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة جدول م1-2)","u":0,"pg":"ص PDF 63"},{"c":"تعليمي","s":"إعدادي + ثانوي","n":"مدرسة إعدادية/ثانوية","lt":"حي سكني / قرية رئيسية (20-40 ألف) (محلية)","lv":3,"p":"7,000 حد أدنى (مدن قائمة)","a":"موقع التلميذ 5 / 7 م²؛ بناء 40% / 30%؛ 12-60 فصل (مفضل 36)؛ 432-2,160 تلميذ","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة جدول م1-2)","u":0,"pg":"ص PDF 63"},{"c":"تعليمي","s":"أساسي + ثانوي مشترك","n":"مدرسة أساسي وثانوي","lt":"حي سكني / قرية رئيسية (20-40 ألف) (محلية)","lv":3,"p":"10,000 حد أدنى (مدن قائمة)؛ 10,000 (مدن جديدة)","a":"قائم: موقع 5 / 7 م²، بناء 40% / 30%، 14-70 فصل (مفضل 42)، 504-2,520 تلميذ؛ جديد: موقع 10 / 12 م²، بناء 30%، 14-70 فصل (مفضل 42)، 350-2,100 تلميذ (جدول م1-4، ص 65)","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة جدول م1-2 و م1-4)","u":0,"pg":"ص PDF 63, 65"},{"c":"تعليمي","s":"ثانوي عام / أزهري","n":"مدرسة ثانوية عامة أو أزهرية","lt":"حي سكني / قرية رئيسية (20-40 ألف) (محلية)","lv":3,"p":"10,000 حد أدنى (قائمة)؛ 10,000 (جديدة)","a":"موقع التلميذ 6 / 6 م² (قائمة)، 12 / 12 م² (جديدة)؛ بناء 40% / 30%؛ 9-30 فصل (مفضل 21)؛ 324-1,188 تلميذ؛ أفنية 3 م²/تلميذ (قائمة)، 9 م² (جديدة)","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 64-65"},{"c":"تعليمي","s":"ثانوي فني صناعي","n":"مدرسة ثانوية صناعية","lt":"مدينة متوسطة (40-100 ألف) (مركزية)","lv":5,"p":"35,000 (قائمة)؛ 50,000 (جديدة)","a":"موقع التلميذ 6 / 10 م² (قائمة)، 16 / 25 م² (جديدة)؛ 15-70 فصل (مفضل 45)؛ 540-2,520 تلميذ (قائمة)","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 64-65"},{"c":"تعليمي","s":"ثانوي فني تجاري","n":"مدرسة ثانوية تجارية","lt":"مدينة متوسطة (40-100 ألف) (مركزية)","lv":5,"p":"35,000 (قائمة)؛ 50,000 (جديدة، تراجع مديرية التربية الحاجة)","a":"موقع التلميذ 6 / 6 م² (قائمة)، 12 / 12 م² (جديدة)؛ بناء أقصى 60% (قائمة) / مفضل 30%","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 64-65"},{"c":"تعليمي","s":"ثانوي فني فندقي","n":"مدرسة ثانوية فندقية","lt":"إقليمي (250 ألف - مليون) (إقليمية)","lv":5,"p":"500,000","a":"موقع التلميذ 7 / 10 م² (قائمة)، 16 / 25 م² (جديدة)؛ بناء 35% / 30%","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 64-65"},{"c":"تعليمي","s":"ثانوي فني زراعي","n":"مدرسة ثانوية زراعية","lt":"إقليمي (250 ألف - مليون) (إقليمية)","lv":5,"p":"500,000","a":"موقع التلميذ 20 / 25 م² (قائمة)، 40 / 85 م² (جديدة)؛ بناء 40% / 15%","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":0,"pg":"ص PDF 64-65"},{"c":"تعليمي","s":"جامعي / معاهد عليا","n":"تعليم جامعي، معاهد فنية متوسطة وعالية","lt":"إقليمي (250 ألف - مليون)","lv":5,"p":"غير موجود (الدليل لا يشمله)","a":"غير موجود","r":"غير موجود","st":"none","stx":"غير موجود في الدليل","u":1,"pg":"ص PDF 21 (الجدول 1 يذكر الفئة فقط)"},{"c":"صحي","s":"رعاية أساسية","n":"وحدة صحة أسرة","lt":"مجاورة سكنية / قرية (5-20 ألف) (محلية)","lv":2,"p":"5-20 ألف (عيادة أسرة لكل ~5,000؛ 10,000 بورديتين)","a":"مبنى 180 م² حد أدنى / 270 مفضل؛ موقع 300 م² / 540 م²؛ نسبة بناء 60% / 50%","r":"حوالي 2.5-3 كم، 5 دقائق (قراءة الأرقام غير مؤكدة)","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":2,"pg":"ص PDF 42-43","num":{"f":5000,"t":20000,"site":[300,540]}},{"c":"صحي","s":"رعاية أساسية","n":"مركز صحة أسرة","lt":"حي سكني / قرية رئيسية (20-40 ألف)","lv":3,"p":"20-40 ألف (4 عيادات أسرة + 3 تخصصية: أطفال، نساء وتوليد، جراحة)","a":"مبنى 400 م² / 500 مفضل؛ موقع 800 م² / 1,250؛ بناء 50% / 40%","r":"5-10 كم، 20 دقيقة","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":2,"pg":"ص PDF 41-43","num":{"f":20000,"t":40000,"site":[800,1250]}},{"c":"صحي","s":"علاجي","n":"مستشفى مركزي (ب)","lt":"مدينة صغيرة (أقل من 40 ألف) (مركزي)","lv":5,"p":"أقل من 40 ألف","a":"50-100 سرير؛ مساحة مبنية 120-160 م²/سرير؛ 10 م² خضراء/سرير؛ مبنى 2,400 / 3,300 م²؛ موقع قائم 4,800 / 8,250 م² (بناء 50% / 40%)، جديد 8,000 / 13,200 م² (بناء 30% / 25%)","r":"10-20 كم، 20 دقيقة","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":2,"pg":"ص PDF 43-44"},{"c":"صحي","s":"علاجي","n":"مستشفى مركزي (أ)","lt":"مدينة متوسطة (40-100 ألف) (مركزي)","lv":5,"p":"40-100 ألف","a":"100-200 سرير؛ مبنى 2,400 / 3,300 م²؛ موقع قائم 4,800 / 8,250 م²، جديد 8,000 / 13,200 م² (نفس عمود المركزي ب في الجدول)","r":"20 كم، 20 دقيقة","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":2,"pg":"ص PDF 43-44","num":{"f":40000,"t":100000,"site":[4800,8250],"siteN":[8000,13200]}},{"c":"صحي","s":"علاجي","n":"مستشفى عام","lt":"مدينة كبيرة (100-250 ألف) وعواصم المحافظات","lv":5,"p":"أكثر من 100 ألف","a":"200-300 سرير (يصل 500)؛ مبنى 3,000 حد أدنى / 4,100 م² مفضل؛ المدن القائمة: موقع 6,000 / 10,250 م² وبناء 50% / 40%؛ المدن الجديدة: موقع 10,000 / 16,400 م² وبناء 30% / 25%","r":"40-50 كم، 40-50 دقيقة","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة الصفحة: جدولا 8 و 9)","u":2,"pg":"ص PDF 43-44","num":{"f":100000,"site":[6000,10250],"siteN":[10000,16400]}},{"c":"صحي","s":"علاجي","n":"إجمالي الأسرّة","lt":"كل المستويات","lv":0,"p":"على مستوى السكان كله","a":"2.7 سرير لكل ألف نسمة (نص مقروء بوضوح، صفحة 41-42 PDF)","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":2,"pg":"ص PDF 41-42"},{"c":"صحي","s":"علاجي","n":"مستشفى جامعي / تعليمي / مركز تخصصي","lt":"إقليمي (250 ألف - مليون)","lv":5,"p":"حسب القرارات القومية","a":"500 سرير فأكثر","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":2,"pg":"ص PDF 41-42"},{"c":"ديني (إسلامي)","s":"مصلى","n":"المصلى","lt":"مجموعة سكنية / عزبة (أقل من 5 آلاف)","lv":1,"p":"500 نسمة حد أدنى (مدن قائمة)","a":"125 مصلي حد أدنى؛ مبنى حتى 120 م² (قائمة) / 144 م² (جديدة)؛ نصيب الفرد 0.25-0.45 م² (قائمة)، 0.3-0.54 (جديدة)","r":"مشي 200-300 م","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":3,"pg":"ص PDF 40-41","num":{"f":500,"pc":[0.25,0.45],"pcN":[0.3,0.54]}},{"c":"ديني (إسلامي)","s":"مسجد","n":"المسجد المحلي","lt":"مجاورة سكنية / قرية (5-20 ألف)","lv":2,"p":"1,000 نسمة حد أدنى","a":"200 مصلي؛ نصيب المصلي من المساحة المبنية 1.2-2.4 م²؛ مبنى حتى 300 م² (قائمة) / 360 م² (جديدة)؛ قطعة 331-590 م²؛ نصيب الفرد 0.3-0.6 م² (قائمة)، 0.4-0.7 (جديدة)؛ موقف سيارة لكل 40 مصلي","r":"مشي حتى 500 م (تنبيه: الدليل يناقض نفسه: الفقرة تقول «لا تزيد عن 500 م» والجداول وشكل 10 تقول «لا تقل عن 500 م»)","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":3,"pg":"ص PDF 40-41","num":{"f":1000,"pc":[0.3,0.6],"pcN":[0.4,0.7]}},{"c":"ديني (إسلامي)","s":"جامع","n":"المسجد الجامع","lt":"حي سكني / قرية رئيسية (20-40 ألف) / مدينة","lv":3,"p":"2,000 نسمة حد أدنى","a":"500 مصلي؛ نصيب المصلي من المساحة المبنية 1.2-2.4 م²؛ مبنى حتى 1,000 م² (قائمة) / 1,200 (جديدة)؛ قطعة 1,125-2,050 م²؛ نصيب الفرد 0.6-1.1 م² (قائمة)، 0.7-1.2 (جديدة)","r":"لا تقل المسافة بين الجوامع عن 1 كم (شكل 10)","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":3,"pg":"ص PDF 40-41","num":{"f":2000,"pc":[0.6,1.1],"pcN":[0.7,1.2]}},{"c":"ديني (مسيحي)","s":"كنيسة","n":"الكنيسة","lt":"مجموعة سكنية / عزبة (أقل من 5 آلاف) إلى حي سكني / قرية رئيسية (20-40 ألف)","lv":3,"p":"من 50 إلى 1,000 أسرة مسيحية (الأسرة 5 أفراد)","a":"من جدول المجتمعات العمرانية الجديدة: قطعة 837-876 م² (50 أسرة) إلى 7,950-8,700 م² (1,000 أسرة)؛ نصيب الفرد 3.35-3.51 إلى 1.59-1.74 م²","r":"مشي حتى 1 كم عند وجود أسر مسيحية","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":4,"pg":"ص PDF 35"},{"c":"تجاري","s":"مخابز","n":"مخبز بلدي / إفرنجي","lt":"مجموعة سكنية / عزبة (أقل من 5 آلاف) / مجاورة سكنية / قرية (5-20 ألف) / حي سكني / قرية رئيسية (20-40 ألف)","lv":2,"p":"لكل 2,000 نسمة (إفرنجي لكل 4,000 إضافي)","a":"مبنى 65 م² (بلدي 82%)، 60 م² (72%)، 30 م² (إفرنجي)؛ موقع 97.5 / 90 / 45 م²؛ 0.04875 / 0.0475 / 0.0225 م²/فرد","r":"150-200 م","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 88","num":{"f":2000,"pc":[0.0475,0.04875]}},{"c":"تجاري","s":"وقود","n":"محطة وقود سائل","lt":"حي سكني / قرية رئيسية (20-40 ألف)","lv":3,"p":"25,000 نسمة (قائمة) أو 20 كم² مأهولة","a":"موقع 1,000 م²؛ 0.04 م²/فرد؛ استثناء: يُكتفى بمحطة لكل 25,000 نسمة (قائمة) أو لكل 20 كم² مأهولة، أيهما أنسب للموقع","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 89","num":{"f":25000,"pc":[0.04,0.04]}},{"c":"تجاري","s":"وقود","n":"محطة تخفيض ضغط غاز طبيعي","lt":"مدينة","lv":5,"p":"62,500 نسمة","a":"2,500 م²؛ 0.04 م²/فرد","r":"150-200 م","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 89","num":{"f":62500,"pc":[0.04,0.04]}},{"c":"تجاري","s":"مركز خدمات تجاري","n":"مركز تجاري للمجاورة","lt":"مجاورة (6-8 آلاف نسمة في المدن الجديدة)","lv":2,"p":"6-8 آلاف","a":"متوسطات مسح للمدن الموجودة، وليست معياراً: متوسط 11.47 فدان (مدن جديدة)؛ 7.12-13.83 فدان حسب المدينة","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 87-88"},{"c":"تجاري","s":"مركز خدمات تجاري","n":"مركز تجاري للحي","lt":"حي (30-40 ألف في المدن الجديدة)","lv":3,"p":"30-40 ألف","a":"متوسطات مسح للمدن الموجودة، وليست معياراً: متوسط 60.8 فدان؛ 28.61-88.51 فدان حسب المدينة","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 87-88"},{"c":"تجاري","s":"مركز خدمات تجاري","n":"مركز تجاري للمدينة","lt":"مدينة (حسب عدد السكان)","lv":5,"p":"حسب السكان","a":"متوسطات مسح للمدن الموجودة، وليست معياراً: متوسط 432.77 فدان؛ 100.47-860.4 فدان حسب المدينة","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 87-88"},{"c":"تجاري","s":"نصيب الفرد (مدن قائمة)","n":"الخدمات التجارية","lt":"مدينة قائمة","lv":5,"p":"—","a":"متوسطات مسح، وليست معياراً: عواصم المحافظات 0.64 م²/فرد؛ المدن الصغرى 0.89؛ القرى 0.45","r":"—","st":"sv","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 86","estPc":[0.45,0.89]},{"c":"تجاري","s":"نصيب الفرد (مدن جديدة)","n":"الخدمات التجارية","lt":"مدينة جديدة","lv":5,"p":"—","a":"متوسطات مسح، وليست معياراً: العاشر من رمضان 0.87 م²/فرد؛ الأحياء من 0.15 إلى 1.62 م²/فرد (متوسط الأحياء الكبيرة 0.9-1.3)","r":"—","st":"sv","stx":"رسمي (قُرئ من موقع GOPP)","u":5,"pg":"ص PDF 86-87"},{"c":"شبابي","s":"مركز شباب","n":"مركز شباب (منتدى)","lt":"مجاورة سكنية / قرية (5-20 ألف) / حي سكني / قرية رئيسية (20-40 ألف)","lv":2,"p":"أقل من 40 ألف","a":"موقع 4,200-8,400 م² (قائمة)، 8,400-16,800 (جديدة)؛ نصيب الفرد 0.2-0.4 (قائمة) / 0.4-0.8 (جديدة)؛ سعة 700-2,000 فرد/يوم","r":"طريق فرعي","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (راجعتُ صورة الصفحة: جدول 2 و3 ص 21 من الدليل، النسخة الكاملة)","u":1,"pg":"ص PDF 34","num":{"f":0,"t":40000,"site":[4200,8400],"band":1}},{"c":"شبابي","s":"مركز شباب نموذجي","n":"مركز شباب نموذجي","lt":"مدينة متوسطة (40-100 ألف)","lv":5,"p":"40-250 ألف","a":"موقع 12,600-21,000 م² (قائمة)، 18,900-27,300 (جديدة)؛ سعة 2,000-10,000 فرد/يوم","r":"طريق رئيسي","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (راجعتُ صورة الصفحة: جدول 2 و3 ص 21 من الدليل، النسخة الكاملة)","u":1,"pg":"ص PDF 34","num":{"f":40000,"t":250000,"site":[12600,21000],"band":1}},{"c":"رياضي","s":"ملاعب مفتوحة (ج)","n":"ملاعب مفتوحة (ج)","lt":"مجاورة سكنية / قرية (5-20 ألف) / مجاورة وقرى مركزية","lv":2,"p":"5-20 ألف","a":"نصيب الفرد 0.3-0.6 م² (قائمة)؛ 0.5-0.9 (جديدة)","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)","num":{"f":5000,"t":20000,"pc":[0.3,0.6]}},{"c":"رياضي","s":"ملاعب مفتوحة (ب)","n":"ملاعب مفتوحة (ب)","lt":"حي سكني / قرية رئيسية (20-40 ألف)","lv":3,"p":"20-40 ألف","a":"نصيب الفرد 0.2-0.4 م² (قائمة)؛ 0.26-0.32 (جديدة)","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)","num":{"f":20000,"t":40000,"pc":[0.2,0.4]}},{"c":"رياضي","s":"ملاعب مفتوحة (أ)","n":"ملاعب مفتوحة (أ)","lt":"مدينة متوسطة (40-100 ألف) إلى مدينة كبيرة (100-250 ألف)","lv":5,"p":"40-250 ألف","a":"نصيب الفرد 0.1-0.2 م² (قائمة)؛ 0.1-0.3 (جديدة)","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)","num":{"f":40000,"t":250000,"pc":[0.1,0.2]}},{"c":"رياضي","s":"نادٍ رياضي (ج)","n":"نادٍ رياضي (ج)","lt":"حي سكني / قرية رئيسية (20-40 ألف)","lv":3,"p":"20-40 ألف","a":"نصيب الفرد 0.5-1.1 م² (قائمة)؛ 0.8-1.6 (جديدة)","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)","num":{"f":20000,"t":40000,"pc":[0.5,1.1]}},{"c":"رياضي","s":"نادٍ رياضي (ب)","n":"نادٍ رياضي (ب)","lt":"مدينة متوسطة (40-100 ألف) إلى مدينة كبيرة (100-250 ألف)","lv":5,"p":"40-250 ألف","a":"نصيب الفرد 0.2-0.5 م² (قائمة)؛ 0.3-0.7 (جديدة)","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)","num":{"f":40000,"t":250000,"pc":[0.2,0.5]}},{"c":"رياضي","s":"نادٍ رياضي (أ) واستاد (ب) ومدارس الموهوبين","n":"نادٍ رياضي (أ)، استاد (ب)، مدارس موهوبين","lt":"مدن كبرى","lv":5,"p":"250 ألف - مليون","a":"نادي (أ): 0.2-0.5 (قائمة)، 0.4-0.8 (جديدة)؛ استاد (ب): 0.4-0.8 / 0.6-1.2؛ مدارس الموهوبين: 0.1-0.2 / 0.1-0.3 م²/فرد","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)"},{"c":"رياضي","s":"استاد (أ) وخدمات إقليمية","n":"استاد (أ)، فندق الرياضيين، وحدة طب رياضي، مركز تنمية رياضية، قرية أولمبية","lt":"مدن مليونية (فوق مليون)","lv":5,"p":"مليون فأكثر","a":"استاد (أ): 0.16-0.32 (قائمة)، 0.21-0.42 (جديدة)؛ فندق رياضيين 0.001-0.002 / 0.002-0.003؛ طب رياضي 0.0005-0.001 / 0.001-0.002؛ مركز تنمية 0.04-0.06 / 0.05-0.09؛ قرية أولمبية 0.08-0.17 / 0.1-0.21 م²/فرد","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (صورة الصفحة)","u":6,"pg":"ص PDF 35 (جدول 2 ص 22 من الدليل)"},{"c":"ثقافي","s":"مكتبة","n":"مكتبة (أ)","lt":"حي سكني / قرية رئيسية (20-40 ألف) (محلية)","lv":3,"p":"20-40 ألف","a":"موقع 300-500 م² (مفضل 400)؛ نصيب الفرد 0.01-0.02 م² (قائمة)، 0.02-0.03 (جديدة)؛ 65 فرد/يوم","r":"طريق فرعي","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام) (ربط العمود بالمستوى)","u":7,"pg":"ص PDF 38"},{"c":"ثقافي","s":"مكتبة","n":"مكتبة (ب)","lt":"مدينة متوسطة (40-100 ألف) (مركزية)","lv":5,"p":"50-100 ألف","a":"موقع 700-1,000 م² (مفضل 800)؛ 100 فرد/يوم","r":"طريق رئيسي","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام) (ربط العمود بالمستوى)","u":7,"pg":"ص PDF 38"},{"c":"ثقافي","s":"بيت ثقافة","n":"بيت ثقافة","lt":"مدينة كبيرة (100-250 ألف)","lv":5,"p":"100-250 ألف","a":"موقع 1,500-2,500 م² (مفضل 2,000)؛ 250 فرد/يوم","r":"طريق رئيسي","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام) (ربط العمود بالمستوى)","u":7,"pg":"ص PDF 38"},{"c":"ثقافي","s":"قصر ثقافة","n":"قصر ثقافة عام","lt":"إقليمي (250 ألف - مليون)","lv":5,"p":"250 ألف فأكثر","a":"موقع 4,000-6,000 م² (مفضل 4,800)؛ 800 فرد/يوم","r":"طريق رئيسي","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام) (ربط العمود بالمستوى)","u":7,"pg":"ص PDF 38"},{"c":"اجتماعي","s":"حضانة","n":"دار حضانة عادية","lt":"مجاورة سكنية / قرية (5-20 ألف) إلى حي سكني / قرية رئيسية (20-40 ألف)","lv":2,"p":"5-40 ألف","a":"نصيب الفرد حوالي 0.04-0.11 م² (قائمة)، 0.06-0.22 (جديدة) (ترتيب الأعمدة مستنتج)","r":"—","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام)","u":8,"pg":"ص PDF 38"},{"c":"اجتماعي","s":"نادٍ طفل / مكتبة طفل / حديقة طفل","n":"مكتبة طفل، نادي طفل، حديقة طفل","lt":"مجاورة سكنية / قرية (5-20 ألف) إلى حي سكني / قرية رئيسية (20-40 ألف)","lv":2,"p":"5-40 ألف","a":"نصيب الفرد بين 0.01 و 0.24 م² حسب الخدمة (قائمة)","r":"—","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام)","u":8,"pg":"ص PDF 38"},{"c":"اجتماعي","s":"مراكز خدمات اجتماعية","n":"وحدة / مركز خدمات اجتماعية، نادٍ نسائي، أندية دفاع اجتماعي","lt":"محلي","lv":2,"p":"5-40 ألف","a":"نصيب الفرد 0.001-0.1 م²؛ الجدول يدمج بعض الخدمات","r":"—","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام)","u":8,"pg":"ص PDF 38"},{"c":"اجتماعي","s":"رعاية مسنين","n":"نادي رعاية كبار السن، دار إقامة","lt":"مركزي","lv":5,"p":"50-250 ألف","a":"0.002-0.008 م²/فرد (قائمة)","r":"—","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام)","u":8,"pg":"ص PDF 39"},{"c":"اجتماعي","s":"إعاقة وإغاثة","n":"مراكز علاج طبيعي، دور حضانة للمعاقين، مراكز إغاثة","lt":"إقليمي","lv":5,"p":"250 ألف فأكثر","a":"0.001-0.056 م²/فرد حسب الخدمة","r":"—","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام)","u":8,"pg":"ص PDF 39-40"},{"c":"بريد","s":"مكتب بريد درجة ثالثة (قرى)","n":"مكتب بريد درجة ثالثة","lt":"مجاورة سكنية / قرية (5-20 ألف)","lv":2,"p":"10,000-25,000 (ولكل قرية أم/وحدة محلية مكتب حتى لو أقل)","a":"مبنى 80 م²؛ موقع إجمالي 314 م²؛ نصيب الفرد 0.01256-0.0314 م²","r":"نطاق 2 كم","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (ترتيب الأعمدة تأكد حسابياً: المساحة ÷ السكان؛ صورة الصفحة بخط تالف)","u":9,"pg":"ص PDF 39 (جدول 3 ص 36)","num":{"f":10000,"t":25000,"site":[314,314]}},{"c":"بريد","s":"مكتب بريد درجة ثانية (أحياء)","n":"مكتب بريد درجة ثانية","lt":"حي سكني / قرية رئيسية (20-40 ألف)","lv":3,"p":"50,000-100,000 (مدن قائمة)؛ 30,000-40,000 (مدن جديدة)","a":"قائم: مبنى 100 م²، موقع 341.5 م²، نصيب 0.00342-0.00683 م²/فرد؛ جديد: مبنى 150 م²، موقع 439.8 م²، نصيب 0.010995-0.01466","r":"نطاق 2 كم؛ الحد الأدنى بين مكتبين 2 كم","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (ترتيب الأعمدة تأكد حسابياً)","u":9,"pg":"ص PDF 39 (جدول 3 و 4)","num":{"f":50000,"t":100000,"site":[341.5,341.5]}},{"c":"بريد","s":"مكتب بريد درجة أولى","n":"مكتب بريد درجة أولى","lt":"مدينة متوسطة (40-100 ألف) فأكثر","lv":5,"p":"100,000 حد أدنى","a":"قائم: مبنى حتى 120 م² (100-150)، موقع حتى 441 م²، نصيب حتى 0.00441؛ جديد: مبنى 200 م²، موقع 585 م²، نصيب 0.00585","r":"مكتب لكل مدينة أو أكثر","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (ترتيب الأعمدة تأكد حسابياً)","u":9,"pg":"ص PDF 39-40 (جدول 3 و 4)","num":{"f":100000,"site":[441,441]}},{"c":"بريد","s":"مناطق التوزيع / مراكز الحركة / إدارة عليا","n":"منطقة توزيع، مركز حركة، مركز تبادل إرساليات","lt":"قومي / مركزي","lv":5,"p":"غير مرتبط بالسكان","a":"مبنى: منطقة توزيع 100-150 م²؛ مركز حركة 3,000؛ مركز تبادل الإرساليات بالمطار 4,000؛ إدارة عليا 4,000 (قراءة الأعمدة من النص)","r":"نطاق منطقة التوزيع 5 كم؛ 145 منطقة توزيع و 40 مركز حركة على مستوى الجمهورية","st":"offq","stx":"رسمي، قراءة غير مؤكدة (ترتيب الأرقام)","u":9,"pg":"ص PDF 39 (جدول 3)"},{"c":"اتصالات","s":"سنترال محلي (كثافة مرتفعة)","n":"سنترال محلي","lt":"مدينة متوسطة (40-100 ألف) فأكثر","lv":5,"p":"120-61 ألف خط أو أكثر؛ كثافة 2,300-9,200 فرد/كم²؛ أقل من 150 ألف أسرة","a":"مساحة السنترال 1,500-2,000 م²؛ نصيب الأسرة 0.01-0.013 م²","r":"DSL 0.5-1 كم؛ صوت 5-7 كم","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة الصفحة)","u":10,"pg":"ص PDF 47 (جدول 3 ص 34)"},{"c":"اتصالات","s":"سنترال محلي (كثافة متوسطة)","n":"سنترال محلي","lt":"مدينة صغيرة (أقل من 40 ألف) إلى مدينة متوسطة (40-100 ألف)","lv":5,"p":"20-60 ألف خط؛ كثافة 570-2,300 فرد/كم²؛ أقل من 60 ألف أسرة","a":"مساحة 1,000-1,500 م²؛ نصيب الأسرة 0.017-0.025 م²","r":"DSL 1-2 كم؛ صوت 5-7 كم","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة الصفحة)","u":10,"pg":"ص PDF 47 (جدول 3)"},{"c":"اتصالات","s":"سنترال محلي (كثافة منخفضة)","n":"سنترال محلي","lt":"مجاورة سكنية / قرية (5-20 ألف) إلى حي سكني / قرية رئيسية (20-40 ألف)","lv":2,"p":"حتى 10 آلاف خط؛ كثافة 250-570 فرد/كم²؛ أقل من 10 آلاف أسرة","a":"مساحة 500-1,000 م²؛ نصيب الأسرة 0.05-0.1 م²","r":"DSL 2-3 كم؛ صوت 5-7 كم؛ لا يوضع سنترال من نفس الرتبة قبل 2-10 كم","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (قُرئ من صورة الصفحة)","u":10,"pg":"ص PDF 47 (جدول 3)"},{"c":"اتصالات","s":"محطات المحمول Macrocell","n":"محطة تقوية محمول أساسية","lt":"—","lv":0,"p":"—","a":"ارتفاع المبنى للهوائيات 15-50 م؛ أقصى كثافة قدرة 0.4 ملّي وات/سم²؛ 12 م أفقياً بين برجين على نفس السطح؛ 6 م بين الهوائي والإنسان؛ 20 م من سور مدارس الأطفال؛ ممنوعة فوق المستشفيات","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (نص واضح، بنود 1-14)","u":10,"pg":"ص PDF البند 9-2-1 ص 37-39 من الدليل"},{"c":"اتصالات","s":"محطات المحمول Microcell","n":"محطة تقوية محمول صغيرة","lt":"—","lv":0,"p":"—","a":"نصف متر عن الإنسان؛ ارتفاع التركيب الخارجي والداخلي 2.5 م على الأقل؛ كسب الهوائي حتى 7.5 ديسيبل؛ ممنوعة داخل المستشفيات وأفنية المدارس","r":"—","st":"off","stx":"رسمي (قُرئ من موقع GOPP) (نص واضح، بنود 1-6)","u":10,"pg":"ص PDF البند 9-2-2 ص 39"},{"c":"أمن وحماية","s":"شرطة، إطفاء","n":"قسم/نقطة شرطة، إطفاء","lt":"—","lv":0,"p":"—","a":"قيمة المنصة الحالية: مركز شرطة 50 ألف نسمة / 2,500 م²؛ إطفاء 50 ألف / 3,000 م²","r":"—","st":"est","stx":"تقديري (قيمة المنصة الحالية، غير مسندة)","u":null,"pg":"المنصة V25.2 (EG_SV) ولا يشملها الـ11 دليل"}],"SA":[{"c":"ديني","s":"مسجد محلي","n":"المسجد المحلي","lt":"مجاورة سكنية (ويمكن لمجموعة سكنية)","lv":2,"p":"1,500 - 4,000","a":"نصيب المصلي 1.2-1.5 م²؛ موقع 750-2,800 م²؛ نصيب الفرد 0.5-0.7 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 45 جدول 1-1","num":{"f":1500.0,"t":4000.0,"site":[750.0,2800.0],"pcRef":[0.5,0.7]}},{"c":"ديني","s":"مسجد جامع","n":"المسجد الجامع","lt":"عدة مجاورات / حي سكني","lv":3,"p":"5,000 - 20,000","a":"نصيب المصلي 1.25-1.40 م²؛ نصيب الفرد 0.3-0.4 م²؛ موقع (قرى) 2,000-6,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 45 جدول 1-1","num":{"f":5000.0,"t":20000.0,"site":[2000.0,6000.0],"pcRef":[0.3,0.4]}},{"c":"ديني","s":"مصلى عيد","n":"مصلى العيد","lt":"مدن متوسطة وصغيرة / مجموعة أحياء","lv":4,"p":"20,000 - 100,000","a":"نصيب المصلي 1.05-1.2 م²؛ نصيب الفرد 0.2-0.3 م²؛ موقع 4,000-30,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 45","num":{"f":20000.0,"t":100000.0,"site":[4000.0,30000.0],"pcRef":[0.2,0.3]}},{"c":"ديني","s":"تحفيظ قرآن","n":"دار تحفيظ القرآن الكريم","lt":"حي سكني أو مجموعة مجاورات","lv":3,"p":"8,000 - 12,000","a":"نصيب الفرد 0.09-0.16 م²؛ موقع 750-2,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 45","num":{"f":8000.0,"t":12000.0,"site":[750.0,2000.0],"pcRef":[0.09,0.16]}},{"c":"ديني","s":"هيئة","n":"مركز هيئة الأمر بالمعروف","lt":"حي / مجموعة أحياء","lv":4,"p":"—","a":"موقع بالحي 1,200-1,500 م²؛ بالمحافظة 3,500-5,000؛ بالمنطقة 6,000-15,000","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 46"},{"c":"تعليمي","s":"رياض أطفال","n":"روضة الأطفال","lt":"مجموعة سكنية كبيرة / مجاورة","lv":2,"p":"2,000 - 3,000","a":"نسبة الأطفال 3-6% من السكان؛ 60-180 طفل؛ 4-9 فصول؛ 15-20 م²/طفل؛ موقع 900-3,600 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 72 جدول 2-1","num":{"f":2000.0,"t":3000.0,"site":[900.0,3600.0]}},{"c":"تعليمي","s":"ابتدائي","n":"المدرسة الابتدائية (بنين؛ بنات بنفس المعايير)","lt":"مجاورة سكنية","lv":2,"p":"3,200 - 4,000","a":"240-340 تلميذ؛ 12-14 فصل؛ 20-25 تلميذ/فصل؛ 15-20 م²/تلميذ؛ موقع 3,600-6,800 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 72","num":{"f":3200.0,"t":4000.0,"site":[3600.0,6800.0]}},{"c":"تعليمي","s":"ابتدائي (ريف)","n":"المدرسة الابتدائية بالقرى","lt":"قرية كبيرة / مجموعة قرى","lv":"R","p":"2,000 - 2,200","a":"165-185 تلميذ؛ 6-9 فصول؛ موقع 2,400-3,700 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 73","num":{"f":2000.0,"t":2200.0,"site":[2400.0,3700.0]}},{"c":"تعليمي","s":"متوسط","n":"المدرسة المتوسطة (بنين؛ بنات بنفس المعايير)","lt":"حي سكني (مدن كبيرة) / مجموعة أحياء (مدن متوسطة وصغيرة)","lv":4,"p":"6,000 - 8,000","a":"200-360 طالب؛ 10-15 فصل؛ 20-25 طالب/فصل؛ 20-25 م²/طالب؛ موقع 4,000-9,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 73","num":{"f":6000.0,"t":8000.0,"site":[4000.0,9000.0]}},{"c":"تعليمي","s":"متوسط (ريف)","n":"المدرسة المتوسطة بالقرى","lt":"مركز خدمات قروي / مجموعة قرى","lv":"R","p":"4,000 - 4,400","a":"150-200 طالب؛ 6-9 فصول؛ موقع 3,000-5,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 74","num":{"f":4000.0,"t":4400.0,"site":[3000.0,5000.0]}},{"c":"تعليمي","s":"ثانوي","n":"المدرسة الثانوية (بنين؛ بنات بنفس المعايير)","lt":"حي سكني (مدن كبيرة) / مجموعة أحياء","lv":4,"p":"11,000 - 13,000","a":"275-455 طالب؛ 12-18 فصل؛ 20-25 طالب/فصل؛ 25-30 م²/طالب؛ موقع 7,000-14,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 74","num":{"f":11000.0,"t":13000.0,"site":[7000.0,14000.0]}},{"c":"تعليمي","s":"ثانوي (ريف)","n":"المدرسة الثانوية بالقرى","lt":"مركز تنمية قروي / مجموعة قرى","lv":"R","p":"6,000 - 6,400","a":"160-225 طالب؛ 6-9 فصول؛ موقع 4,000-7,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 74","num":{"f":6000.0,"t":6400.0,"site":[4000.0,7000.0]}},{"c":"صحي","s":"رعاية أولية","n":"مركز رعاية صحية (ب) 4 عيادات + مختبر وأشعة","lt":"حي سكني (مدن كبرى)","lv":3,"p":"10,000 - 25,000","a":"نصيب الفرد 0.12-0.2 م²؛ موقع 2,000-3,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 117 جدول 4-4","num":{"f":10000.0,"t":25000.0,"site":[2000.0,3000.0],"pcRef":[0.12,0.2]}},{"c":"صحي","s":"رعاية أولية","n":"مركز رعاية صحية (أ) مرجعي 6 عيادات + أسنان","lt":"أكثر من حي (مدن كبرى ومتوسطة)","lv":3,"p":"25,000 - 45,000","a":"نصيب الفرد 0.13-0.20 م²؛ موقع 5,000-6,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 116","num":{"f":25000.0,"t":45000.0,"site":[5000.0,6000.0],"pcRef":[0.13,0.2]}},{"c":"صحي","s":"رعاية أولية (ريف)","n":"مركز رعاية صحية (أ) و(ب) بالقرى","lt":"مراكز إدارية بالمحافظات / مراكز خدمات قروية","lv":"R","p":"(أ) 12,500-25,000؛ (ب) 7,500-12,500","a":"موقع 2,000-3,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 117"},{"c":"صحي","s":"رعاية أولية (ريف)","n":"مركز رعاية صحية (ج) بالقرى","lt":"مراكز خدمات قروية وقرى","lv":"R","p":"2,500 - 7,500","a":"نصيب الفرد 0.4-0.8 م²؛ موقع 2,000-3,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 118 (صورة الصفحة)","num":{"f":2500.0,"t":7500.0,"site":[2000.0,3000.0],"pcRef":[0.4,0.8]}},{"c":"صحي","s":"علاجي","n":"مستشفى عام 100-200 سرير","lt":"مراكز نمو إقليمية صغيرة / محافظات ومدن متوسطة","lv":5,"p":"25,000 - 50,000","a":"3-4 سرير لكل ألف؛ 500-700 م²/سرير؛ موقع 5-14 هكتار","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 115","num":{"f":25000.0,"t":50000.0,"site":[50000.0,140000.0]}},{"c":"صحي","s":"علاجي","n":"مستشفى عام 300-400 سرير","lt":"مراكز نمو إقليمية كبرى / محافظات ومدن كبرى","lv":5,"p":"75,000 - 130,000","a":"3-4 سرير لكل ألف؛ 400-500 م²/سرير؛ موقع 12-20 هكتار","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 115","num":{"f":75000.0,"t":130000.0,"site":[120000.0,200000.0]}},{"c":"صحي","s":"علاجي","n":"مستشفى عام 500-600 سرير","lt":"مراكز نمو وطنية / عواصم مناطق","lv":5,"p":"150,000 - 250,000","a":"3-4 سرير لكل ألف؛ 350-450 م²/سرير؛ موقع 17.5-27 هكتار","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 115","num":{"f":150000.0,"t":250000.0,"site":[175000.0,270000.0]}},{"c":"صحي","s":"علاجي","n":"مستشفيات تخصصية","lt":"مراكز نمو وطنية وإقليمية / محافظات كبرى","lv":5,"p":"100,000 - 500,000","a":"1-1.5 سرير لكل ألف؛ 100-300 سرير؛ 300-500 م²/سرير؛ موقع 3-15 هكتار","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 116 (صورة الصفحة)","num":{"f":100000.0,"t":500000.0,"site":[30000.0,150000.0]}},{"c":"صحي","s":"إسعاف","n":"مركز إسعاف","lt":"مراكز نمو محلية","lv":5,"p":"20,000-40,000 (مدن متوسطة وصغيرة)؛ 40,000-70,000 (كبيرة)","a":"موقع 900-1,600 م²؛ نصيب الفرد 0.02-0.04 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 118"},{"c":"صحي","s":"إسعاف","n":"مركز إسعاف الهلال الأحمر خارج المدن","lt":"على الطرق السريعة والإقليمية","lv":5,"p":"مركز كل 50-60 كم","a":"موقع 300-500 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 118 (صورة الصفحة)"},{"c":"ثقافي","s":"مركز ثقافي (ج)","n":"مركز ثقافي (ج)","lt":"حي سكني / مجموعة أحياء / مدن متوسطة وصغيرة","lv":4,"p":"30,000 - 100,000","a":"نصيب الفرد 0.06-0.07 م²؛ موقع 2,000-6,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 94 جدول 3-1","num":{"f":30000.0,"t":100000.0,"site":[2000.0,6000.0],"pcRef":[0.06,0.07]}},{"c":"ثقافي","s":"مركز ثقافي (ب)","n":"مركز ثقافي (ب)","lt":"مدن كبيرة / عواصم محافظات كبرى","lv":5,"p":"200,000 - 500,000","a":"نصيب الفرد 0.03-0.04 م²؛ موقع 0.8-2 هكتار","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 94","num":{"f":200000.0,"t":500000.0,"site":[8000.0,20000.0],"pcRef":[0.03,0.04]}},{"c":"ثقافي","s":"مركز ثقافي (أ)","n":"مركز ثقافي (أ)","lt":"مدن كبرى / عواصم مناطق","lv":5,"p":"500,000 - 1,000,000","a":"نصيب الفرد 0.02-0.03 م²؛ موقع 15,000-25,000 م² (1.5-2.5 هكتار)","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 94 (صورة الصفحة)","num":{"f":500000.0,"t":1000000.0,"site":[15000.0,25000.0],"pcRef":[0.02,0.03]}},{"c":"ثقافي","s":"مكتبة","n":"مكتبة عامة متوسطة","lt":"مدن متوسطة / مجموعة أحياء في المدن الكبرى","lv":4,"p":"100,000 - 250,000","a":"نصيب الفرد 0.01-0.02 م²؛ موقع 2,000-4,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 95","num":{"f":100000.0,"t":250000.0,"site":[2000.0,4000.0],"pcRef":[0.01,0.02]}},{"c":"ثقافي","s":"مكتبة","n":"مكتبة عامة كبرى","lt":"مدن فوق 250 ألف","lv":5,"p":"250,000 - 1,000,000","a":"موقع 4,000-10,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 95","num":{"f":250000.0,"t":1000000.0,"site":[4000.0,10000.0]}},{"c":"اجتماعي","s":"مركز تنمية اجتماعي (ج)","n":"مركز تنمية اجتماعي (ج)","lt":"حي سكني (مدن)، مراكز تنمية قروية","lv":3,"p":"10,000 - 30,000","a":"نصيب الفرد 0.1-0.15 م²؛ موقع 1,500-3,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 136 جدول 5-1","num":{"f":10000.0,"t":30000.0,"site":[1500.0,3000.0],"pcRef":[0.1,0.15]}},{"c":"اجتماعي","s":"مركز تنمية اجتماعي (ب)","n":"مركز تنمية اجتماعي (ب)","lt":"مجموعة أحياء","lv":4,"p":"50,000 - 100,000","a":"نصيب الفرد 0.1-0.15 م²؛ موقع 7,500-10,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 136","num":{"f":50000.0,"t":100000.0,"site":[7500.0,10000.0],"pcRef":[0.1,0.15]}},{"c":"اجتماعي","s":"مركز تنمية اجتماعي (أ)","n":"مركز تنمية اجتماعي (أ)","lt":"عواصم المحافظات الكبرى","lv":5,"p":"500,000 - 1,000,000","a":"نصيب الفرد 0.02-0.03 م²؛ موقع 15,000-20,000 م² (1.5-2 هكتار)","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 136 (صورة الصفحة)","num":{"f":500000.0,"t":1000000.0,"site":[15000.0,20000.0],"pcRef":[0.02,0.03]}},{"c":"أمن","s":"شرطة","n":"مخفر الشرطة","lt":"حي سكني (قرية: وسط مجموعة قرى)","lv":3,"p":"10,000 - 30,000","a":"نصيب الفرد 0.23-0.5 م²؛ موقع 5,000-7,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 167 جدول 6-3","num":{"f":10000.0,"t":30000.0,"site":[5000.0,7000.0],"pcRef":[0.23,0.5]}},{"c":"أمن","s":"شرطة","n":"مركز الشرطة","lt":"حي / مجموعة أحياء","lv":4,"p":"50,000 - 100,000","a":"نصيب الفرد 0.1-0.2 م²؛ موقع 9,000-11,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 167","num":{"f":50000.0,"t":100000.0,"site":[9000.0,11000.0],"pcRef":[0.1,0.2]}},{"c":"أمن","s":"مرور وجوازات","n":"قسم المرور","lt":"مدن كبرى / مجموعة أحياء","lv":4,"p":"50,000 - 200,000","a":"نصيب الفرد 0.05-0.2 م²؛ موقع 8,500-11,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 168 (جدول 6-3، صورة الصفحة)","num":{"f":50000.0,"t":200000.0,"site":[8500.0,11000.0],"pcRef":[0.05,0.2]}},{"c":"أمن","s":"مرور وجوازات","n":"وحدة المرور","lt":"مدن متوسطة وكبرى","lv":5,"p":"10,000 - 30,000","a":"نصيب الفرد 0.25-0.55 م²؛ موقع 5,000-7,500 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 168 (جدول 6-3، صورة الصفحة)","num":{"f":10000.0,"t":30000.0,"site":[5000.0,7500.0],"pcRef":[0.25,0.55]}},{"c":"أمن","s":"مرور وجوازات","n":"جوازات فئة (ج)","lt":"مدن / محافظات كبرى","lv":5,"p":"25,000 - 100,000","a":"نصيب الفرد 0.2-0.6 م²؛ موقع 15,000-20,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 168 (جدول 6-3، صورة الصفحة)","num":{"f":25000.0,"t":100000.0,"site":[15000.0,20000.0],"pcRef":[0.2,0.6]}},{"c":"أمن","s":"دفاع مدني","n":"فرقة الدفاع المدني","lt":"مراكز تنمية محلية / أحياء مدن متوسطة وصغيرة","lv":5,"p":"5,000 - 25,000","a":"نصيب الفرد 0.3-0.9 م²؛ موقع 4,500-6,500 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 168","num":{"f":5000.0,"t":25000.0,"site":[4500.0,6500.0],"pcRef":[0.3,0.9]}},{"c":"أمن","s":"دفاع مدني","n":"مركز الدفاع المدني","lt":"مجموعة أحياء / مدن كبرى","lv":4,"p":"25,000 - 100,000","a":"نصيب الفرد 0.08-0.2 م²؛ موقع 5,500-7,500 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 167","num":{"f":25000.0,"t":100000.0,"site":[5500.0,7500.0],"pcRef":[0.08,0.2]}},{"c":"ترفيه","s":"حدائق","n":"ملاعب الأطفال","lt":"مجاورة أو مجموعة سكنية","lv":2,"p":"1,500 - 4,000","a":"نصيب الفرد 0.22-0.33 م²؛ موقع 500-900 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 199 جدول 7-3","num":{"f":1500.0,"t":4000.0,"site":[500.0,900.0],"pcRef":[0.22,0.33]}},{"c":"ترفيه","s":"حدائق","n":"حديقة المجاورة السكنية","lt":"مجاورة سكنية","lv":2,"p":"3,000 - 5,000","a":"نصيب الفرد 0.9-1.2 م²؛ موقع 2,700-6,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 199","num":{"f":3000.0,"t":5000.0,"site":[2700.0,6000.0],"pcRef":[0.9,1.2]}},{"c":"ترفيه","s":"حدائق","n":"حديقة الحي السكني","lt":"حي (مدن كبرى) / عواصم محافظات صغيرة","lv":3,"p":"15,000 - 25,000","a":"نصيب الفرد 0.4-0.5 م²؛ موقع 6,000-12,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 198","num":{"f":15000.0,"t":25000.0,"site":[6000.0,12000.0],"pcRef":[0.4,0.5]}},{"c":"ترفيه","s":"حدائق","n":"حديقة المدينة","lt":"مدن رئيسية / عواصم محافظات","lv":5,"p":"40,000 فأكثر","a":"نصيب الفرد 0.3-0.4 م²؛ موقع 20,000 م² فأكثر","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 198","num":{"f":40000.0,"site":[20000.0,20000.0],"pcRef":[0.3,0.4]}},{"c":"ترفيه","s":"حدائق","n":"الحدائق الكبرى والنوعية","lt":"مدن كبرى / محافظات كبرى","lv":5,"p":"100,000 فأكثر","a":"نصيب الفرد 0.6-0.8 م²؛ موقع 60,000 م² فأكثر","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 199","num":{"f":100000.0,"site":[60000.0,60000.0],"pcRef":[0.6,0.8]}},{"c":"رياضي","s":"نادي","n":"نادي رياضي (ج)","lt":"حي سكني / مجموعة أحياء","lv":4,"p":"20,000 - 50,000","a":"نصيب الفرد 1.0-1.5 م²؛ موقع 30,000-50,000 م² (3-5 هكتار)","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 197 (صورة الصفحة). صُحِّح: كان 0.2-0.3 م² و 6,000-10,000 م² (قراءة خاطئة من النص)","num":{"f":20000.0,"t":50000.0,"site":[30000.0,50000.0],"pcRef":[1.0,1.5]}},{"c":"رياضي","s":"نادي","n":"نادي رياضي (ب)","lt":"حي (مدن كبرى) / مدن متوسطة","lv":3,"p":"50,000 - 100,000","a":"نصيب الفرد 0.7-1.0 م²؛ موقع 5-7 هكتار","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 197","num":{"f":50000.0,"t":100000.0,"site":[50000.0,70000.0],"pcRef":[0.7,1.0]}},{"c":"رياضي","s":"ساحات","n":"الساحات البلدية","lt":"مدن متوسطة / مجموعة أحياء","lv":4,"p":"20,000 - 50,000","a":"نصيب الفرد 0.2-0.3 م²؛ موقع 6,000-10,000 م² (0.6-1 هكتار)","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 198 (صورة الصفحة)","num":{"f":20000.0,"t":50000.0,"site":[6000.0,10000.0],"pcRef":[0.2,0.3]}},{"c":"رياضي","s":"منتزه","n":"المنتزهات العامة","lt":"مدن كبرى / مراكز نمو","lv":5,"p":"50,000 - 150,000","a":"نصيب الفرد 0.45-0.7 م²؛ موقع 35,000-70,000 م² (3.5-7 هكتار)","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 197 (صورة الصفحة)","num":{"f":50000.0,"t":150000.0,"site":[35000.0,70000.0],"pcRef":[0.45,0.7]}},{"c":"تجاري","s":"مجاورة","n":"خدمات تجارية بالمجاورة (مدن صغيرة أقل من 100 ألف)","lt":"مجاورة سكنية","lv":2,"p":"3,000 - 4,000","a":"5-10 محلات لكل ألف؛ نصيب الفرد 0.25-0.5 م²؛ موقع 750-2,000 م²؛ مشي حتى 500 م","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 212 جدول 8-4","num":{"f":3000.0,"t":4000.0,"site":[750.0,2000.0],"pcRef":[0.25,0.5]}},{"c":"تجاري","s":"مجاورة","n":"خدمات تجارية بالمجاورة (مدن متوسطة 100-200 ألف)","lt":"مجاورة سكنية","lv":2,"p":"4,000 - 5,000","a":"10-15 محل لكل ألف؛ نصيب الفرد 0.5-1.0 م²؛ موقع 2,000-5,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 212","num":{"f":4000.0,"t":5000.0,"site":[2000.0,5000.0],"pcRef":[0.5,1.0]}},{"c":"تجاري","s":"مجاورة","n":"خدمات تجارية بالمجاورة (مدن كبيرة فوق 200 ألف)","lt":"مجاورة سكنية","lv":2,"p":"5,000 - 6,000","a":"10-15 محل لكل ألف؛ نصيب الفرد 1.0-1.5 م²؛ موقع 5,000-9,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 212","num":{"f":5000.0,"t":6000.0,"site":[5000.0,9000.0],"pcRef":[1.0,1.5]}},{"c":"تجاري","s":"حي","n":"خدمات تجارية بالحي السكني (مدن صغيرة)","lt":"حي سكني","lv":3,"p":"10,000 - 15,000","a":"5-10 محلات لكل ألف؛ نصيب الفرد 0.25-0.5 م²؛ موقع 2,500-5,000 م²؛ مشي حتى 1,200 م","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 213","num":{"f":10000.0,"t":15000.0,"site":[2500.0,5000.0],"pcRef":[0.25,0.5]}},{"c":"تجاري","s":"حي","n":"خدمات تجارية بالحي السكني (مدن متوسطة 100-200 ألف)","lt":"حي سكني","lv":3,"p":"15,000 - 20,000","a":"10-15 محل لكل ألف؛ نصيب الفرد 0.5-0.75 م²؛ موقع 5,000-10,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 213 (صورة الصفحة). صُحِّح من صف مدمج سابق","num":{"f":15000.0,"t":20000.0,"site":[5000.0,10000.0],"pcRef":[0.5,0.75]}},{"c":"تجاري","s":"حي","n":"خدمات تجارية بالحي السكني (مدن كبيرة فوق 200 ألف)","lt":"حي سكني","lv":3,"p":"20,000 - 25,000","a":"10-15 محل لكل ألف؛ نصيب الفرد 0.75-1.0 م²؛ موقع 10,000-20,000 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 214 (صورة الصفحة). صُحِّح من صف مدمج سابق","num":{"f":20000.0,"t":25000.0,"site":[10000.0,20000.0],"pcRef":[0.75,1.0]}},{"c":"بريد","s":"بريد رئيسي (أ)","n":"مركز بريد رئيسي (أ)","lt":"عواصم مناطق / مراكز نمو وطنية","lv":5,"p":"500,000 - 1,000,000","a":"نصيب الفرد 0.01-0.014 م²؛ موقع 7,000-10,000 م²؛ موقف لكل 25 م² مبنية","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 163-164 (نص واضح)","num":{"f":500000.0,"t":1000000.0,"site":[7000.0,10000.0],"pcRef":[0.01,0.014]}},{"c":"بريد","s":"بريد رئيسي (ب)","n":"مركز بريد رئيسي (ب)","lt":"مراكز نمو إقليمية ومحلية / عدة أحياء بالمدن الكبرى","lv":5,"p":"30,000 - 300,000","a":"نصيب الفرد 0.01-0.06 م²؛ موقع 2,000-2,500 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 164 (نص واضح)","num":{"f":30000.0,"t":300000.0,"site":[2000.0,2500.0],"pcRef":[0.01,0.06]}},{"c":"بريد","s":"بريد فرعي (أ)","n":"مركز بريد فرعي (أ)","lt":"حي سكني / مركز تنمية قروي","lv":3,"p":"10,000 - 20,000","a":"نصيب الفرد 0.03-0.04 م²؛ موقع 400-600 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 165 (نص واضح)","num":{"f":10000.0,"t":20000.0,"site":[400.0,600.0],"pcRef":[0.03,0.04]}},{"c":"بريد","s":"بريد فرعي (ب)","n":"مركز بريد فرعي (ب)","lt":"مجمعات قروية / مراكز تنمية قروية صغيرة","lv":0,"p":"5,000 - 10,000","a":"نصيب الفرد 0.04-0.05 م²؛ موقع 250-400 م²","r":"—","st":"off","stx":"رسمي (قُرئ من PDF الوزارة، momah.gov.sa)","u":11,"pg":"ص PDF 166 (نص واضح)","num":{"f":5000.0,"t":10000.0,"site":[250.0,400.0],"pcRef":[0.04,0.05]}},{"c":"مرافق","s":"مياه، صرف، كهرباء","n":"—","lt":"—","lv":0,"p":"—","a":"غير موجود في هذا الدليل","r":"—","st":"none","stx":"غير موجود","u":null,"pg":"—"}],"MAP":[["نسبة البناء / التغطية للقطعة","القانون + المخطط التفصيلي المعتمد","اللائحة تقول إن النسبة تُحدد في الاشتراطات البنائية للمخطط التفصيلي؛ رقم ثابت وجدته فقط للمناطق الحرفية: 65% من القطعة","جدول المدارس فيه نسب بناء للمدرسة (مثلاً 40% / 30%) والخدمات الأخرى لها نسب","لا تعارض: الأولى للسكن والحرفي، الثانية لمباني الخدمات","القانون للسكني والحرفي وكل ما بالمخطط التفصيلي؛ GOPP لمباني الخدمات","رسمي (قُرئ من نص اللائحة)"],["الارتفاعات وعدد الأدوار","القانون + المخطط الاستراتيجي المعتمد","الارتفاع يُحدد حسب اشتراطات المجلس الأعلى للتخطيط والمخطط الاستراتيجي للمدينة، ويجوز ارتفاعات مختلفة في المنطقة الواحدة. لا رقم عام","لا شيء مهم","لا تداخل","القانون (والمخطط المعتمد). المنصة تحتاج مدخل يدوي أو افتراضي مُعلّم","رسمي (قُرئ من نص اللائحة)"],["الارتدادات","القانون","تُحدد حسب نوع المسكن (متصل، شبه متصل، منفصل) أمامي وجانبي وخلفي بما يحقق أقصى نسبة تغطية؛ وفي الطرق الأضيق من الحد المسموح الارتداد بنصف الفرق من الجانبين. لم أجد جدول أرقام عام","لا شيء","لا تداخل","القانون","رسمي (قُرئ من نص اللائحة)"],["مساحة القطعة وأبعادها","القانون + المخطط التفصيلي","اللائحة تطلب حداً أدنى للمساحة والأبعاد حسب الاستعمال. عمق القطعة لا يزيد عن مثلي العرض. المنطقة الحرفية: عرض القطعة 10 م حد أدنى، 100 م² للحرفة و500 م² للمصنع الصغير، عرض شارع 12 م حد أدنى، بلوك حتى 300 م","GOPP يحدد مساحة قطعة الخدمة (مدرسة، مسجد، وحدة صحية)","لا تعارض: الأولى قطع الإسكان والحرفي، الثانية قطع الخدمات","القانون لقطع الإسكان؛ GOPP لقطع الخدمات","رسمي (قُرئ من نص اللائحة)"],["نسبة الخدمات من المنطقة","القانون","المنطقة الحرفية: الخدمات المكملة لا تقل عن 5% من المساحة. للسكن: اللائحة تطلب توفير الخدمات بمستوياتها لكن بدون نسبة عامة وجدتها","GOPP يعطي نصيب الفرد (م²/فرد) لكل خدمة ولكل مستوى","تداخل جزئي في المبدأ فقط","GOPP لأي منطقة سكنية (نصيب الفرد)؛ 5% القانون للحرفي فقط","رسمي (قُرئ من نص اللائحة)"],["المساحات الخضراء","GOPP (دليل المساحات الخضراء 2010 ودلائل الخدمات الشبابية والرياضية)","اللائحة تذكر الحدائق والمساحات الخضراء كمخرجات لازمة بالمخطط ولم أجد نصيب فرد رقمي","دليل الهيئة العامة للتخطيط العمراني 2010: مدن قائمة 5-7 م²/فرد، مدن جديدة 10-15 (أو 15-20)، قرى 3-5 / 5-10","لا تعارض رقمي لأن القانون لا يعطي رقم","GOPP","فيه تأكيد من ملف سابق"],["الكثافة السكانية","القانون يعرّفها، والرقم من المخطط","اللائحة تعرّف الكثافة الإجمالية والصافية والبنائية وتطلب تحديدها بالمخطط، بدون رقم عام وجدته","GOPP جدول مستويات التخطيط (5-20 ألف، 20-40 ألف... إلخ) يربط السكان بالمستوى","لا تعارض","المنصة تأخذ التعريف من القانون والرقم مُدخَل مستخدم","رسمي (قُرئ من نص اللائحة)"],["نصيب الفرد من الخدمات والمساحات","GOPP","لا يعطي أرقام نصيب الفرد. يشترط أن المجاورة تُخدم بمدرسة تعليم أساسي وأن يصل السكان للخدمات دون مشقة","كل الجداول في الملف حسب المستوى","لا تعارض","GOPP","رسمي (المصدر GOPP)"],["الشرطة والإطفاء والمرافق","غير موجود في أي منهما (ضمن ما قُرئ)","لم أجدها","ليست ضمن الـ11 دليل","غير موجود","تقدير مُعلّم في المنصة إلى أن يُوجد مصدر","غير موجود"]],"LV":[["مجموعة سكنية / عزبة / قرية","أقل من 5,000","محلي","جدول 1 (إسترشادي)","رسمي (قُرئ من موقع GOPP)"],["مجاورة سكنية / قرية","5,000 - 20,000","محلي","جدول 1","رسمي (قُرئ من موقع GOPP)"],["حي سكني / قرية رئيسية","20,000 - 40,000","محلي","جدول 1","رسمي (قُرئ من موقع GOPP)"],["مدن صغيرة","أقل من 40,000","مركزي","جدول 1","رسمي (قُرئ من موقع GOPP)"],["مدن متوسطة","40,000 - 100,000","مركزي","جدول 1","رسمي (قُرئ من موقع GOPP)"],["مدن كبيرة","100,000 - 250,000","مركزي","جدول 1","رسمي (قُرئ من موقع GOPP)"],["مدن كبرى","250,000 - مليون","إقليمي","جدول 1","رسمي (قُرئ من موقع GOPP)"],["مدن مليونية","مليون فأكثر","إقليمي","جدول 1","رسمي (قُرئ من موقع GOPP)"]],"SRC":["https://gopp.gov.eg/wp-content/uploads/2024/01/1-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D8%B9%D9%84%D9%8A%D9%85%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/5-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%B4%D8%A8%D8%A7%D8%A8%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/2-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%B5%D8%AD%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/7-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%AF%D9%8A%D9%86%D9%8A%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/8-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%AF%D9%8A%D9%86%D9%8A%D8%A9-%D8%A7%D9%84%D9%85%D8%B3%D9%8A%D8%AD%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/11-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D8%AC%D8%A7%D8%B1%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/6-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/4-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/3-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%A5%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/9-%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%A8%D8%B1%D9%8A%D8%AF%D9%8A%D8%A9.pdf","https://gopp.gov.eg/wp-content/uploads/2024/01/10-%D8%AE%D8%AF%D9%85%D8%A7%D8%AA-%D8%A7%D9%84%D8%A5%D8%AA%D8%B5%D8%A7%D9%84%D8%A7%D8%AA.pdf","https://momah.gov.sa/sites/default/files/2022-02/%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D9%8A%D9%8A%D8%B1%20%D8%A7%D9%84%D8%AA%D8%AE%D8%B7%D9%8A%D8%B7%D9%8A%D8%A9%20%D9%84%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9%20%D9%88%D8%A7%D9%84%D8%A7%D9%82%D9%84%D9%8A%D9%85%D9%8A%D8%A9%20%D9%88%D8%A7%D9%84%D9%85%D8%AD%D9%84%D9%8A%D8%A9%20%D9%88%D9%85%D8%B3%D8%AA%D9%88%D9%8A%D8%A7%D8%AA%D9%87%D8%A7%20%D8%A7%D9%84%D9%85%D8%AE%D8%AA%D9%84%D9%81%D8%A9.pdf"]};</script>
+<script>
+/* ===== UrbanMind V26.5: planning reference selector (RAK / Egypt / Saudi) + services by reference ===== */
+(function(){
+'use strict';
+var $=function(i){return document.getElementById(i)};
+var D=window.UM_REFDATA;
+var LVL={0:'عام',1:'مجموعة سكنية',2:'مجاورة',3:'حي',4:'مجموعة أحياء / قطاع',5:'مدينة / إقليم',R:'قرى'};
+var ST={off:['رسمي','#0f6b5c'],offq:['رسمي (قراءة غير مؤكدة)','#8a5a00'],cop:['منقول','#8a5a00'],est:['تقديري','#8a5a00'],sv:['متوسط مسح (ليس معياراً)','#8a5a00'],none:['غير موجود','#9b1c1c']};
+var EG_DEN={low:40,mid:100,high:200};          /* people per hectare: 4,000 / 10,000 / 20,000 per km2 (estimate) */
+var EGT={
+ urban:{n:'مدينة قائمة (افتراضي)',plot:null,w:20,cov:60,fl:3,sb:[3,3,3],park:1,note:'القسيمة والارتدادات والأدوار ونسب البناء هنا افتراضات تقديرية من المنصة، وليست من قانون 119. الأرقام الرسمية للمباني تأتي من القانون والمخطط التفصيلي المعتمد.'},
+ rural:{n:'ريف / قرية',plot:null,w:15,cov:60,fl:2,sb:[2,2,2],park:0.5,note:'تقدير: لا يوجد في ملف المرجع رقم موثّق لقسيمة الريف.'},
+ land150:{n:'مدن جديدة: قطع أراضي 150 م² (نموذج)',plot:150,w:10,cov:70,fl:3,sb:[3,0,3],park:1,note:'مساحة القطعة من نموذج برامج الأراضي؛ بقية القيم تقدير.'},
+ land209:{n:'مدن جديدة: قطع أراضي 209 م² (نموذج)',plot:209,w:12,cov:65,fl:3,sb:[3,0,3],park:1,note:'مساحة القطعة من نموذج برامج الأراضي؛ بقية القيم تقدير.'},
+ land276:{n:'مدن جديدة: قطع أراضي 276 م² (نموذج)',plot:276,w:15,cov:60,fl:3,sb:[3,2,3],park:1,note:'مساحة القطعة من نموذج برامج الأراضي؛ بقية القيم تقدير.'},
+ apt:{n:'مدن جديدة: شقق (إسكان اجتماعي/متوسط، 75–90 م²)',plot:90,w:20,cov:30,fl:5,sb:[6,6,6],park:1,note:'تقدير مبدئي: الحاسبة تعمل بالقسيمة، فرقم القسيمة هنا يمثل حصة الأرض لكل أسرة في عمارة متكررة.'}
+};
+var UF={ha:1e4,m2:1,km2:1e6,fed:4200};
+var firstFar=($('calc-far')||{}).value||'1.2';
+var EST={};try{EST=JSON.parse(localStorage.getItem('um_est_v27')||'{}')||{}}catch(e){}
+
+/* ---------- UI ---------- */
+var box=document.createElement('div');
+box.id='um-ref-box';
+box.className='p-3.5 rounded-xl bg-slate-900/80 border border-amber-500/35 space-y-2.5';
+box.innerHTML=
+ '<div><label class="block text-xs font-bold text-amber-300 mb-1" for="um-ref">المرجع التخطيطي</label>'+
+ '<select id="um-ref" onchange="umRefChange()" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs sm:text-sm font-bold text-white">'+
+ '<option value="eg">مصر (قانون 119)</option>'+
+ '<option value="sa">السعودية (معايير وزارة البلديات، بيانات الخدمات)</option>'+
+ '<option value="rak">الإمارات: رأس الخيمة</option></select>'+
+ '<div id="um-ref-note" class="mt-1.5 text-[11px] leading-relaxed text-slate-300"></div></div>'+
+ '<div id="um-eg-box" style="display:none" class="space-y-2">'+
+  '<div><label class="block text-[11px] font-bold text-teal-300 mb-1" for="um-eg-type">نوع المنطقة</label>'+
+  '<select id="um-eg-type" onchange="umEgType()" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-white">'+
+  Object.keys(EGT).map(function(k){return '<option value="'+k+'">'+EGT[k].n+'</option>'}).join('')+'</select></div>'+
+  '<div><label class="block text-[11px] font-bold text-teal-300 mb-1" for="um-eg-den">فئة الكثافة (تقديرية، قابلة للتعديل)</label>'+
+  '<select id="um-eg-den" onchange="umEgDen()" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-white">'+
+  '<option value="low">منخفضة (< 5,000/كم²)</option><option value="mid" selected>متوسطة (حتى 15,000/كم²)</option><option value="high">عالية (> 15,000/كم²)</option><option value="custom">مخصّصة (من نوع المنطقة)</option></select></div>'+
+  '<div id="um-eg-tier" class="text-[11px] text-slate-300"></div><div id="um-eg-note" class="text-[11px] text-amber-300"></div></div>'+
+ '<div id="um-sa-box" style="display:none" class="space-y-2"><label class="block text-[11px] font-bold text-teal-300 mb-1" for="um-sa-area">نطاق الخدمات</label>'+
+  '<select id="um-sa-area" onchange="runMasterplanCalculator()" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-white"><option value="city">مدن</option><option value="vil">مدن + معايير القرى</option></select>'+
+  '<div class="text-[11px] text-amber-300">حجم الأسرة (5.5) وقيم المباني للسعودية تقدير، لا توجد في ملف المرجع. عدّلها حسب مخططك.</div></div>';
+var codeSel=$('calc-code');
+codeSel.closest('.p-3\\.5').insertAdjacentElement('beforebegin',box);
+/* extra units + Saudi code option */
+(function(){var u=$('calc-unit');
+ if(!u.querySelector('option[value=km2]')){u.insertAdjacentHTML('beforeend','<option value="km2">كم²</option><option value="fed">فدان</option>')}
+ if(!codeSel.querySelector('option[value=sa]'))codeSel.insertAdjacentHTML('beforeend','<option value="sa">السعودية: معايير وزارة البلديات</option>');
+})();
+/* services block */
+var sv=document.createElement('div');sv.id='um-ref-sv';sv.style.display='none';sv.className='space-y-3';
+$('sv-bal').insertAdjacentElement('beforebegin',sv);
+var badge=document.createElement('div');badge.id='um-rak-badge';badge.className='um-ref-badge text-[11px] p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-300 leading-relaxed';
+badge.innerHTML='<b style="color:#8a5a00" class="um-ref-chip">تقديري</b> قيم رأس الخيمة هنا من جدول Reference Manual (Code A / B / D) الموجود في المنصة، بدون سنة أو إصدار مذكور. أرقام المباني من لائحة رأس الخيمة 2026 (القرار 7 لسنة 2026) رسمية.';
+$('sv-bal').insertAdjacentElement('beforebegin',badge);
+
+/* ---------- helpers ---------- */
+function fmt(x){return Math.round(x).toLocaleString('en')}
+function unitsLabel(u){return {ha:'هكتار',m2:'م²',km2:'كم²',fed:'فدان'}[u]||'هكتار'}
+function refNow(){return $('um-ref').value}
+function curPop(){return parseFloat(($('out-pop').textContent||'0').replace(/[^0-9.]/g,''))||0}
+function setv(i,v){var e=$(i);if(e)e.value=v}
+function fieldsDefault(){setv('calc-pct-res',50);setv('calc-pct-roads',22);setv('calc-pct-open',12);setv('calc-pct-fac',10);setv('calc-pct-com',6);setv('calc-far',firstFar);
+ if($('calc-mode').value!=='area'){$('calc-mode').value='area';calcModeChange()}
+ if($('ca-mix-on')&&$('ca-mix-on').checked){$('ca-mix-on').checked=false;toggleRefMix()}}
+
+/* ---------- apply visibility (no value changes) ---------- */
+window.umRefApply=function(){
+ var r=refNow();
+ var notes={
+  rak:'<b>رأس الخيمة:</b> قيم الحاسبة والخدمات من جدول Reference Manual (Code A / B / D) بلا سنة مذكورة، لذا تُعرض <b>تقديرية</b>. أرقام المباني من لائحة 2026 رسمية.',
+  eg:'<b>مصر:</b> قانون البناء 119 لسنة 2008 لشكل المبنى، وأدلة GOPP للخدمات. أي رقم بدون علامة «رسمي» تقديري ويجب مراجعته.',
+  sa:'<b>السعودية:</b> بيانات الخدمات من معايير وزارة البلديات (قرار 19378 بتاريخ 21/04/1437هـ). اسم الكود وسنته للتأكيد لاحقاً. قيم المباني تقديرية.'};
+ $('um-ref-note').innerHTML=notes[r];
+ $('um-eg-box').style.display=r==='eg'?'':'none';
+ $('um-sa-box').style.display=r==='sa'?'':'none';
+ codeSel.parentElement.style.display=r==='rak'?'':'none';
+ var sc=$('rak-scorer-box');if(sc)sc.style.display=r==='rak'?'':'none';
+ var u=$('calc-unit');
+ ['km2','fed'].forEach(function(k){var o=u.querySelector('option[value='+k+']');if(o){o.disabled=r==='rak';o.hidden=r==='rak'}});
+ if(r!=='rak'&&codeSel.value!==r){codeSel.value=r}
+ if(r==='rak'&&(codeSel.value==='eg'||codeSel.value==='sa')){codeSel.value='rak_sub'}
+ ['hier-panel','sv-groups-container','sv-hidden-note','sv-bal','ca-infill-box','ca-summary-pills'].forEach(function(i){var e=$(i);if(e)e.style.display=r==='rak'?'':'none'});
+ sv.style.display=r==='rak'?'none':'';
+ badge.style.display=r==='rak'?'':'none';
+ var th=document.querySelector('#calc-table-body') && document.querySelector('#calc-table-body').closest('table').querySelector('th:last-child');
+ if(th)th.textContent=r==='rak'?'المعيار المرجعي (APA/GCC)':'نطاق عام تقديري (APA/GCC)';
+};
+/* ---------- reset to a reference's defaults ---------- */
+window.umRefChange=function(){
+ var r=refNow();
+ var u=$('calc-unit');
+ fieldsDefault();
+ if(r==='rak'){
+  u.value='ha';$('calc-area-input').value=82;
+  codeSel.value='rak_sub';$('ca-sub-demo').value='pdf';
+  calcCodeChange();$('rak-parcel-type').value='parcel_conv';applyRakParcelPreset();
+ }else if(r==='eg'){
+  u.value='km2';$('calc-area-input').value=1;
+  codeSel.value='eg';calcCodeChange();
+  $('um-eg-type').value='urban';$('um-eg-den').value='mid';
+  umEgType(true);
+ }else{
+  u.value='ha';$('calc-area-input').value=82;
+  codeSel.value='sa';calcCodeChange();
+  $('um-sa-area').value='city';
+ }
+ $('calc-area-ha').value=parseFloat($('calc-area-input').value)*UF[u.value]/1e4;
+ umRefApply();
+ runMasterplanCalculator();
+};
+window.umEgType=function(silent){
+ var t=EGT[$('um-eg-type').value];
+ setv('calc-hh-size',3.9);setv('calc-plot-w',t.w);setv('calc-cover',t.cov);setv('calc-floors',t.fl);
+ setv('cs-f',t.sb[0]);setv('cs-s',t.sb[1]);setv('cs-r',t.sb[2]);setv('calc-park',t.park);
+ if(t.plot){setv('calc-plot-size',t.plot);$('um-eg-den').value='custom'}
+ else if($('um-eg-den').value==='custom'){$('um-eg-den').value='mid'}
+ if(!t.plot)umEgDen(true);
+ $('um-eg-note').textContent=t.note;
+ if(silent!==true)runMasterplanCalculator();
+};
+window.umEgDen=function(silent){
+ var k=$('um-eg-den').value;
+ if(EG_DEN[k]){
+  var hh=parseFloat($('calc-hh-size').value)||3.9,res=parseFloat($('calc-pct-res').value)||50;
+  setv('calc-plot-size',Math.max(60,Math.round(hh/EG_DEN[k]*1e4*res/100)));
+ }
+ if(silent!==true)runMasterplanCalculator();
+};
+function tierBadge(){
+ var el=$('um-eg-tier');if(!el||refNow()!=='eg')return;
+ var pop=curPop(),ha=parseFloat($('calc-area-ha').value)||0;
+ if(!pop||!ha){el.textContent='';return}
+ var d=pop/(ha/100),tier=d<5000?'منخفضة':(d<=15000?'متوسطة':'عالية');
+ el.innerHTML='الكثافة الناتجة: <b>'+fmt(d)+' نسمة/كم²</b> ('+fmt(d/100)+' نسمة/هكتار) ← فئة <b>'+tier+'</b> <b style="color:#8a5a00">(تقديري)</b>';
+}
+/* ---------- services ---------- */
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function parsePc(r){var m=String(r.a||'').match(/نصيب الفرد[^\d]{0,30}([\d.]+)\s*[-–]\s*([\d.]+)\s*م²/);return m?[parseFloat(m[1]),parseFloat(m[2])]:null}
+function calcRow(r,pop){
+ var n=r.num;if(!n||r.st!=='off')return null;
+ var f=n.f||0,t=n.t,lv=r.lv,units=null,lo,hi;
+ if(n.site){
+  if(pop<f)return {na:'أقل من الحد الأدنى للسكان ('+fmt(f)+')'};
+  if(lv>=1&&lv<=3&&!n.band){units=Math.max(1,Math.round(pop/(t?(f+t)/2:f)))}
+  else{if(t&&pop>t)return {na:'يخدم نطاقاً أقل من عدد السكان الحالي، تغطيه خدمة المستوى الأعلى'};units=1}
+  lo=units*n.site[0];hi=units*n.site[1];
+ }else if(n.pc){
+  if(pop<f)return {na:'أقل من الحد الأدنى للسكان ('+fmt(f)+')'};
+  if(t&&pop>t)return {na:'يخدم نطاقاً أقل من عدد السكان الحالي، تغطيه خدمة المستوى الأعلى'};
+  lo=pop*n.pc[0];hi=pop*n.pc[1];
+ }else return null;
+ return {units:units,lo:lo,hi:hi};
+}
+function bucket(r){
+ var s=(r.n||'')+' '+(r.c||'');
+ if(/تجاري/.test(s))return 'com';
+ if(/حديقة|حدائق|منتزه|ملاعب|ساحات|مساحات خضراء/.test(s))return 'open';
+ return 'fac';
+}
+var BN={fac:'الخدمات',open:'المناطق المفتوحة',com:'التجاري'};
+function rows(){
+ var r=refNow(),src=r==='eg'?D.EG:D.SA,vil=($('um-sa-area')||{}).value==='vil';
+ var out=src.filter(function(x){return !(x.lv==='R'&&!vil)&&x.n!=='—'}).map(function(x,i){return Object.assign({},x,{key:r+i})});
+ if(r==='eg'){out.push({key:'eg-green',c:'مساحات خضراء',s:'حدائق',n:'المساحات الخضراء (نصيب الفرد)',lt:'',lv:0,p:'—',a:'مدن قائمة 5-7 م²/فرد؛ مدن جديدة 10-15 م²/فرد (دليل المساحات الخضراء 2010، منقول بدون تحقق؛ نسبة المنصة تقديرية)',r:'—',st:'est',u:null,pg:'ملف المرجع، خريطة 119 مقابل GOPP (قيمة المنصة تقديرية)',estPc:[5,7]})}
+ return out;
+}
+function render(){
+ var r=refNow();if(r==='rak')return;
+ var pop=curPop(),m2=(parseFloat($('calc-area-ha').value)||0)*1e4;
+ var P={fac:m2*(+$('calc-pct-fac').value||0)/100,open:m2*(+$('calc-pct-open').value||0)/100,com:m2*(+$('calc-pct-com').value||0)/100};
+ var tot={fac:[0,0],open:[0,0],com:[0,0]},est={fac:0,open:0,com:0},cons=[];
+ var groups={},order=[];
+ rows().forEach(function(x){
+  var res=calcRow(x,pop),b=bucket(x),pc=null,estv=null;
+  if(res&&!res.na){tot[b][0]+=res.lo;tot[b][1]+=res.hi;cons.push({g:x.c||'',name:x.n,lvl:LVL[x.lv]||'عام',radius:(x.r&&x.r!=='—')?x.r:'غير محدد في المصدر',std:shortStd(x),count:res.units?String(res.units):'حسب نصيب الفرد',area:fmt(res.lo)+(res.hi!==res.lo?' – '+fmt(res.hi):'')+' م²',st:(ST[x.st]||ST.est)[0],src:x.u!=null?'['+(x.u+1)+'] '+(x.pg||''):(x.pg||'')})}
+  if(!x.num||x.st!=='off'){
+   pc=x.estPc||parsePc(x);
+   if(pc&&pop>0){var mid=(pc[0]+pc[1])/2;var v=EST[x.key]!=null?EST[x.key]:+mid.toFixed(4);estv=v;est[b]+=pop*v;cons.push({g:x.c||'',name:x.n,lvl:LVL[x.lv]||'عام',radius:(x.r&&x.r!=='—')?x.r:'غير محدد في المصدر',std:shortStd(x)+' · تقدير: '+v+' م²/فرد',count:'حسب نصيب الفرد',area:fmt(pop*v)+' م²',st:'تقديري',src:x.u!=null?'['+(x.u+1)+'] '+(x.pg||''):(x.pg||'')})}
+  }
+  var g=x.c||'أخرى';if(!groups[g]){groups[g]=[];order.push(g)}
+  groups[g].push({x:x,res:res,pc:pc,estv:estv,b:b});
+ });
+ var h='';
+ h+='<div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700 text-[11px] text-slate-300 leading-relaxed"><b class="text-amber-300">كيف تُقرأ الأرقام:</b> المساحة المطلوبة تُحسب فقط للصفوف المعلّمة «رسمي» وفيها رقم مباشر (موقع الخدمة أو نصيب الفرد). الصفوف التقديرية تظهر منفصلة بقيمة وسطية من المدى، وتقدر تعدّلها. الصفوف التي لا رقم لها تظهر نصّاً فقط ولا تدخل في الحساب، ولا يُعلن عجز بناءً على أرقام غير مؤكدة.</div>';
+ order.forEach(function(g){
+  h+='<details class="rounded-xl bg-slate-900/70 border border-slate-700"><summary class="cursor-pointer px-3.5 py-2.5 text-xs sm:text-sm font-extrabold text-teal-300">'+esc(g)+' <span class="font-mono text-[11px] text-slate-400">('+groups[g].length+')</span></summary><div class="p-2 space-y-2">';
+  groups[g].forEach(function(o){
+   var x=o.x,st=ST[x.st]||ST.est,req='';
+   if(o.res&&o.res.na)req='<span class="text-slate-400">'+esc(o.res.na)+'</span>';
+   else if(o.res)req='<b class="font-mono text-teal-300">'+(o.res.units?o.res.units+' وحدة · ':'')+fmt(o.res.lo)+(o.res.hi!==o.res.lo?' – '+fmt(o.res.hi):'')+' م²</b> <span class="text-slate-400">(من رقم رسمي)</span>';
+   else if(o.pc&&pop>0){
+    req='<span class="text-slate-300">تقدير: نصيب الفرد</span> <input type="number" step="any" min="0" value="'+o.estv+'" onchange="umEstSet(\''+x.key+'\',this.value)" aria-label="نصيب الفرد م2 (تقدير)" class="w-20 rounded bg-slate-950 border border-slate-700 px-1.5 py-0.5 text-[11px] font-mono text-white"> م² ← <b class="font-mono" style="color:#b45309">'+fmt(pop*o.estv)+' م²</b> <b style="color:#8a5a00">(تقديري)</b>';
+   }else req='<span class="text-slate-400">لا رقم متاح في المصدر، غير محسوب</span>';
+   h+='<div class="p-2.5 rounded-lg border border-slate-800 text-xs space-y-1">'+
+    '<div class="flex flex-wrap items-center gap-1.5"><b class="text-white">'+esc(x.n)+'</b>'+
+    '<span class="px-1.5 py-0.5 rounded bg-slate-950/70 border border-slate-700 text-[10px]">'+esc(LVL[x.lv]||'عام')+'</span>'+
+    '<span class="px-1.5 py-0.5 rounded border text-[10px] font-bold" style="color:'+st[1]+';border-color:'+st[1]+'">'+st[0]+'</span></div>'+
+    '<div>'+req+'</div>'+
+    '<details><summary class="cursor-pointer text-[11px] text-slate-400">المعيار والمصدر</summary><div class="text-[11px] text-slate-300 leading-relaxed mt-1 space-y-0.5">'+
+    (x.p&&x.p!=='—'?'<div>السكان المخدومون: '+esc(x.p)+'</div>':'')+(x.a?'<div>المعيار: '+esc(x.a)+'</div>':'')+(x.r&&x.r!=='—'?'<div>المدى/المسافة: '+esc(x.r)+'</div>':'')+
+    '<div>المصدر: '+(x.u!=null?'<a href="'+esc(D.SRC[x.u])+'" target="_blank" rel="noopener" class="underline">مرجع ['+(x.u+1)+']</a> ':'')+esc(x.pg||'')+'</div></div></details></div>';
+  });
+  h+='</div></details>';
+ });
+ /* balance */
+ h+='<div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700 text-xs space-y-1.5"><b class="text-amber-300">الميزانية مقابل المطلوب (من الأرقام الرسمية المباشرة فقط)</b>';
+ ['fac','open','com'].forEach(function(b){
+  var lo=tot[b][0],hi=tot[b][1],bud=P[b],msg;
+  var txt='';
+  if(hi===0&&est[b]===0)msg='لا صفوف محسوبة في هذا البند.';
+  else{
+   var s2='';
+   if(hi>0){txt='المطلوب الرسمي: '+fmt(lo)+(hi!==lo?' – '+fmt(hi):'')+' م²';
+    s2=bud>=hi?'الميزانية ('+fmt(bud)+' م²) تغطي المطلوب الرسمي.':(bud>=lo?'الميزانية ('+fmt(bud)+' م²) داخل مدى المطلوب الرسمي.':'الميزانية ('+fmt(bud)+' م²) أقل من أدنى مطلوب رسمي محسوب. المجموع تراكمي ولم تُفحص بدائل الخدمات، فراجع الصفوف قبل اعتباره عجزاً.');
+   }else{txt='لا أرقام رسمية مباشرة في هذا البند.';s2='الميزانية: '+fmt(bud)+' م².'}
+   if(est[b])txt+=' · تقديري: '+fmt(est[b])+' م² <b style="color:#8a5a00">(تقديري)</b>'+(est[b]<=bud?' (داخل الميزانية)':' (أكبر من الميزانية، لكنه تقدير فلا يُعد عجزاً مؤكداً)');
+   msg=txt+'<br>'+s2;
+  }
+  h+='<div><b>'+BN[b]+':</b> '+msg+'</div>';
+ });
+ h+='</div>';
+ var bl=[];['fac','open','com'].forEach(function(b){var lo=tot[b][0],hi=tot[b][1];bl.push([BN[b],(hi>0?fmt(lo)+(hi!==lo?' – '+fmt(hi):'')+' م²':'—'),est[b]?fmt(est[b])+' م²':'—',fmt(P[b])+' م²',hi===0&&!est[b]?'لا صفوف محسوبة':(hi>0?(P[b]>=hi?'الميزانية تغطي المطلوب الرسمي':(P[b]>=lo?'داخل مدى المطلوب الرسمي':'أقل من أدنى مطلوب رسمي محسوب (راجع البدائل، ليس عجزاً مؤكداً)')):'تقديري فقط، لا حكم')])});
+ window.UMCONS={ref:r,pop:pop,rows:cons,budget:bl,skipped:0};
+ h+='<details class="rounded-xl bg-slate-900/70 border border-slate-700"><summary class="cursor-pointer px-3.5 py-2.5 text-xs font-bold text-teal-300">المراجع</summary><ol class="p-3 pr-6 list-decimal text-[11px] text-slate-300 space-y-1">'+D.SRC.map(function(u){return '<li><a class="underline break-all" target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(decodeURIComponent(u))+'</a></li>'}).join('')+'</ol></details>';
+ if(r==='eg')h+='<details class="rounded-xl bg-slate-900/70 border border-slate-700"><summary class="cursor-pointer px-3.5 py-2.5 text-xs font-bold text-teal-300">من يحكم ماذا: قانون 119 مقابل GOPP</summary><div class="p-3 text-[11px] text-slate-300 space-y-2">'+D.MAP.map(function(m){return '<div><b>'+esc(m[0])+':</b> '+esc(m[5])+' <span class="text-slate-400">('+esc(m[6])+')</span></div>'}).join('')+'</div></details>';
+ sv.innerHTML=h;
+ $('sv-section-title').textContent='رابعاً: الخدمات والمرافق حسب '+(r==='eg'?'أدلة GOPP (مصر)':'معايير وزارة البلديات (السعودية)')+' — عدد السكان '+fmt(pop);
+ $('sv-section-sub').textContent='كل صف عليه علامة المصدر (رسمي / منقول / تقديري). الصفوف التي تخص مستوى أعلى من حجم الموقع تظهر «لا ينطبق».';
+}
+window.umEstSet=function(k,v){var n=parseFloat(v);if(isFinite(n)&&n>=0)EST[k]=n;else delete EST[k];try{localStorage.setItem('um_est_v27',JSON.stringify(EST))}catch(e){}runMasterplanCalculator()};
+
+function shortStd(x){var t=(x.p&&x.p!=='—'?'السكان: '+x.p+' · ':'')+(x.a||'');return t.length>150?t.slice(0,147)+'...':t}
+function rakCons(){
+ var rows=[];
+ document.querySelectorAll('#sv-groups-container > details').forEach(function(d){
+  var g=((d.querySelector('summary span')||{}).textContent||'').replace(/\(.*$/,'').trim();
+  d.querySelectorAll('tbody tr').forEach(function(tr){
+   var td=tr.querySelectorAll('td');if(td.length<6)return;
+   var cnt=parseFloat((td[3].textContent||'').replace(/[^0-9.]/g,''))||0;if(cnt<=0)return;
+   var basis=td[2].textContent.trim();var m=basis.match(/نطاق[^·+]*/);
+   rows.push({g:g,name:td[1].textContent.trim(),lvl:g,radius:m?m[0].trim():'غير محدد في الجدول',std:basis||'—',count:String(cnt),area:td[5].textContent.trim(),st:'تقديري',src:'جدول Reference Manual (رأس الخيمة)'});
+  });
+ });
+ var bal=($('sv-bal')||{}).textContent||'';
+ window.UMCONS={ref:'rak',pop:curPop(),rows:rows,budget:[['الخدمات والحدائق (كما في الحاسبة)','','','',bal.replace(/\s+/g,' ').trim()]],skipped:0};
+}
+function consTableHTML(print){
+ var C=window.UMCONS;if(!C||!C.rows.length)return '';
+ var th='<tr><th>الخدمة</th><th>المستوى</th><th>نطاق الخدمة</th><th>المعيار</th><th>العدد</th><th>المساحة</th><th>الحالة</th><th>المصدر</th></tr>';
+ var cur='',body='';
+ C.rows.forEach(function(r){
+  if(r.g!==cur){cur=r.g;body+='<tr class="um-cons-g"><td colspan="8"><b>'+esc(cur)+'</b></td></tr>'}
+  body+='<tr><td>'+esc(r.name)+'</td><td>'+esc(r.lvl)+'</td><td>'+esc(r.radius)+'</td><td>'+esc(r.std)+'</td><td>'+esc(r.count)+'</td><td>'+esc(r.area)+'</td><td>'+esc(r.st)+'</td><td>'+esc(r.src)+'</td></tr>';
+ });
+ var bh='';
+ if(C.ref!=='rak'&&C.budget&&C.budget.length){
+  bh='<h3>مقارنة الميزانية</h3><table class="um-cons-t"><tr><th>البند</th><th>المطلوب الرسمي</th><th>تقديري</th><th>الميزانية</th><th>الحكم</th></tr>'+C.budget.map(function(b){return '<tr>'+b.map(function(c){return '<td>'+esc(c)+'</td>'}).join('')+'</tr>'}).join('')+'</table>';
+ }else if(C.budget&&C.budget[0]&&C.budget[0][4]){
+  bh='<h3>مقارنة الميزانية</h3><div class="umr-note">'+esc(C.budget[0][4])+'</div>';
+ }
+ return '<h3>الجدول المجمع للخدمات (عدد السكان '+fmt(C.pop)+')</h3><div class="um-cons-wrap"><table class="um-cons-t"><thead>'+th+'</thead><tbody>'+body+'</tbody></table></div>'+
+  '<div class="umr-note">المساحات بالمتر المربع، والمدى (من – إلى) يعكس حدود المعيار. «تقديري» يعني أن الرقم غير مؤكد من مصدر رسمي ويجب مراجعته. الصفوف التي لا رقم لها في المصدر لا تظهر هنا.</div>'+bh;
+}
+window.umSvPrintHTML=function(){try{if(refNow()==='rak')rakCons();var h=consTableHTML(true);return h?'<div id="umr-services">'+h+'</div>':''}catch(e){return ''}};
+window.umSvCsvLines=function(){
+ try{if(refNow()==='rak')rakCons();var C=window.UMCONS;if(!C||!C.rows.length)return [];
+  function q(x){return '"'+String(x==null?'':x).replace(/"/g,"'")+'"'}
+  var L=['','"٦) الجدول المجمع للخدمات (عدد السكان '+Math.round(C.pop)+')"',['الخدمة','المجموعة','المستوى','نطاق الخدمة','المعيار','العدد','المساحة','الحالة','المصدر'].map(q).join(',')];
+  C.rows.forEach(function(r){L.push([r.name,r.g,r.lvl,r.radius,r.std,r.count,r.area,r.st,r.src].map(q).join(','))});
+  if(C.ref!=='rak'&&C.budget){L.push('');L.push('"مقارنة الميزانية"');L.push(['البند','المطلوب الرسمي','تقديري','الميزانية','الحكم'].map(q).join(','));C.budget.forEach(function(b){L.push(b.map(q).join(','))})}
+  else if(C.budget&&C.budget[0]){L.push('');L.push(q('مقارنة الميزانية: '+C.budget[0][4]))}
+  return L;
+ }catch(e){return []}
+};
+var cons=document.createElement('div');cons.id='um-cons';cons.className='rounded-xl bg-slate-900/70 border border-slate-700 p-2';
+sv.insertAdjacentElement('beforebegin',cons);
+function renderCons(){
+ try{if(refNow()==='rak')rakCons();var h=consTableHTML(false);
+  cons.innerHTML=h?'<details open><summary class="cursor-pointer px-2 py-2 text-xs sm:text-sm font-extrabold text-teal-300">الجدول المجمع للخدمات (نطاق الخدمة، المعيار، العدد، المساحة)</summary><div class="um-cons-scr">'+h.replace(/<h3>[^<]*الجدول المجمع[^<]*<\/h3>/,'')+'</div></details>':'';
+ }catch(e){console.warn('cons',e)}
+}
+
+/* ---------- hook the engine ---------- */
+var _run=window.runMasterplanCalculator;
+window.runMasterplanCalculator=function(){
+ var res=_run.apply(this,arguments);
+ try{
+  var r=refNow(),tn=$('calc-table-body');
+  if(r!=='rak'){render();tierBadge();
+   var tbl=tn.closest('table');if(tbl&&!$('um-lu-note')){tbl.insertAdjacentHTML('afterend','<div id="um-lu-note" class="text-[11px] p-2 rounded-lg bg-slate-900/70 border border-slate-700 text-amber-300">نسب الاستعمالات المرجعية في هذا الجدول نطاقات عامة (APA / دول الخليج) وليست من كود مصر أو السعودية. لم نجد في ملف المرجع نسباً مقابلة، فهي تقديرية.</div>')}
+  }
+  var ln=$('um-lu-note');if(ln)ln.style.display=r==='rak'?'none':'';
+  renderCons();
+ }catch(e){console.warn('um-ref render',e)}
+ return res;
+};
+var _chk=window.umRunChecks;
+if(typeof _chk==='function')window.umRunChecks=function(){
+ var x=_chk.apply(this,arguments);
+ try{if(refNow()!=='rak'){var el=$('um-checks-list');if(el)el.insertAdjacentHTML('afterbegin','<div class="p-3 rounded-xl border text-xs um-chk-info">ملاحظة: المدى المرجعي لنسب الاستعمال وحد الحدائق (WHO 9 م² وقيم رأس الخيمة) في هذا الفحص عامة وتقديرية، وليست من كود المرجع المختار.</div>')}}catch(e){}
+ return x;
+};
+/* ---------- boot ---------- */
+(function(){
+ var fresh=true;
+ fresh=!!window.umFresh;
+ if(fresh){$('um-ref').value='eg';try{umRefChange()}catch(e){console.warn(e)};return}
+ var r='rak';
+ if(codeSel.value==='eg')r='eg';else if(codeSel.value==='sa')r='sa';
+ $('um-ref').value=r;
+ umRefApply();
+ if(r==='eg'){var t=EGT.urban;$('um-eg-note').textContent=t.note}
+ try{runMasterplanCalculator()}catch(e){}
+})();
+})();
+</script>
+</body>
 </html>

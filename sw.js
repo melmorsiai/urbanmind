@@ -1,5 +1,5 @@
 // UrbanMind service worker: instant loads from cache, refreshes in the background.
-const C='urbanmind-v25-3';
+const C='urbanmind-v26-9';
 const CORE=['./','index.html','manifest.json','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>Promise.all(CORE.map(u=>c.add(u).catch(()=>{})))))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
